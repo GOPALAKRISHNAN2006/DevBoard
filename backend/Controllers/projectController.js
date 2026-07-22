@@ -80,7 +80,7 @@ export const updateProject = async(req,res)=>{
                 leetcodeUrl,liveUrl,featured
             },
             {
-                new : true
+                new : true,runValidators:true
             }
         );
         if(!project){
@@ -89,7 +89,10 @@ export const updateProject = async(req,res)=>{
             });
         }
        
-        res.status(200).json(project);
+        res.status(200).json({
+            message:"Project Updated Sucessfully",
+            project
+        });
     }catch(error){
        console.log(error);
        res.status(500).json({

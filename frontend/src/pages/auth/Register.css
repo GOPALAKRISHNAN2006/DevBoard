@@ -1,0 +1,33 @@
+.register-page{
+
+    background:#f4f7fc;
+
+    min-height:100vh;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.register-card{
+
+    border:none;
+
+    border-radius:15px;
+
+}
+
+.form-control{
+
+    height:45px;
+
+}
+
+.btn{
+
+    height:45px;
+
+    font-weight:600;
+
+}

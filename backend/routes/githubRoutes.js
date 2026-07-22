@@ -1,6 +1,6 @@
 import express from "express"
 import authMiddleware from "../middleware/authMiddleware.js";
-import { fetchGithub, fetchGithubRepos,fetchGithubStats } from "../Controller/githubController.js";
+import { fetchGithub, fetchGithubRepos,fetchGithubStats } from "../Controllers/githubController.js";
 import { getGithubRepos } from "../services/githubService.js";
 const router = express.Router();
 

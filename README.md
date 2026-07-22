@@ -1,273 +1,152 @@
-# 🚀 DevBoard Backend
+# 🚀 DevBoard
 
-A production-style MERN backend for **DevBoard**, a developer portfolio dashboard that combines GitHub analytics, LeetCode statistics, project management, and user profiles into a single platform.
+A production-style MERN stack application for **DevBoard**, a developer portfolio dashboard that combines GitHub analytics, LeetCode statistics, project management, and user profiles into a single platform.
 
 ---
 
 ## 📌 Features
 
-### 🔐 Authentication
-
-* User Registration
-* User Login
-* JWT Authentication
-* Protected Routes
+### 🔐 Authentication & Users
+* User Registration & Login
+* JWT Authentication & Protected Routes
+* User Profile Management (GitHub/LeetCode usernames, Bio, Skills, Location)
 * Password Hashing using bcrypt
 
-### 👤 User Profile
-
-* Get Logged-in User Profile
-* Update User Profile
-* GitHub Username
-* LeetCode Username
-* Bio
-* Location
-* Skills
-
 ### 📁 Project Portfolio
-
-* Create Project
-* Get All Projects
-* Get Project by ID
-* Update Project (PUT)
-* Partial Update (PATCH)
-* Delete Project
-
-Each project supports:
-
-* Title
-* Description
-* Tech Stack
-* GitHub URL
-* Live URL
-* LeetCode URL (optional)
-* Featured Project
+* Create, Read, Update, and Delete Projects
+* Support for Tech Stack, GitHub/Live URLs, and Featured status
 
 ### 🐙 GitHub Integration
-
-* Fetch GitHub Profile
-* Fetch Public Repositories
-* GitHub Analytics
-
-  * Total Repositories
-  * Total Stars
-  * Total Forks
-  * Most Used Language
-  * Top Repository
+* Fetch GitHub Profile and Public Repositories
+* GitHub Analytics (Total Repositories, Total Stars/Forks, Most Used Language)
 
 ### 💻 LeetCode Integration
-
 * Fetch LeetCode Profile using GraphQL
-* Ranking
-* Reputation
-* Avatar
-* Accepted Submission Statistics
+* Ranking, Reputation, Avatar, and Accepted Submission Statistics
+
+### 📊 Dashboard & UI
+* Responsive User Interface built with React and Bootstrap
+* Interactive Charts and Data Visualization using Recharts
+* Toast Notifications for seamless user experience
 
 ---
 
 ## 🛠 Tech Stack
 
+### Frontend
+* **React 19** (Vite)
+* **React Router DOM** for navigation
+* **Bootstrap** for responsive styling
+* **Recharts** for data visualization
+* **Axios** for API requests
+* **React Hot Toast** for notifications
+* **React Icons**
+
 ### Backend
-
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-
-### Authentication
-
-* JWT (jsonwebtoken)
-* bcrypt
-
-### API Integration
-
-* Axios
-* GitHub REST API
-* LeetCode GraphQL API
-
-### Development Tools
-
-* Nodemon
-* dotenv
+* **Node.js** & **Express.js**
+* **MongoDB** & **Mongoose**
+* **JWT** & **bcrypt** for Authentication
+* **Axios** (GitHub REST API, LeetCode GraphQL API)
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-backend/
+DevBoard/
 │
-├── config/
-│   └── db.js
+├── backend/          # Express backend application
+│   ├── config/       # Database configuration
+│   ├── controllers/  # Route controllers (Auth, User, Projects, GitHub, LeetCode)
+│   ├── middleware/   # Custom middlewares (Auth)
+│   ├── models/       # Mongoose schemas (User, Project)
+│   ├── routes/       # API route definitions
+│   ├── services/     # Third-party API services
+│   └── server.js     # Entry point
 │
-├── controllers/
-│   ├── authController.js
-│   ├── userController.js
-│   ├── projectController.js
-│   ├── githubController.js
-│   └── leetcodeController.js
-│
-├── middleware/
-│   └── authMiddleware.js
-│
-├── models/
-│   ├── User.js
-│   └── Project.js
-│
-├── routes/
-│   ├── authRoutes.js
-│   ├── userRoutes.js
-│   ├── projectRoutes.js
-│   ├── githubRoutes.js
-│   └── leetcodeRoutes.js
-│
-├── services/
-│   ├── github.service.js
-│   └── leetcode.service.js
-│
-├── .env
-├── server.js
-└── package.json
+└── frontend/         # React frontend application
+    ├── src/
+    │   ├── components/ # Reusable UI components
+    │   ├── pages/      # Page components (Dashboard, Auth, etc.)
+    │   ├── App.jsx     # Main React component
+    │   └── main.jsx    # Entry point
+    └── package.json
 ```
 
 ---
 
-## 📡 API Endpoints
+## 📡 API Endpoints (Backend)
 
-### Authentication
-
-| Method | Endpoint             | Description   |
-| ------ | -------------------- | ------------- |
-| POST   | `/api/auth/register` | Register User |
-| POST   | `/api/auth/login`    | Login User    |
-
----
-
-### User
-
-| Method | Endpoint        | Description    |
-| ------ | --------------- | -------------- |
-| GET    | `/api/users/me` | Get Profile    |
-| PUT    | `/api/users/me` | Update Profile |
-
----
-
-### Projects
-
-| Method | Endpoint            | Description      |
-| ------ | ------------------- | ---------------- |
-| POST   | `/api/projects`     | Create Project   |
-| GET    | `/api/projects`     | Get All Projects |
-| GET    | `/api/projects/:id` | Get Project      |
-| PUT    | `/api/projects/:id` | Update Project   |
-| PATCH  | `/api/projects/:id` | Partial Update   |
-| DELETE | `/api/projects/:id` | Delete Project   |
-
----
-
-### GitHub
-
-| Method | Endpoint              | Description         |
-| ------ | --------------------- | ------------------- |
-| GET    | `/api/github/profile` | GitHub Profile      |
-| GET    | `/api/github/repos`   | GitHub Repositories |
-| GET    | `/api/github/stats`   | GitHub Analytics    |
-
----
-
-### LeetCode
-
-| Method | Endpoint                | Description                     |
-| ------ | ----------------------- | ------------------------------- |
-| GET    | `/api/leetcode/profile` | LeetCode Profile                |
-| GET    | `/api/leetcode/stats`   | LeetCode Analytics *(Upcoming)* |
+* **Auth**: `POST /api/auth/register`, `POST /api/auth/login`
+* **User**: `GET /api/users/me`, `PUT /api/users/me`
+* **Projects**: `GET /api/projects`, `POST /api/projects`, `PUT /PATCH /DELETE /api/projects/:id`
+* **GitHub**: `GET /api/github/profile`, `/api/github/repos`, `/api/github/stats`
+* **LeetCode**: `GET /api/leetcode/profile`, `/api/leetcode/stats`
 
 ---
 
 ## ⚙️ Environment Variables
 
-Create a `.env` file in the project root.
-
+### Backend (`backend/.env`)
+Create a `.env` file in the `backend` directory:
 ```env
 PORT=5000
-
 MONGO_URI=your_mongodb_connection_string
-
 JWT_SECRET=your_jwt_secret
+```
+
+### Frontend (`frontend/.env`)
+Create a `.env` file in the `frontend` directory:
+```env
+VITE_API_URL=http://localhost:5000/api
 ```
 
 ---
 
-## ▶️ Installation
+## ▶️ Installation & Setup
 
-Clone the repository:
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd DevBoard
+   ```
 
-```bash
-git clone <repository-url>
-```
+2. **Backend Setup:**
+   ```bash
+   cd backend
+   npm install
+   npm run dev
+   ```
+   *(Runs on http://localhost:5000)*
 
-Move into the project:
-
-```bash
-cd backend
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Create a `.env` file.
-
-Run the development server:
-
-```bash
-npm run dev
-```
+3. **Frontend Setup:**
+   Open a new terminal and navigate to the frontend folder:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   *(Runs on http://localhost:5173)*
 
 ---
 
 ## 📈 Current Progress
-
-* ✅ Authentication
-* ✅ JWT Authorization
-* ✅ User Profile
-* ✅ Project Portfolio CRUD
-* ✅ GitHub Profile Integration
-* ✅ GitHub Repository Integration
-* ✅ GitHub Analytics
-* ✅ LeetCode GraphQL Integration
-* 🚧 LeetCode Analytics
-* 🚧 Resume Builder
-* 🚧 Job Tracker
+* ✅ Full MERN Stack Setup
+* ✅ Authentication (JWT)
+* ✅ User Profiles & Project CRUD
+* ✅ GitHub & LeetCode Integrations
+* ✅ Interactive Frontend Dashboard
+* 🚧 Resume Builder & Job Tracker
 * 🚧 AI Features
-
----
-
-## 🎯 Future Enhancements
-
-* Resume Builder
-* Job Application Tracker
-* AI Resume Review
-* AI Interview Preparation
-* AI Project Suggestions
-* Cloudinary Image Upload
-* Email Verification
-* Refresh Tokens
-* Role-Based Authorization
-* API Documentation with Swagger
 
 ---
 
 ## 👨‍💻 Author
 
 **Gopalakrishnan M**
-
-* GitHub: https://github.com/GOPALAKRISHNAN2006
+* GitHub: [GOPALAKRISHNAN2006](https://github.com/GOPALAKRISHNAN2006)
 
 ---
 
 ## 📄 License
-
 This project is licensed under the MIT License.

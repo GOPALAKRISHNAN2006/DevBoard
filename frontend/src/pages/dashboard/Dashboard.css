@@ -1,0 +1,28 @@
+body{
+     margin:0;
+    padding:0;
+    overflow-x:hidden;
+    background:#f5f7fa;
+}
+
+.main-content{
+    margin-left:250px;
+    width:calc(100% - 250px);
+    min-height:100vh;
+    background:#f5f7fa;
+}
+.row{
+    margin-left:0;
+    margin-right:0;
+}
+.card{
+    border-radius:15px;
+}
+
+.card h2{
+    font-weight:bold;
+}
+
+.card h4{
+    font-weight:600;
+}
