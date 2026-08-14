@@ -1,60 +1,98 @@
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
-    FaTachometerAlt, FaProjectDiagram, FaBriefcase,
-    FaFileAlt, FaGithub, FaCode, FaUser, FaSignOutAlt
-} from "react-icons/fa";
-
+  FiGrid,
+  FiFolder,
+  FiBriefcase,
+  FiFileText,
+  FiGithub,
+  FiCode,
+  FiUser,
+  FiLogOut,
+  FiX,
+  FiCpu,
+  FiBookOpen,
+  FiBarChart2,
+  FiLinkedin
+} from "react-icons/fi";
+import { useAuth } from "../context/AuthContext";
 import "./Sidebar.css";
 
-const Sidebar=()=>{
-    return(
-        <div className="bg-dark text-white vh-100 p-3 sidebar">
-            <h3 className="text-center mb-3">DevBoard</h3>
-            <ul className="nav flex-column">
-                <li className="nav-item mb-2">
-                    <Link className="nav-link text-white" to="/dashboard">
-                      <FaTachometerAlt className="me-2"/>
-                       Dashboard
-                    </Link>
-                </li>
-                <li className="nav-item mb-2">
-                    <Link className="nav-link text-white" to="/project">
-                    <FaProjectDiagram className="me-2"/>
-                     Projects</Link>
-                </li>
-                <li className="nav-item mb-2">
-                    <Link className="nav-link text-white" to="/jobs">
-                    <FaBriefcase className="me-2"/>
-                     Jobs</Link>
-                </li>
-                <li className="nav-item mb-2">
-                    <Link className="nav-link text-white" to="/resume">
-                    <FaFileAlt className="me-2"/>
-                     Resume</Link>
-                </li>
-                 <li className="nav-item mb-2">
-                    <Link className="nav-link text-white" to="/github">
-                    <FaGithub className="me-2"/>
-                     GitHub</Link>
-                </li>
-                <li className="nav-item mb-2">
-                    <Link className="nav-link text-white" to="/leetcode">
-                    <FaCode className="me-2"/>
-                     Leetcode</Link>
-                </li>
-                 <li className="nav-item mb-2">
-                    <Link className="nav-link text-white" to="/profile">
-                    <FaUser className="me-2"/>
-                     Profile</Link>
-                </li>
+const links = [
+  ["/dashboard", "Dashboard", FiGrid],
+  ["/projects", "Projects", FiFolder],
+  ["/jobs", "Job Tracker", FiBriefcase],
+  ["/resume", "Resume", FiFileText],
+  ["/notes", "Notes", FiBookOpen],
+  ["/analytics", "Analytics", FiBarChart2],
+  ["/github", "GitHub", FiGithub],
+  ["/leetcode", "LeetCode", FiCode],
+  ["/linkedin", "LinkedIn", FiLinkedin],
+  ["/profile", "Profile Settings", FiUser],
+];
 
-            </ul>
-            <button className="btn btn-danger w-100 mt-5">
-                <FaSignOutAlt className="me-2"/>
-                Logout
-            </button>
+export default function Sidebar({ open, setOpen }) {
+  const { user, logout } = useAuth();
+  const nav = useNavigate();
+
+  const out = () => {
+    logout();
+    nav("/login");
+  };
+
+  return (
+    <>
+      <div
+        className={`side-backdrop ${open ? "show" : ""}`}
+        onClick={() => setOpen(false)}
+      />
+      <aside className={`sidebar ${open ? "open" : ""}`} data-testid="app-sidebar">
+        <div className="sidebar-header">
+          <div className="brand">
+            <div className="brand-icon">
+              <FiCpu />
+            </div>
+            <span className="brand-text">DevBoard</span>
+          </div>
+          <button className="close-btn d-lg-none" aria-label="Close navigation" data-testid="sidebar-close-button" onClick={() => setOpen(false)}>
+            <FiX />
+          </button>
         </div>
-    );
-};
 
-export default Sidebar;
+        <div className="sidebar-content">
+          <div className="nav-section">
+            <small className="nav-label">WORKSPACE</small>
+            <nav className="nav-menu">
+              {links.map(([to, label, Icon]) => (
+                <NavLink 
+                  key={to} 
+                  to={to} 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={() => setOpen(false)}
+                >
+                  <Icon className="nav-icon" />
+                  <span className="nav-text">{label}</span>
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+        </div>
+
+        <div className="sidebar-footer">
+          <div className="user-profile-card">
+            <div className="user-avatar">
+              {user?.name?.[0]?.toUpperCase() || "D"}
+            </div>
+            <div className="user-details">
+              <span className="user-name">{user?.name || "Developer"}</span>
+              <span className="user-email">{user?.email || "dev@example.com"}</span>
+            </div>
+          </div>
+          <button className="logout-btn" data-testid="logout-button" onClick={out}>
+            <FiLogOut /> 
+            <span>Sign out</span>
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}

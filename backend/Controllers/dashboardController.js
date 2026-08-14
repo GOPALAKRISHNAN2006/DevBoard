@@ -2,15 +2,18 @@ import User from "../models/User.js";
 import Project from "../models/Project.js";
 import Resume from "../models/Resume.js";
 import Job from "../models/Job.js";
+import Note from "../models/Note.js";
 
 export const getDashboard = async(req,res)=>{
     try{
 
-        const [user,projects,resume,jobs] = await Promise.all([
+        const [user,projects,resume,jobs,notes] = await Promise.all([
             User.findById(req.user.id).select("-password"),
             Project.find({ owner: req.user.id }).sort({ createdAt: -1 }),
             Resume.findOne({user:req.user.id}),
-            Job.find({ user: req.user.id }).sort({ createdAt: -1 })
+            Job.find({ user: req.user.id }).sort({ createdAt: -1 }),
+            Note.find({ owner: req.user.id, isArchived: false })
+                .sort({ isPinned: -1, updatedAt: -1 })
         ]);
         if(!user){
             return res.status(404).json({
@@ -36,6 +39,7 @@ export const getDashboard = async(req,res)=>{
 
          const recentProjects = projects.slice(0, 5);
          const recentJobs = jobs.slice(0, 5);
+         const recentNotes = notes.slice(0, 5);
 
          const upcomingDeadlines = jobs
             .filter(job => job.deadline && new Date(job.deadline) >= new Date())
@@ -58,17 +62,21 @@ export const getDashboard = async(req,res)=>{
             resume : resume ? {
                 headline : resume.headline,
                 skills : resume.skills,
-                skillsCount : resume.skills.length,
+                skillsCount : resume.skills?.length || 0,
                 education : resume.education,
-                educationCount : resume.education.length,
+                educationCount : resume.education?.length || 0,
                 experience : resume.experience,
-                experienceCount : resume.experience.length,
+                experienceCount : resume.experience?.length || 0,
                 certifications : resume.certifications,
-                certificationsCount: resume.certifications.length
+                certificationsCount: resume.certifications?.length || 0
             } : null,
             jobs : {
                 ...jobStats,
                 recent : recentJobs
+            },
+            notes: {
+                total: notes.length,
+                recent: recentNotes
             },
             upcomingDeadlines
         });

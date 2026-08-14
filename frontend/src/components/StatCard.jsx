@@ -1,19 +1,18 @@
-const StatCard = ({ title, value, icon, bgColor }) => {
-    return (
-        <div className="card shadow border-0">
-            <div className={`card-body text-center ${bgColor} text-white`}>
-
-                <div className="mb-3">
-                    {icon}
-                </div>
-
-                <h5>{title}</h5>
-
-                <h2>{value}</h2>
-
-            </div>
-        </div>
-    );
-};
-
-export default StatCard;
+export default function StatCard({
+  icon: Icon,
+  label,
+  value,
+  tone = "indigo",
+}) {
+  return (
+    <div className="stat-card card h-100">
+      <div className={`stat-icon ${tone}`}>
+        <Icon />
+      </div>
+      <div>
+        <p>{label}</p>
+        <h3>{value ?? 0}</h3>
+      </div>
+    </div>
+  );
+}

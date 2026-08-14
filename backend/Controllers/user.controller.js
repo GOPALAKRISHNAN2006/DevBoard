@@ -13,11 +13,19 @@ export const getProfile = async(req,res)=>{
 
 export const updateProfile = async(req,res)=>{
     try{
-        const {githubUsername,leetcodeUsername,bio,location,skills} = req.body;
+        const {
+            name, githubUsername, leetcodeUsername, bio, location, skills,
+            linkedinUrl, portfolioUrl, twitterUrl, website, phone
+        } = req.body;
+        const updateFields = {
+            githubUsername, leetcodeUsername, bio, location, skills,
+            linkedinUrl, portfolioUrl, twitterUrl, website, phone
+        };
+        if (name) updateFields.name = name;
+
         const updatedUser = await User.findByIdAndUpdate(
-            req.user.id,{
-                githubUsername,leetcodeUsername,bio,location,skills
-            },
+            req.user.id,
+            updateFields,
             {
                 new : true,
                 runValidators:true

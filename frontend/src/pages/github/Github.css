@@ -1,0 +1,9 @@
+.github-loading-grid { display: grid; gap: 1rem; }
+.github-skeleton { border: 1px solid var(--border-main); border-radius: 14px; background: linear-gradient(100deg, var(--bg-surface-hover) 25%, #eef1f7 42%, var(--bg-surface-hover) 58%); background-size: 220% 100%; animation: github-shimmer 1.35s ease-in-out infinite; }
+.github-skeleton-profile { height: 174px; }
+.github-skeleton-stat { height: 112px; }
+.github-skeleton-repos { height: 260px; margin-top: .75rem; }
+
+[data-bs-theme="dark"] .github-skeleton { background: linear-gradient(100deg, #171b28 25%, #242b3d 42%, #171b28 58%); background-size: 220% 100%; border-color: #2b3347; }
+
+@keyframes github-shimmer { to { background-position: -120% 0; } }

@@ -45,7 +45,32 @@ const userSchema = new mongoose.Schema(
             type:String,
             trim:true
         }
-    ]
+    ],
+    linkedinUrl:{
+        type:String,
+        default:"",
+        trim:true
+    },
+    portfolioUrl:{
+        type:String,
+        default:"",
+        trim:true
+    },
+    twitterUrl:{
+        type:String,
+        default:"",
+        trim:true
+    },
+    phone:{
+        type:String,
+        default:"",
+        trim:true
+    },
+    website:{
+        type:String,
+        default:"",
+        trim:true
+    }
    },{
     timestamps:true
    }

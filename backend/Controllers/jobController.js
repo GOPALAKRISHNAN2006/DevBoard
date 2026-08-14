@@ -28,38 +28,48 @@ export const createJob = async (req,res)=>{
    } 
 }
 
-export const getJob = async(req,res)=>{
-    try{
-      const page = Number(req.query.page) || 1;
-      const limit = Number(req.query.limit) || 5;
-      const {sort} = req.query;
-      let sortOption = {createdAt: -1};
-      if(sort === "oldest"){
-        sortOption = { createdAt: 1};
-      }
-      if(sort === "deadline"){
-        sortOption = { deadline : 1};
-      }
-        const jobs = await Job.find({
-            user:req.user.id
-        })
-        .sort(sortOption)
-        .skip((page-1)*limit)
-        .limit(limit);
-      const totalJobs = await Job.countDocuments({
-             user: req.user.id
-      });  
+export const getJob = async (req, res) => {
+    try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const { sort, search = "", status, jobType } = req.query;
 
-        
+        const query = { user: req.user.id };
+
+        if (search) {
+            // Search by company or role
+            query.$or = [
+                { company: { $regex: search, $options: "i" } },
+                { role: { $regex: search, $options: "i" } }
+            ];
+        }
+
+        if (status) query.status = status;
+        if (jobType) query.jobType = jobType;
+
+        let sortOption = { createdAt: -1 };
+        if (sort === "oldest") sortOption = { createdAt: 1 };
+        if (sort === "deadline") sortOption = { deadline: 1 };
+        if (sort === "salary") sortOption = { salary: -1 };
+
+        const skip = (page - 1) * limit;
+
+        const jobs = await Job.find(query)
+            .sort(sortOption)
+            .skip(skip)
+            .limit(limit);
+            
+        const totalJobs = await Job.countDocuments(query);
+
         res.status(200).json({
-          page,limit,totalJobs,
-          totalPages: Math.ceil(totalJobs/limit),
-          jobs
-        })
-    }catch(error){
-        res.status(500).json({
-            message:error.message
-        })
+            page,
+            limit,
+            totalJobs,
+            totalPages: Math.ceil(totalJobs / limit),
+            jobs
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 

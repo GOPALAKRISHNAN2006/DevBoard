@@ -8,51 +8,62 @@ import {
 export const fetchGithubRepos = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-
-    if (!user.githubUsername) {
+    // Use stored githubUsername or fallback to query parameter for testing
+    const githubUsername = user.githubUsername || req.query.username;
+    if (!githubUsername) {
       return res.status(400).json({
-        message: "GitHub username not found",
+        message: "GitHub username not found. Provide 'username' query param or update profile.",
       });
     }
-
-    const repos = await getGithubRepos(user.githubUsername);
-
+    const repos = await getGithubRepos(githubUsername);
     res.status(200).json(repos);
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
+    const status = error.response?.status || 500;
+    const message = status === 404
+      ? "GitHub user not found. Check the username in Profile Settings."
+      : status === 403
+        ? "GitHub API rate limit reached. Try again shortly."
+        : error.response?.data?.message || error.message || "Unable to load GitHub repositories.";
+    res.status(status).json({ message });
   }
 };
-export const fetchGithub = async(req,res)=>{
-    try{
-        const user = await User.findById(req.user.id);
-
-        if(!user.githubUsername){
-            return res.status(400).json({
-                message:"Github username not found. Pleas update your profile."
-            });
-        }
-        const profile = await getGithubProfile (user.githubUsername);
-        return res.status(200).json(profile);
-    }catch(error){
-        return res.status(500).json({
-            message:error.message
-        });
+export const fetchGithub = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    // Use stored githubUsername or fallback to query parameter for testing
+    const githubUsername = user.githubUsername || req.query.username;
+    if (!githubUsername) {
+      return res.status(400).json({
+        message: "GitHub username not found. Please update your profile or provide 'username' query param.",
+      });
     }
+    const profile = await getGithubProfile(githubUsername);
+    return res.status(200).json(profile);
+  } catch (error) {
+    const status = error.response?.status || 500;
+    const message = status === 404
+      ? "GitHub user not found. Check the username in Profile Settings."
+      : status === 403
+        ? "GitHub API rate limit reached. Try again shortly."
+        : error.response?.data?.message || error.message || "Unable to load the GitHub profile.";
+    return res.status(status).json({ message });
+  }
 };
 
 export const fetchGithubStats = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
-    if (!user.githubUsername) {
+    // Use stored githubUsername or fallback to query parameter for testing
+    const githubUsername = user.githubUsername || req.query.username;
+
+    if (!githubUsername) {
       return res.status(400).json({
         message: "GitHub username not found",
       });
     }
 
-    const repos = await getGithubRepos(user.githubUsername);
+    const repos = await getGithubRepos(githubUsername);
 
     const totalRepos = repos.length;
     const totalStars = repos.reduce(

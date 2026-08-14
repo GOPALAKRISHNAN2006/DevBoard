@@ -38,12 +38,8 @@ export const getResume = async(req,res)=>{
         {
             user:req.user.id
         });
-        if(!resume){
-            res.status(404).json({
-                message:"Not Found..."
-            });
-        }
-        res.status(200).json(resume);
+        if (!resume) { return res.status(404).json({ message: "Resume not found" }); }
+        return res.status(200).json(resume);
     }catch(error){
         console.log(error);
        res.status(500).json({

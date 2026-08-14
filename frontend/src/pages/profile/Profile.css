@@ -1,0 +1,88 @@
+.profile-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.profile-section-header h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.profile-avatar-lg {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Connection status */
+.connection-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.connection-item:last-child {
+  border-bottom: none;
+}
+
+.connection-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.connection-icon.blue { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.connection-icon.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.connection-icon.green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+.connection-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.connection-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.connection-status {
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.connection-status.connected {
+  color: #10b981;
+}
+
+.connection-status.missing {
+  color: var(--text-tertiary);
+}
+
+.profile-section-header { color: #6366f1; }
+.profile-section-header svg { background: #eef2ff; padding: 6px; width: 28px; height: 28px; border-radius: 8px; }
+.profile-avatar-lg { box-shadow: 0 10px 22px rgba(99,102,241,.23); }
+.connection-item { padding: .7rem .35rem; transition: background .2s ease; border-radius: 8px; }
+.connection-item:hover { background: var(--bg-surface-hover); }

@@ -1,71 +1,67 @@
 import { useState } from "react";
-import {Link,useNavigate} from "react-router-dom";
-import API from "../../api/axios.js";
-import { toast } from "react-hot-toast";
-import { FaUserCircle } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 import "./Login.css";
-
-const Login = () =>{
-    const navigate = useNavigate();
-    const [formData,setFormData] = useState({
-        email:"", password:""
-    });
-    const handleChange = (e) =>{
-        setFormData({
-            ...formData,[e.target.name]:e.target.value
-        });
-    };
-
-    const handleSubmit = async(e)=>{
-        e.preventDefault();
-        try{
-            const res = await API.post("/auth/login",formData);
-            localStorage.setItem("token",res.data.token);
-            toast.success("Login Successful");
-            navigate("/dashboard");
-        }catch(error){
-            toast.error(error.response?.data?.message || "Login Failed");
-        }
-    };
-    return (
-        <div className="login-page">
-            <div className="container">
-                <div className="row justify-content-center">
-                    <div className="col-lg-5 col-md-7">
-                        <div className="card shadow-lg login-card">
-                            <div className="card-body p-5">
-                                <div className="text-center mb-4">
-                                    <FaUserCircle size={70} className="text-primary"/>
-                                    <h2 className="mt-3"> Dev Board</h2>
-                                    <p className="text-muted">Login to your account</p>
-                                </div>
-                                <form onSubmit={handleSubmit}>
-                                    <div className="mb-3">
-                                        <label className="form-label">Email</label>
-                                        <input type="email" name="email" className="form-control"
-                                         placeholder="Enter Email" value={formData.email} 
-                                         onChange={handleChange} required/>
-                                    </div>
-                                    <div className="mb-4">
-                                        <label className="form-label">Password</label>
-                                        <input type="password" name="password" className="form-control"
-                                         placeholder="Enter Password" value={formData.password} 
-                                         onChange={handleChange} required/>
-                                    </div>
-                                    <button className="btn btn-primary w-100">Login</button>
-
-                                </form>
-                                <p className="text-center mt-4">
-                                    Don't have an account?
-                                    <Link to="/register" className="ms-2">Register</Link>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+export default function Login() {
+  const [email, setEmail] = useState(""),
+    [password, setPassword] = useState(""),
+    [busy, setBusy] = useState(false),
+    nav = useNavigate(),
+    { login } = useAuth();
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const { data } = await api.post("/auth/login", { email, password });
+      login(data);
+      toast.success("Welcome back!");
+      nav("/dashboard", { replace: true });
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Login failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="auth-page" data-testid="login-page">
+      <div className="auth-panel">
+        <div className="auth-brand">&lt;/&gt; DevBoard</div>
+        <h1>Welcome back</h1>
+        <p>Sign in to manage your developer journey.</p>
+        <form onSubmit={submit} data-testid="login-form">
+          <label htmlFor="email">Email address</label>
+          <input
+            className="form-control"
+            id="email"
+            name="email"
+            data-testid="login-email-input"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <label htmlFor="password">Password</label>
+          <input
+            className="form-control"
+            id="password"
+            name="password"
+            data-testid="login-password-input"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit" className="btn btn-primary w-100 mt-4" data-testid="login-submit-button" disabled={busy}
+          id="loginBtn">
+            {busy ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
+        <div className="auth-switch">
+          New to DevBoard? <Link to="/register" data-testid="register-link">Create account</Link>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
-
-export default Login;

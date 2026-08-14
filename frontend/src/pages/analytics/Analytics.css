@@ -1,0 +1,96 @@
+.analytics-stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.analytics-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.analytics-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin: 0 auto 12px;
+}
+
+.analytics-stat-icon.blue { background: rgba(59,130,246,0.12); color: #3b82f6; }
+.analytics-stat-icon.purple { background: rgba(99,102,241,0.12); color: #6366f1; }
+.analytics-stat-icon.orange { background: rgba(245,158,11,0.12); color: #f59e0b; }
+.analytics-stat-icon.green { background: rgba(16,185,129,0.12); color: #10b981; }
+
+.analytics-stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.analytics-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chart-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+  letter-spacing: -0.01em;
+}
+
+.chart-wrap {
+  height: 260px;
+  position: relative;
+}
+
+/* GitHub stats grid */
+.analytics-github-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.github-stat-box {
+  background: var(--bg-surface-hover);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  text-align: center;
+}
+
+.github-stat-value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.github-stat-key {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.analytics-stat-card { border-radius: 14px; padding: 22px 16px; background: linear-gradient(145deg, var(--bg-surface), var(--bg-surface-hover)); }
+.analytics-stat-card:hover { border-color: #c7d2fe; box-shadow: 0 12px 24px rgba(49,46,129,.08); }
+.analytics-stat-icon { border-radius: 12px; }
+.github-stat-box { border-radius: 10px; background: linear-gradient(145deg, var(--bg-surface-hover), var(--bg-surface)); }
