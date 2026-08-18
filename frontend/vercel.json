@@ -5,27 +5,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://devboard-x6a4.onrender.com/api/:path*"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/favicon.svg",
-      "dest": "/favicon.svg"
     },
     {
-      "src": "/manifest.json",
-      "dest": "/manifest.json"
-    },
-    {
-      "src": "/dist/(.*)",
-      "dest": "/dist/$1"
-    },
-    {
-      "src": "/(.*)",
-      "headers": {
-        "Cache-Control": "public, max-age=0, must-revalidate"
-      },
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
