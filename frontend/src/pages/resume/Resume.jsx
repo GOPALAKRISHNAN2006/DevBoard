@@ -66,31 +66,31 @@ export default function Resume() {
 
   const completionItems = data
     ? [
-        {
-          label: "Professional headline",
-          done: Boolean(data.headline),
-        },
-        {
-          label: "Career summary",
-          done: Boolean(data.summary),
-        },
-        {
-          label: "Add 3+ skills",
-          done: (data.skills?.length || 0) >= 3,
-        },
-        {
-          label: "Work experience",
-          done: (data.experience?.length || 0) > 0,
-        },
-        {
-          label: "Education",
-          done: (data.education?.length || 0) > 0,
-        },
-        {
-          label: "Certification",
-          done: (data.certifications?.length || 0) > 0,
-        },
-      ]
+      {
+        label: "Professional headline",
+        done: Boolean(data.headline),
+      },
+      {
+        label: "Career summary",
+        done: Boolean(data.summary),
+      },
+      {
+        label: "Add 3+ skills",
+        done: (data.skills?.length || 0) >= 3,
+      },
+      {
+        label: "Work experience",
+        done: (data.experience?.length || 0) > 0,
+      },
+      {
+        label: "Education",
+        done: (data.education?.length || 0) > 0,
+      },
+      {
+        label: "Certification",
+        done: (data.certifications?.length || 0) > 0,
+      },
+    ]
     : [];
 
   const completedCount = completionItems.filter(
@@ -151,7 +151,7 @@ export default function Resume() {
     } catch (e) {
       toast.error(
         e.response?.data?.message ||
-          "Unable to save resume"
+        "Unable to save resume"
       );
       return false;
     }
