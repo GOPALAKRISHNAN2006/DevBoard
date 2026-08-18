@@ -1,8 +1,6 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "cleanUrls": false,
-  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/:path*",
@@ -19,7 +17,14 @@
       "dest": "/manifest.json"
     },
     {
+      "src": "/dist/(.*)",
+      "dest": "/dist/$1"
+    },
+    {
       "src": "/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      },
       "dest": "/index.html"
     }
   ]
