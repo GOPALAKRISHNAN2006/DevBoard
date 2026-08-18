@@ -14,6 +14,7 @@ import {
   FiTarget,
   FiZap,
   FiArrowRight,
+  FiFolder,
 } from "react-icons/fi";
 import api from "../../api/axios";
 import Layout from "../../components/Layout";
@@ -32,6 +33,7 @@ export default function Resume() {
   const [showExp, setShowExp] = useState(false);
   const [showEdu, setShowEdu] = useState(false);
   const [showCert, setShowCert] = useState(false);
+  const [showProj, setShowProj] = useState(false);
 
   // Form states
   const [summaryForm, setSummaryForm] = useState({
@@ -47,6 +49,7 @@ export default function Resume() {
     duration: "",
     description: "",
   });
+  const [expEditIndex, setExpEditIndex] = useState(null);
 
   const [eduForm, setEduForm] = useState({
     _id: null,
@@ -55,6 +58,7 @@ export default function Resume() {
     year: "",
     cgpa: "",
   });
+  const [eduEditIndex, setEduEditIndex] = useState(null);
 
   const [certForm, setCertForm] = useState({
     _id: null,
@@ -63,6 +67,15 @@ export default function Resume() {
     year: "",
   });
   const [certEditIndex, setCertEditIndex] = useState(null);
+
+  const [projForm, setProjForm] = useState({
+    _id: null,
+    name: "",
+    description: "",
+    techStack: "",
+    url: "",
+  });
+  const [projEditIndex, setProjEditIndex] = useState(null);
 
   const completionItems = data
     ? [
@@ -115,6 +128,7 @@ export default function Resume() {
           experience: [],
           education: [],
           certifications: [],
+          projects: [],
         }
       );
     } catch {
@@ -125,6 +139,7 @@ export default function Resume() {
         experience: [],
         education: [],
         certifications: [],
+        projects: [],
       });
     } finally {
       setLoaded(true);
@@ -189,9 +204,15 @@ export default function Resume() {
 
   /* Experience Handlers */
 
-  const openExp = (item = null) => {
+  const openExp = (item = null, index = null) => {
     if (item) {
-      setExpForm(item);
+      setExpForm({
+        _id: item._id || null,
+        company: item.company || "",
+        role: item.role || "",
+        duration: item.duration || "",
+        description: item.description || "",
+      });
     } else {
       setExpForm({
         _id: null,
@@ -202,47 +223,71 @@ export default function Resume() {
       });
     }
 
+    setExpEditIndex(index);
     setShowExp(true);
   };
 
-  const saveExp = (e) => {
+  const saveExp = async (e) => {
     e.preventDefault();
 
-    let newExp = [...(data.experience || [])];
+    const currentData = data || {
+      headline: "",
+      summary: "",
+      skills: [],
+      experience: [],
+      education: [],
+      certifications: [],
+    };
 
-    if (expForm._id) {
-      newExp = newExp.map((x) =>
-        x._id === expForm._id ? expForm : x
-      );
+    let newExp = [...(currentData.experience || [])];
+    const expToSave = {
+      company: expForm.company,
+      role: expForm.role,
+      duration: expForm.duration,
+      description: expForm.description,
+      ...(expForm._id ? { _id: expForm._id } : {}),
+    };
+
+    if (expEditIndex !== null && expEditIndex >= 0) {
+      newExp[expEditIndex] = expToSave;
     } else {
-      newExp.push(expForm);
+      newExp.push(expToSave);
     }
 
-    saveOverall({
-      ...data,
+    const saved = await saveOverall({
+      ...currentData,
       experience: newExp,
     });
 
-    setShowExp(false);
+    if (saved) {
+      setExpEditIndex(null);
+      setShowExp(false);
+    }
   };
 
-  const deleteExp = (id) => {
+  const deleteExp = (index) => {
     if (!window.confirm("Delete this experience?"))
       return;
 
     saveOverall({
       ...data,
       experience: data.experience.filter(
-        (x) => x._id !== id
+        (_, currentIndex) => currentIndex !== index
       ),
     });
   };
 
   /* Education Handlers */
 
-  const openEdu = (item = null) => {
+  const openEdu = (item = null, index = null) => {
     if (item) {
-      setEduForm(item);
+      setEduForm({
+        _id: item._id || null,
+        institute: item.institute || "",
+        degree: item.degree || "",
+        year: item.year || "",
+        cgpa: item.cgpa || "",
+      });
     } else {
       setEduForm({
         _id: null,
@@ -253,38 +298,56 @@ export default function Resume() {
       });
     }
 
+    setEduEditIndex(index);
     setShowEdu(true);
   };
 
-  const saveEdu = (e) => {
+  const saveEdu = async (e) => {
     e.preventDefault();
 
-    let newEdu = [...(data.education || [])];
+    const currentData = data || {
+      headline: "",
+      summary: "",
+      skills: [],
+      experience: [],
+      education: [],
+      certifications: [],
+    };
 
-    if (eduForm._id) {
-      newEdu = newEdu.map((x) =>
-        x._id === eduForm._id ? eduForm : x
-      );
+    let newEdu = [...(currentData.education || [])];
+    const eduToSave = {
+      institute: eduForm.institute,
+      degree: eduForm.degree,
+      year: eduForm.year,
+      cgpa: eduForm.cgpa,
+      ...(eduForm._id ? { _id: eduForm._id } : {}),
+    };
+
+    if (eduEditIndex !== null && eduEditIndex >= 0) {
+      newEdu[eduEditIndex] = eduToSave;
     } else {
-      newEdu.push(eduForm);
+      newEdu.push(eduToSave);
     }
 
-    saveOverall({
-      ...data,
+    const saved = await saveOverall({
+      ...currentData,
       education: newEdu,
     });
 
-    setShowEdu(false);
+    if (saved) {
+      setEduEditIndex(null);
+      setShowEdu(false);
+    }
   };
 
-  const deleteEdu = (id) => {
+  const deleteEdu = (index) => {
     if (!window.confirm("Delete this education?"))
       return;
 
     saveOverall({
       ...data,
       education: data.education.filter(
-        (x) => x._id !== id
+        (_, currentIndex) => currentIndex !== index
       ),
     });
   };
@@ -356,6 +419,82 @@ export default function Resume() {
     saveOverall({
       ...data,
       certifications: data.certifications.filter(
+        (_, currentIndex) => currentIndex !== index
+      ),
+    });
+  };
+
+  /* Project Handlers */
+
+  const openProj = (item = null, index = null) => {
+    if (item) {
+      setProjForm({
+        _id: item._id || null,
+        name: item.name || "",
+        description: item.description || "",
+        techStack: item.techStack || "",
+        url: item.url || "",
+      });
+    } else {
+      setProjForm({
+        _id: null,
+        name: "",
+        description: "",
+        techStack: "",
+        url: "",
+      });
+    }
+
+    setProjEditIndex(index);
+    setShowProj(true);
+  };
+
+  const saveProj = async (e) => {
+    e.preventDefault();
+
+    const currentData = data || {
+      headline: "",
+      summary: "",
+      skills: [],
+      experience: [],
+      education: [],
+      certifications: [],
+      projects: [],
+    };
+
+    let newProj = [...(currentData.projects || [])];
+    const projToSave = {
+      name: projForm.name,
+      description: projForm.description,
+      techStack: projForm.techStack,
+      url: projForm.url,
+      ...(projForm._id ? { _id: projForm._id } : {}),
+    };
+
+    if (projEditIndex !== null && projEditIndex >= 0) {
+      newProj[projEditIndex] = projToSave;
+    } else {
+      newProj.push(projToSave);
+    }
+
+    const saved = await saveOverall({
+      ...currentData,
+      projects: newProj,
+    });
+
+    if (saved) {
+      setProjEditIndex(null);
+      setShowProj(false);
+    }
+  };
+
+  const deleteProj = (index) => {
+    if (!window.confirm("Delete this project?"))
+      return;
+
+    saveOverall({
+      ...data,
+      projects: data.projects.filter(
         (_, currentIndex) => currentIndex !== index
       ),
     });
@@ -695,7 +834,7 @@ export default function Resume() {
                       <button
                         className="icon-btn"
                         data-testid={`resume-edit-experience-${exp._id || index}`}
-                        onClick={() => openExp(exp)}
+                        onClick={() => openExp(exp, index)}
                       >
                         <FiEdit2 />
                       </button>
@@ -704,7 +843,7 @@ export default function Resume() {
                         className="icon-btn text-danger"
                         data-testid={`resume-delete-experience-${exp._id || index}`}
                         onClick={() =>
-                          deleteExp(exp._id)
+                          deleteExp(index)
                         }
                       >
                         <FiTrash2 />
@@ -721,6 +860,124 @@ export default function Resume() {
                 <EmptyState
                   title="No experience"
                   text="Add your work history."
+                />
+
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* ================================================= */}
+        {/* PROJECTS */}
+        {/* ================================================= */}
+
+        <div className="col-12">
+
+          <div
+            className="card resume-card p-4"
+            data-testid="resume-projects-section"
+          >
+
+            <div className="resume-section-header">
+
+              <div className="d-flex align-items-center gap-2">
+                <FiFolder
+                  className="text-blue"
+                  style={{ color: "#3b82f6" }}
+                />
+
+                <h5 className="m-0">
+                  Projects
+                </h5>
+              </div>
+
+              <button
+                className="btn btn-primary btn-sm"
+                data-testid="resume-add-project-button"
+                onClick={() => openProj()}
+              >
+                <FiPlus /> Add
+              </button>
+
+            </div>
+
+            <div className="resume-content mt-4">
+
+              {data.projects?.length > 0 ? (
+
+                data.projects.map((proj, index) => (
+
+                  <div
+                    key={proj._id || index}
+                    className="resume-item"
+                    data-testid={`resume-project-${proj._id || index}`}
+                  >
+
+                    <div className="resume-item-body">
+
+                      <h6
+                        data-testid={`resume-project-name-${proj._id || index}`}
+                      >
+                        {proj.name}
+                      </h6>
+
+                      <div className="resume-item-meta">
+                        {proj.techStack && (
+                          <span data-testid={`resume-project-tech-${proj._id || index}`}>
+                            Tech: {proj.techStack}
+                          </span>
+                        )}
+                        {proj.url && (
+                          <>
+                            <span className="dot-divider">•</span>
+                            <a href={proj.url} target="_blank" rel="noreferrer" data-testid={`resume-project-url-${proj._id || index}`}>
+                              Link
+                            </a>
+                          </>
+                        )}
+                      </div>
+
+                      <p className="resume-item-desc mt-2">
+                        {proj.description}
+                      </p>
+
+                    </div>
+
+                    <div className="resume-item-actions">
+
+                      <button
+                        className="icon-btn"
+                        data-testid={`resume-edit-project-${proj._id || index}`}
+                        onClick={() => openProj(proj, index)}
+                      >
+                        <FiEdit2 />
+                      </button>
+
+                      <button
+                        className="icon-btn text-danger"
+                        data-testid={`resume-delete-project-${proj._id || index}`}
+                        onClick={() =>
+                          deleteProj(index)
+                        }
+                      >
+                        <FiTrash2 />
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                ))
+
+              ) : (
+
+                <EmptyState
+                  title="No projects"
+                  text="Add your projects."
                 />
 
               )}
@@ -827,7 +1084,7 @@ export default function Resume() {
                       <button
                         className="icon-btn"
                         data-testid={`resume-edit-education-${edu._id || index}`}
-                        onClick={() => openEdu(edu)}
+                        onClick={() => openEdu(edu, index)}
                       >
                         <FiEdit2 />
                       </button>
@@ -836,7 +1093,7 @@ export default function Resume() {
                         className="icon-btn text-danger"
                         data-testid={`resume-delete-education-${edu._id || index}`}
                         onClick={() =>
-                          deleteEdu(edu._id)
+                          deleteEdu(index)
                         }
                       >
                         <FiTrash2 />
@@ -1095,6 +1352,42 @@ export default function Resume() {
                     {exp.description && (
                       <p>
                         {exp.description}
+                      </p>
+                    )}
+
+                  </article>
+                )
+              )}
+
+            </section>
+          )}
+
+          {data.projects?.length > 0 && (
+            <section>
+              <h2>Projects</h2>
+
+              {data.projects.map(
+                (proj, index) => (
+                  <article
+                    key={proj._id || index}
+                  >
+
+                    <div>
+                      <h3>{proj.name}</h3>
+                      {proj.techStack && <strong>Tech: {proj.techStack}</strong>}
+                    </div>
+
+                    {proj.url && (
+                      <time>
+                        <a href={proj.url} target="_blank" rel="noreferrer">
+                          {proj.url}
+                        </a>
+                      </time>
+                    )}
+
+                    {proj.description && (
+                      <p>
+                        {proj.description}
                       </p>
                     )}
 
@@ -1686,6 +1979,149 @@ export default function Resume() {
               type="submit"
               className="btn btn-primary"
               data-testid="resume-certification-save-button"
+            >
+              Save
+            </button>
+
+          </Modal.Footer>
+
+        </form>
+
+      </Modal>
+
+
+      {/* ================================================= */}
+      {/* PROJECT MODAL */}
+      {/* ================================================= */}
+
+      <Modal
+        show={showProj}
+        onHide={() => setShowProj(false)}
+        centered
+        contentClassName="app-modal"
+      >
+
+        <form onSubmit={saveProj}>
+
+          <Modal.Header closeButton>
+
+            <Modal.Title
+              data-testid="resume-project-modal-title"
+            >
+              {projForm._id
+                ? "Edit"
+                : "Add"}{" "}
+              Project
+            </Modal.Title>
+
+          </Modal.Header>
+
+          <Modal.Body>
+
+            <div className="mb-3">
+
+              <label className="form-label">
+                Project Name
+              </label>
+
+              <input
+                className="form-control"
+                data-testid="resume-project-name-input"
+                placeholder="e.g. Portfolio Website"
+                required
+                value={projForm.name}
+                onChange={(e) =>
+                  setProjForm({
+                    ...projForm,
+                    name: e.target.value,
+                  })
+                }
+              />
+
+            </div>
+
+            <div className="mb-3">
+
+              <label className="form-label">
+                Tech Stack
+              </label>
+
+              <input
+                className="form-control"
+                data-testid="resume-project-techstack-input"
+                placeholder="e.g. React, Node.js, CSS"
+                value={projForm.techStack}
+                onChange={(e) =>
+                  setProjForm({
+                    ...projForm,
+                    techStack: e.target.value,
+                  })
+                }
+              />
+
+            </div>
+
+            <div className="mb-3">
+
+              <label className="form-label">
+                Project Link
+              </label>
+
+              <input
+                className="form-control"
+                data-testid="resume-project-url-input"
+                placeholder="https://github.com/..."
+                value={projForm.url}
+                onChange={(e) =>
+                  setProjForm({
+                    ...projForm,
+                    url: e.target.value,
+                  })
+                }
+              />
+
+            </div>
+
+            <div className="mb-3">
+
+              <label className="form-label">
+                Description
+              </label>
+
+              <textarea
+                className="form-control"
+                data-testid="resume-project-description-input"
+                rows="3"
+                value={projForm.description}
+                onChange={(e) =>
+                  setProjForm({
+                    ...projForm,
+                    description: e.target.value,
+                  })
+                }
+              />
+
+            </div>
+
+          </Modal.Body>
+
+          <Modal.Footer>
+
+            <button
+              type="button"
+              className="btn btn-light"
+              data-testid="resume-project-cancel-button"
+              onClick={() =>
+                setShowProj(false)
+              }
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              data-testid="resume-project-save-button"
             >
               Save
             </button>

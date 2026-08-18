@@ -21,7 +21,14 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!localStorage.getItem('token')) { setLoading(false); return; }
-    refreshUser().catch(() => { localStorage.removeItem('token'); updateUser(null); }).finally(() => setLoading(false));
+    refreshUser()
+      .catch((err) => { 
+        if (err.response && err.response.status === 401) {
+          localStorage.removeItem('token'); 
+          updateUser(null); 
+        }
+      })
+      .finally(() => setLoading(false));
   }, [refreshUser, updateUser]);
 
   const login = (data) => { localStorage.setItem('token', data.token); updateUser(data.user); };

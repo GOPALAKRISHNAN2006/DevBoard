@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
+import { FiCommand } from "react-icons/fi";
 import "./Register.css";
 export default function Register() {
   const [name, setName] = useState(""),
@@ -15,7 +16,7 @@ export default function Register() {
     try {
       await api.post("/auth/register", { name, email, password });
       toast.success("Account created. Please sign in.");
-      nav("/login");cd
+      nav("/login");
     } catch (e) {
       toast.error(e.response?.data?.message || "Registration failed");
     } finally {
@@ -25,7 +26,9 @@ export default function Register() {
   return (
     <div className="auth-page" data-testid="register-page">
       <div className="auth-panel">
-        <div className="auth-brand">&lt;/&gt; DevBoard</div>
+        <div className="auth-brand">
+          <FiCommand style={{ marginRight: "8px" }} /> DevBoard
+        </div>
         <h1>Create your workspace</h1>
         <p>Start tracking your developer career in one place.</p>
         <form onSubmit={submit} data-testid="register-form">

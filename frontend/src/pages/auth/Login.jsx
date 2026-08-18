@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
+import { FiCommand } from "react-icons/fi";
 import "./Login.css";
 export default function Login() {
   const [email, setEmail] = useState(""),
@@ -27,7 +28,9 @@ export default function Login() {
   return (
     <div className="auth-page" data-testid="login-page">
       <div className="auth-panel">
-        <div className="auth-brand">&lt;/&gt; DevBoard</div>
+        <div className="auth-brand">
+          <FiCommand style={{ marginRight: "8px" }} /> DevBoard
+        </div>
         <h1>Welcome back</h1>
         <p>Sign in to manage your developer journey.</p>
         <form onSubmit={submit} data-testid="login-form">

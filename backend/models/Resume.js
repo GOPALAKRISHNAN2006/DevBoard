@@ -38,6 +38,15 @@ const resumeSchema = new mongoose.Schema(
         issuer: String,
         year: String
       }
+    ],
+
+    projects: [
+      {
+        name: String,
+        description: String,
+        techStack: String,
+        url: String
+      }
     ]
   },
   {

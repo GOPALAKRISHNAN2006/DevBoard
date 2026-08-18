@@ -9,6 +9,9 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
+// Public Pages
+import Home from './pages/home/Home';
+
 // App Pages
 import Dashboard from './pages/dashboard/Dashboard';
 import Projects from './pages/projects/Projects';
@@ -29,6 +32,7 @@ export default function App() {
           <AuthProvider>
             <Routes>
               {/* Public Routes */}
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
@@ -48,7 +52,7 @@ export default function App() {
               </Route>
 
               {/* Fallback */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             <Toaster position="top-right" />
           </AuthProvider>

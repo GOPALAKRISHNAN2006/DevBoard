@@ -328,6 +328,24 @@
   .notes-editor {
     min-height: 60vh;
   }
+
+  .editor-toolbar {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .editor-title {
+    font-size: 1.05rem;
+  }
+
+  .editor-toolbar-actions {
+    flex-shrink: 0;
+  }
+
+  .editor-toolbar-actions .btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
 }
 
 .notes-page { border: 1px solid var(--border-main); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); }

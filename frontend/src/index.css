@@ -141,13 +141,13 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--border-dark);
   border-radius: var(--radius-full);
   border: 2px solid var(--bg-body);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--text-tertiary);
 }
 
 /* Layout */
@@ -216,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .card:hover {
   box-shadow: var(--shadow-md);
-  border-color: #d1d5db;
+  border-color: var(--border-dark);
   transform: translateY(-1px);
 }
 
