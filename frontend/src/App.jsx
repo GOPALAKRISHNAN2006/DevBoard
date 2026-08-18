@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -22,35 +23,37 @@ import LinkedIn from './pages/linkedin/LinkedIn';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <AuthProvider>
-          <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ThemeProvider>
+          <AuthProvider>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/jobs" element={<Jobs />} />
-            <Route path="/jobs/new" element={<Jobs />} />
-            <Route path="/resume" element={<Resume />} />
-            <Route path="/github" element={<Github />} />
-            <Route path="/leetcode" element={<Leetcode />} />
-            <Route path="/linkedin" element={<LinkedIn />} />
-            <Route path="/notes" element={<Notes />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
+              {/* Protected Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/jobs" element={<Jobs />} />
+                <Route path="/jobs/new" element={<Jobs />} />
+                <Route path="/resume" element={<Resume />} />
+                <Route path="/github" element={<Github />} />
+                <Route path="/leetcode" element={<Leetcode />} />
+                <Route path="/linkedin" element={<LinkedIn />} />
+                <Route path="/notes" element={<Notes />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-          <Toaster position="top-right" />
-        </AuthProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+            <Toaster position="top-right" />
+          </AuthProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
