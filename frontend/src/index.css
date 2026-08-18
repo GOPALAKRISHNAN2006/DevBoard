@@ -151,17 +151,34 @@ a:hover {
 }
 
 /* Layout */
+.app-layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .main-area {
   margin-left: 260px;
   min-height: 100vh;
-  padding-top: 76px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-area > main {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 76px;
 }
 
 .page-content {
   padding: 32px 40px;
   max-width: 1440px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Typography */
@@ -413,10 +430,21 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Responsive */
 @media(max-width: 991px) {
+  .app-layout {
+    height: auto;
+    overflow: visible;
+  }
+  
   .main-area {
     margin-left: 0;
+    min-height: 100vh;
+    width: 100%;
+  }
+  
+  .main-area > main {
     padding-top: 68px;
   }
+  
   .page-content {
     padding: 24px 20px;
   }
@@ -428,6 +456,7 @@ h1, h2, h3, h4, h5, h6 {
     gap: 16px;
     flex-direction: column;
   }
+}
   .page-title {
     font-size: 1.25rem;
   }
