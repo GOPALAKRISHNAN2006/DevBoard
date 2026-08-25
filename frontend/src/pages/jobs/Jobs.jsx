@@ -15,6 +15,7 @@ import Layout from "../../components/Layout";
 import Loader from "../../components/Loader";
 import EmptyState from "../../components/EmptyState";
 import Pagination from "../../components/Pagination";
+import useDebounce from "../../hooks/useDebounce";
 import "./Jobs.css";
 
 const blank = {
@@ -45,6 +46,8 @@ export default function Jobs() {
   const [totalPages, setTotalPages] = useState(1);
   const [form, setForm] = useState(null);
 
+  const debouncedQ = useDebounce(q, 350);
+
   // Load jobs
   const load = async () => {
 
@@ -55,8 +58,8 @@ export default function Jobs() {
         limit: 5,
       });
 
-      if (q) {
-        params.append("search", q);
+      if (debouncedQ) {
+        params.append("search", debouncedQ);
       }
 
       if (filter) {
@@ -83,7 +86,7 @@ export default function Jobs() {
 
     load();
 
-  }, [page, q, filter]);
+  }, [page, debouncedQ, filter]);
 
 
   // Open Add Job form when /jobs/new is used

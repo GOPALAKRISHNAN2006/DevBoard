@@ -13,7 +13,10 @@ import noteRoutes from "./routes/noteRoutes.js";
 import linkedinRoutes from "./routes/linkedinRoutes.js";
 
 import cors from "cors";
+import compression from "compression";
 const app = express();
+
+app.use(compression());
 
 // CORS Configuration
 const allowedOrigins = [

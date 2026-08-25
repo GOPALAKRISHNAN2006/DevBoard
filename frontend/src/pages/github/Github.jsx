@@ -103,6 +103,8 @@ export default function Github() {
             width="72"
             height="72"
             alt="avatar"
+            loading="lazy"
+            decoding="async"
           />
           <div>
             <h4 className="mb-1 fw-bold">{profile.name || profile.login}</h4>

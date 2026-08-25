@@ -54,7 +54,7 @@ export default function LinkedIn() {
         <div className="linkedin-profile-row">
           <div className="linkedin-avatar">
             {profile?.avatar
-              ? <img src={profile.avatar} alt={profile.name} />
+              ? <img src={profile.avatar} alt={profile.name} loading="lazy" decoding="async" />
               : <span>{profile?.name?.[0]?.toUpperCase() || "D"}</span>
             }
           </div>

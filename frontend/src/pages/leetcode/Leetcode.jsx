@@ -134,6 +134,8 @@ export default function Leetcode() {
                   height="64"
                   alt="avatar"
                   data-testid="leetcode-avatar"
+                  loading="lazy"
+                  decoding="async"
                 />
               )}
 

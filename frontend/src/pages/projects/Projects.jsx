@@ -15,6 +15,7 @@ import Layout from "../../components/Layout";
 import Loader from "../../components/Loader";
 import EmptyState from "../../components/EmptyState";
 import Pagination from "../../components/Pagination";
+import useDebounce from "../../hooks/useDebounce";
 import "./Projects.css";
 const blank = {
   title: "",
@@ -53,10 +54,12 @@ export default function Projects() {
     [show, setShow] = useState(false),
     [del, setDel] = useState(null);
 
+  const debouncedQ = useDebounce(q, 350);
+
   const load = useCallback(async () => {
     try {
       const params = new URLSearchParams({ page, limit: 6 });
-      if (q) params.append("search", q);
+      if (debouncedQ) params.append("search", debouncedQ);
       if (statusFilter) params.append("status", statusFilter);
 
       const { data } = await api.get(`/project?${params.toString()}`);
@@ -66,7 +69,7 @@ export default function Projects() {
       setItems([]);
       toast.error("Could not load projects");
     }
-  }, [page, q, statusFilter]);
+  }, [page, debouncedQ, statusFilter]);
 
   useEffect(() => {
     load();

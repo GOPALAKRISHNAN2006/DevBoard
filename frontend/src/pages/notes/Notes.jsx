@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import {
   FiPlus, FiSearch, FiMapPin, FiArchive,
@@ -7,11 +7,77 @@ import {
 import api from "../../api/axios";
 import Layout from "../../components/Layout";
 import EmptyState from "../../components/EmptyState";
+import useDebounce from "../../hooks/useDebounce";
 import "./Notes.css";
+
+// Memoized Note Item Component to avoid unnecessary DOM operations
+const NoteItem = React.memo(({ note, isActive, onOpen, onToggle, onDelete }) => {
+  return (
+    <div
+      className={`note-item ${isActive ? "selected" : ""}`}
+      data-testid={`note-item-${note._id}`} 
+      onClick={() => onOpen(note)}
+    >
+      <div className="note-item-header">
+        <span className="note-item-title">{note.title || "Untitled"}</span>
+        <div className="note-item-actions">
+          {note.isPinned && <FiMapPin className="pin-indicator" />}
+          <button
+            className="note-action-btn"
+            data-testid={`edit-note-button-${note._id}`}
+            onClick={e => { e.stopPropagation(); onOpen(note); }}
+            title="Edit note"
+            aria-label={`Edit ${note.title || "note"}`}
+          >
+            <FiEdit3 />
+          </button>
+          <button
+            className="note-action-btn" 
+            data-testid={`pin-note-button-${note._id}`}
+            onClick={e => { e.stopPropagation(); onToggle(note, "isPinned"); }}
+            title={note.isPinned ? "Unpin" : "Pin"}
+          >
+            <FiMapPin />
+          </button>
+          <button
+            className="note-action-btn"
+            data-testid={`archive-note-button-${note._id}`}
+            onClick={e => { e.stopPropagation(); onToggle(note, "isArchived"); }}
+            title={note.isArchived ? "Unarchive" : "Archive"}
+          >
+            <FiArchive />
+          </button>
+          <button
+            className="note-action-btn danger"
+            data-testid={`delete-note-button-${note._id}`}
+            onClick={e => { e.stopPropagation(); onDelete(note); }}
+            title="Delete"
+          >
+            <FiTrash2 />
+          </button>
+        </div>
+      </div>
+      <p className="note-item-preview">
+        {note.content?.slice(0, 80) || "No content…"}
+      </p>
+      {note.tags?.length > 0 && (
+        <div className="note-item-tags">
+          {note.tags.slice(0, 3).map(t => (
+            <span key={t} className="note-tag">{t}</span>
+          ))}
+        </div>
+      )}
+      <span className="note-item-date">
+        {new Date(note.updatedAt).toLocaleDateString()}
+      </span>
+    </div>
+  );
+});
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 350);
   const [filter, setFilter] = useState("active");
   const [active, setActive] = useState(null);   // note being edited
   const [isNew, setIsNew] = useState(false);
@@ -19,30 +85,32 @@ export default function Notes() {
   const [loading, setLoading] = useState(true);
   const saveTimeout = useRef(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
-      const { data } = await api.get(`/notes?search=${search}&filter=${filter}`);
+      const { data } = await api.get(`/notes?search=${debouncedSearch}&filter=${filter}`);
       setNotes(Array.isArray(data) ? data : []);
     } catch {
       setNotes([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [debouncedSearch, filter]);
 
-  useEffect(() => { load(); }, [search, filter]);
+  useEffect(() => { 
+    load(); 
+  }, [load]);
 
-  const openNote = (note) => {
+  const openNote = useCallback((note) => {
     setIsNew(false);
     setActive(note);
     setForm({ title: note.title, content: note.content, tags: note.tags?.join(", ") || "" });
-  };
+  }, []);
 
-  const openNew = () => {
+  const openNew = useCallback(() => {
     setIsNew(true);
     setActive(null);
     setForm({ title: "", content: "", tags: "" });
-  };
+  }, []);
 
   const save = async () => {
     const body = {
@@ -82,15 +150,15 @@ export default function Notes() {
     }, 1200);
   };
 
-  const toggle = async (note, field) => {
+  const toggle = useCallback(async (note, field) => {
     try {
       await api.put(`/notes/${note._id}`, { [field]: !note[field] });
       load();
       if (active?._id === note._id) setActive(n => ({ ...n, [field]: !n[field] }));
     } catch { toast.error("Failed to update note"); }
-  };
+  }, [load, active]);
 
-  const remove = async (note) => {
+  const remove = useCallback(async (note) => {
     if (!window.confirm("Delete this note?")) return;
     try {
       await api.delete(`/notes/${note._id}`);
@@ -98,7 +166,7 @@ export default function Notes() {
       if (active?._id === note._id) { setActive(null); setIsNew(false); }
       load();
     } catch { toast.error("Could not delete note"); }
-  };
+  }, [load, active]);
 
   const close = () => { setActive(null); setIsNew(false); };
 
@@ -148,65 +216,14 @@ export default function Notes() {
               <EmptyState title="No notes found" text="Create your first note." />
             ) : (
               notes.map(note => (
-                <div
+                <NoteItem
                   key={note._id}
-                  className={`note-item ${active?._id === note._id ? "selected" : ""}`}
-                  data-testid={`note-item-${note._id}`} 
-                  onClick={() => openNote(note)}
-                >
-                  <div className="note-item-header">
-                    <span className="note-item-title">{note.title || "Untitled"}</span>
-                    <div className="note-item-actions">
-                      {note.isPinned && <FiMapPin className="pin-indicator" />}
-                      <button
-                        className="note-action-btn"
-                        data-testid={`edit-note-button-${note._id}`}
-                        onClick={e => { e.stopPropagation(); openNote(note); }}
-                        title="Edit note"
-                        aria-label={`Edit ${note.title || "note"}`}
-                      >
-                        <FiEdit3 />
-                      </button>
-                      <button
-                        className="note-action-btn" 
-                        data-testid={`pin-note-button-${note._id}`}
-                        onClick={e => { e.stopPropagation(); toggle(note, "isPinned"); }}
-                        title={note.isPinned ? "Unpin" : "Pin"}
-                      >
-                        <FiMapPin />
-                      </button>
-                      <button
-                        className="note-action-btn"
-                        data-testid={`archive-note-button-${note._id}`}
-                        onClick={e => { e.stopPropagation(); toggle(note, "isArchived"); }}
-                        title={note.isArchived ? "Unarchive" : "Archive"}
-                      >
-                        <FiArchive />
-                      </button>
-                      <button
-                        className="note-action-btn danger"
-                        data-testid={`delete-note-button-${note._id}`}
-                        onClick={e => { e.stopPropagation(); remove(note); }}
-                        title="Delete"
-                      >
-                        <FiTrash2 />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="note-item-preview">
-                    {note.content?.slice(0, 80) || "No content…"}
-                  </p>
-                  {note.tags?.length > 0 && (
-                    <div className="note-item-tags">
-                      {note.tags.slice(0, 3).map(t => (
-                        <span key={t} className="note-tag">{t}</span>
-                      ))}
-                    </div>
-                  )}
-                  <span className="note-item-date">
-                    {new Date(note.updatedAt).toLocaleDateString()}
-                  </span>
-                </div>
+                  note={note}
+                  isActive={active?._id === note._id}
+                  onOpen={openNote}
+                  onToggle={toggle}
+                  onDelete={remove}
+                />
               ))
             )}
           </div>
