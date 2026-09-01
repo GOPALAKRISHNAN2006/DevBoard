@@ -1,201 +1,238 @@
-import { useEffect, useState } from "react";
-import {
-  FiLinkedin, FiExternalLink, FiUser, FiBriefcase,
-  FiBook, FiAward, FiCode, FiMapPin, FiEdit
-} from "react-icons/fi";
-import { Link } from "react-router-dom";
-import api from "../../api/axios";
-import Layout from "../../components/Layout";
-import Loader from "../../components/Loader";
-import "./LinkedIn.css";
+import React, { useEffect, useState, useCallback } from 'react';
+import { FiLinkedin, FiExternalLink, FiEdit3, FiRefreshCw, FiAlertCircle } from 'react-icons/fi';
+import toast from 'react-hot-toast';
+
+import api from '../../api/axios';
+import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
+
+import LinkedInProfileHero from '../../components/linkedin/LinkedInProfileHero';
+import ProfileStats from '../../components/linkedin/ProfileStats';
+import ProfileStrengthCard from '../../components/linkedin/ProfileStrengthCard';
+import ProfessionalHeadline from '../../components/linkedin/ProfessionalHeadline';
+import AboutSection from '../../components/linkedin/AboutSection';
+import SkillsSection from '../../components/linkedin/SkillsSection';
+import ExperienceTimeline from '../../components/linkedin/ExperienceTimeline';
+import EducationSection from '../../components/linkedin/EducationSection';
+import CertificationGrid from '../../components/linkedin/CertificationGrid';
+import ProjectSection from '../../components/linkedin/ProjectSection';
+import ProfessionalLinks from '../../components/linkedin/ProfessionalLinks';
+import ResumeComparison from '../../components/linkedin/ResumeComparison';
+import CareerSuggestions from '../../components/linkedin/CareerSuggestions';
+import ProfileChecklist from '../../components/linkedin/ProfileChecklist';
+import EditLinkedInModal from '../../components/linkedin/EditLinkedInModal';
+import SyncProfileModal from '../../components/linkedin/SyncProfileModal';
 
 export default function LinkedIn() {
-  const [profile, setProfile] = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    api.get("/linkedin/profile")
-      .then(r => setProfile(r.data))
-      .catch(() => setProfile({}))
-      .finally(() => setLoading(false));
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showSyncModal, setShowSyncModal] = useState(false);
+
+  const fetchProfile = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await api.get('/linkedin/profile');
+      setData(res.data);
+    } catch (err) {
+      console.error('Fetch LinkedIn profile error:', err);
+      setError(err.response?.data?.message || 'Failed to load LinkedIn career profile.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  if (loading) return <Layout><Loader /></Layout>;
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
-  const hasLinkedIn = !!profile?.linkedinUrl;
-  const hasSummary = !!profile?.summary;
-  const hasExperience = profile?.experience?.length > 0;
-  const hasEducation = profile?.education?.length > 0;
-  const hasSkills = profile?.skills?.length > 0;
-  const hasCerts = profile?.certifications?.length > 0;
+  // Handle Edit Save
+  const handleSaveProfile = async (updatedFields) => {
+    try {
+      setSaving(true);
+      const res = await api.put('/linkedin/profile', updatedFields);
+      setData((prev) => ({
+        ...prev,
+        profile: res.data.profile,
+        strength: res.data.strength,
+      }));
+      toast.success('LinkedIn profile updated successfully');
+      setShowEditModal(false);
+    } catch (err) {
+      console.error('Update LinkedIn profile error:', err);
+      toast.error('Failed to update LinkedIn profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Handle Apply Headline Suggestion
+  const handleApplyHeadline = async (newHeadline) => {
+    try {
+      const res = await api.put('/linkedin/profile', { headline: newHeadline });
+      setData((prev) => ({
+        ...prev,
+        profile: res.data.profile,
+        strength: res.data.strength,
+      }));
+      toast.success('Headline updated with suggestion');
+    } catch (err) {
+      toast.error('Failed to apply headline suggestion');
+    }
+  };
+
+  // Handle Sync Resume Confirmation
+  const handleConfirmSync = async () => {
+    try {
+      setSyncing(true);
+      const res = await api.post('/linkedin/sync-resume');
+      setData((prev) => ({
+        ...prev,
+        profile: res.data.profile,
+        strength: res.data.strength,
+      }));
+      toast.success('LinkedIn profile synchronized from DevBoard Resume');
+      setShowSyncModal(false);
+    } catch (err) {
+      console.error('Sync profile error:', err);
+      toast.error('Failed to sync profile data');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="py-5 text-center">
+          <Loader />
+          <p className="text-muted mt-3 fw-medium">Loading LinkedIn career profile...</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  const profile = data?.profile || {};
+  const strength = data?.strength || {};
+  const headlineSuggestions = data?.headlineSuggestions || [];
+  const comparison = data?.comparison || {};
+  const careerSuggestions = data?.careerSuggestions || [];
 
   return (
     <Layout>
-      <div className="section-head">
+      {/* ============================= */}
+      {/* PAGE HEADER */}
+      {/* ============================= */}
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
-          <h1 className="page-title">LinkedIn</h1>
-          <p className="page-subtitle">Your professional presence, powered by DevBoard.</p>
+          <h1 className="h3 fw-bold text-dark mb-1">LinkedIn Career Dashboard</h1>
+          <p className="text-muted small mb-0">
+            Build and manage your professional presence powered by DevBoard.
+          </p>
         </div>
-        <div className="d-flex gap-2">
-          <Link to="/resume" className="btn btn-light btn-sm">
-            <FiEdit /> Edit Resume
-          </Link>
-          {hasLinkedIn && (
-            <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" className="btn btn-primary">
-              <FiLinkedin /> Open LinkedIn Profile
+
+        <div className="d-flex align-items-center gap-2">
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm fw-bold d-flex align-items-center gap-1"
+            onClick={() => setShowEditModal(true)}
+          >
+            <FiEdit3 /> Edit Profile
+          </button>
+
+          {profile.linkedinUrl && (
+            <a
+              href={profile.linkedinUrl.startsWith('http') ? profile.linkedinUrl : `https://${profile.linkedinUrl}`}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-primary btn-sm fw-bold d-flex align-items-center gap-1"
+            >
+              <FiLinkedin /> Open LinkedIn <FiExternalLink />
             </a>
           )}
         </div>
       </div>
 
-      {/* Profile Banner */}
-      <div className="linkedin-banner card mb-4">
-        <div className="linkedin-cover" />
-        <div className="linkedin-profile-row">
-          <div className="linkedin-avatar">
-            {profile?.avatar
-              ? <img src={profile.avatar} alt={profile.name} loading="lazy" decoding="async" />
-              : <span>{profile?.name?.[0]?.toUpperCase() || "D"}</span>
-            }
-          </div>
-          <div className="linkedin-profile-info">
-            <h2 className="linkedin-name">{profile?.name || "Developer"}</h2>
-            {profile?.headline && <p className="linkedin-headline">{profile.headline}</p>}
-            {profile?.location && (
-              <p className="linkedin-location"><FiMapPin /> {profile.location}</p>
-            )}
-            {!hasLinkedIn && (
-              <div className="linkedin-url-hint">
-                <span>💡 Add your LinkedIn URL in <Link to="/profile"><strong>Profile Settings</strong></Link> to enable the Open Profile button.</span>
-              </div>
-            )}
-          </div>
+      {error ? (
+        <div className="card border-danger p-4 text-center my-4">
+          <FiAlertCircle className="text-danger fs-1 mb-2 mx-auto" />
+          <h4 className="h5 fw-bold text-dark">Unable to load LinkedIn profile</h4>
+          <p className="text-muted small mb-3">{error}</p>
+          <button type="button" className="btn btn-primary btn-sm fw-bold" onClick={fetchProfile}>
+            Try Again
+          </button>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* SECTION 1 — LINKEDIN PROFILE HERO */}
+          <LinkedInProfileHero profile={profile} onOpenEditModal={() => setShowEditModal(true)} />
 
-      <div className="row g-4">
-        {/* About / Summary */}
-        <div className="col-12">
-          <div className="card p-4">
-            <div className="linkedin-section-header">
-              <FiUser className="linkedin-section-icon blue" />
-              <h5>About</h5>
-            </div>
-            {hasSummary ? (
-              <p className="linkedin-summary mt-2">{profile.summary}</p>
-            ) : (
-              <div className="linkedin-empty-section">
-                <p className="text-muted small mb-2">No summary added yet. Add one in your Resume Builder to show it here.</p>
-                <Link to="/resume" className="btn btn-light btn-sm"><FiEdit /> Add Summary</Link>
-              </div>
-            )}
-          </div>
-        </div>
+          {/* SECTION 2 — PROFILE STATISTICS */}
+          <ProfileStats profile={profile} strength={strength} />
 
-        {/* Experience */}
-        <div className="col-lg-6">
-          <div className="card p-4 h-100">
-            <div className="linkedin-section-header">
-              <FiBriefcase className="linkedin-section-icon purple" />
-              <h5>Experience</h5>
-            </div>
-            {hasExperience ? (
-              <div className="timeline mt-3">
-                {profile.experience.map((exp, i) => (
-                  <div key={i} className="timeline-item">
-                    <div className="timeline-dot" />
-                    <div className="timeline-body">
-                      <strong>{exp.title || exp.role}</strong>
-                      <p className="timeline-sub">{exp.company}</p>
-                      {exp.duration && <span className="timeline-date">{exp.duration}</span>}
-                      {exp.description && <p className="timeline-desc">{exp.description}</p>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="linkedin-empty-section mt-3">
-                <p className="text-muted small mb-2">No experience added. Add your work history in the Resume Builder.</p>
-                <Link to="/resume" className="btn btn-light btn-sm"><FiEdit /> Add Experience</Link>
-              </div>
-            )}
-          </div>
-        </div>
+          {/* SECTION 3 — DEVBOARD PROFILE STRENGTH */}
+          <ProfileStrengthCard strength={strength} onOpenEditModal={() => setShowEditModal(true)} />
 
-        {/* Education */}
-        <div className="col-lg-6">
-          <div className="card p-4 h-100">
-            <div className="linkedin-section-header">
-              <FiBook className="linkedin-section-icon orange" />
-              <h5>Education</h5>
-            </div>
-            {hasEducation ? (
-              <div className="timeline mt-3">
-                {profile.education.map((edu, i) => (
-                  <div key={i} className="timeline-item">
-                    <div className="timeline-dot" />
-                    <div className="timeline-body">
-                      <strong>{edu.degree}</strong>
-                      <p className="timeline-sub">{edu.institute || edu.institution}</p>
-                      {edu.year && <span className="timeline-date">Class of {edu.year}</span>}
-                      {edu.cgpa && <p className="timeline-desc">CGPA: {edu.cgpa}</p>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="linkedin-empty-section mt-3">
-                <p className="text-muted small mb-2">No education added. Add your degrees in the Resume Builder.</p>
-                <Link to="/resume" className="btn btn-light btn-sm"><FiEdit /> Add Education</Link>
-              </div>
-            )}
-          </div>
-        </div>
+          {/* SECTION 4 — PROFESSIONAL HEADLINE */}
+          <ProfessionalHeadline
+            headline={profile.headline}
+            suggestions={headlineSuggestions}
+            onOpenEditModal={() => setShowEditModal(true)}
+            onApplyHeadline={handleApplyHeadline}
+          />
 
-        {/* Skills */}
-        {hasSkills && (
-          <div className="col-lg-6">
-            <div className="card p-4 h-100">
-              <div className="linkedin-section-header">
-                <FiCode className="linkedin-section-icon green" />
-                <h5>Skills</h5>
-              </div>
-              <div className="skills-grid mt-3">
-                {profile.skills.map((skill, i) => (
-                  <span key={i} className="skill-chip">{skill}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+          {/* SECTION 5 — ABOUT / SUMMARY */}
+          <AboutSection about={profile.about} onOpenEditModal={() => setShowEditModal(true)} />
 
-        {/* Certifications */}
-        {hasCerts && (
-          <div className="col-lg-6">
-            <div className="card p-4 h-100">
-              <div className="linkedin-section-header">
-                <FiAward className="linkedin-section-icon orange" />
-                <h5>Certifications</h5>
-              </div>
-              <div className="certs-list mt-3">
-                {profile.certifications.map((cert, i) => (
-                  <div key={i} className="cert-item">
-                    <div>
-                      <strong>{cert.title || cert.name}</strong>
-                      <p className="cert-issuer">{cert.issuer}</p>
-                    </div>
-                    {cert.credentialUrl && (
-                      <a href={cert.credentialUrl} target="_blank" rel="noreferrer" className="cert-link">
-                        <FiExternalLink />
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+          {/* SECTION 6 & 7 — SKILLS & SKILL ANALYTICS */}
+          <SkillsSection skills={profile.skills} onOpenEditModal={() => setShowEditModal(true)} />
+
+          {/* SECTION 8 — WORK EXPERIENCE TIMELINE */}
+          <ExperienceTimeline experience={profile.experience} onOpenEditModal={() => setShowEditModal(true)} />
+
+          {/* SECTION 9 — EDUCATION */}
+          <EducationSection education={profile.education} onOpenEditModal={() => setShowEditModal(true)} />
+
+          {/* SECTION 10 — CERTIFICATIONS */}
+          <CertificationGrid certifications={profile.certifications} onOpenEditModal={() => setShowEditModal(true)} />
+
+          {/* SECTION 11 — FEATURED PROJECTS */}
+          <ProjectSection projects={profile.projects} onOpenEditModal={() => setShowEditModal(true)} />
+
+          {/* SECTION 12 — PROFESSIONAL LINKS */}
+          <ProfessionalLinks profile={profile} onOpenEditModal={() => setShowEditModal(true)} />
+
+          {/* SECTION 13 & 14 — RESUME ↔ LINKEDIN COMPARISON & SYNC */}
+          <ResumeComparison comparison={comparison} onOpenSyncModal={() => setShowSyncModal(true)} />
+
+          {/* SECTION 15 & 16 — CAREER BRANDING & TARGET ALIGNMENT */}
+          <CareerSuggestions suggestions={careerSuggestions} targetRole={profile.targetRole} />
+
+          {/* SECTION 17 — LINKEDIN PROFILE CHECKLIST */}
+          <ProfileChecklist profile={profile} user={profile} onOpenEditModal={() => setShowEditModal(true)} />
+        </>
+      )}
+
+      {/* EDIT MODAL */}
+      <EditLinkedInModal
+        show={showEditModal}
+        profile={profile}
+        onSave={handleSaveProfile}
+        onClose={() => setShowEditModal(false)}
+      />
+
+      {/* SYNC MODAL */}
+      <SyncProfileModal
+        show={showSyncModal}
+        onConfirm={handleConfirmSync}
+        onClose={() => setShowSyncModal(false)}
+        syncing={syncing}
+      />
     </Layout>
   );
 }

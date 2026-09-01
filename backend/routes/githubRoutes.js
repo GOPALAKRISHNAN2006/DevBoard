@@ -1,11 +1,21 @@
-import express from "express"
+import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { fetchGithub, fetchGithubRepos,fetchGithubStats } from "../Controllers/githubController.js";
-import { getGithubRepos } from "../services/githubService.js";
+import {
+  fetchGithub,
+  fetchGithubRepos,
+  fetchGithubStats,
+  fetchGithubAnalytics,
+  fetchRepositoryDetails,
+} from "../Controllers/githubController.js";
+
 const router = express.Router();
 
-router.get("/profile",authMiddleware,fetchGithub);
-router.get("/profile/repos",authMiddleware,fetchGithubRepos);
-router.get("/stats",authMiddleware,fetchGithubStats);
+router.use(authMiddleware);
+
+router.get("/profile", fetchGithub);
+router.get("/repos", fetchGithubRepos);
+router.get("/stats", fetchGithubStats);
+router.get("/analytics", fetchGithubAnalytics);
+router.get("/repos/:name", fetchRepositoryDetails);
 
 export default router;

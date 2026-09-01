@@ -1,2137 +1,414 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import {
-  FiPlus,
-  FiEdit2,
-  FiTrash2,
-  FiBriefcase,
-  FiBook,
-  FiAward,
-  FiFileText,
-  FiDownload,
-  FiEye,
-  FiCheckCircle,
-  FiTarget,
-  FiZap,
-  FiArrowRight,
-  FiFolder,
-} from "react-icons/fi";
-import api from "../../api/axios";
-import Layout from "../../components/Layout";
-import Loader from "../../components/Loader";
-import EmptyState from "../../components/EmptyState";
-import { Modal } from "react-bootstrap";
-import "./Resume.css";
+  getResumes,
+  getResumeById,
+  createResume,
+  updateResume,
+  deleteResume,
+  duplicateResume,
+  analyzeJobMatch,
+  analyzeResume,
+} from '../../api/resumeApi';
 
-export default function Resume() {
-  const [data, setData] = useState(null);
-  const [loaded, setLoaded] = useState(false);
-  const [preview, setPreview] = useState(false);
+import ResumeToolbar from '../../components/resume/ResumeToolbar';
+import ResumeVersionSelector from '../../components/resume/ResumeVersionSelector';
+import ResumeEditor from '../../components/resume/ResumeEditor';
+import ResumePreview from '../../components/resume/ResumePreview';
+import ResumeUploadModal from '../../components/resume/ResumeUploadModal';
 
-  // Modals state
-  const [showSummary, setShowSummary] = useState(false);
-  const [showExp, setShowExp] = useState(false);
-  const [showEdu, setShowEdu] = useState(false);
-  const [showCert, setShowCert] = useState(false);
-  const [showProj, setShowProj] = useState(false);
+import ATSScoreCard from '../../components/resume/ats/ATSScoreCard';
+import ATSBreakdown from '../../components/resume/ats/ATSBreakdown';
+import KeywordMatch from '../../components/resume/ats/KeywordMatch';
+import SuggestionList from '../../components/resume/ats/SuggestionList';
+import JobDescriptionAnalyzer from '../../components/resume/ats/JobDescriptionAnalyzer';
 
-  // Form states
-  const [summaryForm, setSummaryForm] = useState({
-    headline: "",
-    summary: "",
-    skills: "",
-  });
+import { downloadResumePdf } from '../../utils/pdfGenerator';
+import './Resume.css';
 
-  const [expForm, setExpForm] = useState({
-    _id: null,
-    company: "",
-    role: "",
-    duration: "",
-    description: "",
-  });
-  const [expEditIndex, setExpEditIndex] = useState(null);
+const DEFAULT_RESUME_DATA = {
+  title: 'Frontend Developer Resume',
+  targetRole: 'Frontend Developer',
+  personalInfo: {
+    name: 'Gopalakrishnan M',
+    title: 'Frontend Engineer',
+    email: 'gopal@example.com',
+    phone: '+91 98765 43210',
+    location: 'Chennai, TN',
+    linkedin: 'https://linkedin.com/in/gopal',
+    github: 'https://github.com/GOPALAKRISHNAN2006',
+    portfolio: 'https://devboard.app',
+  },
+  summary:
+    'Dedicated Frontend Developer with experience in React, JavaScript, Bootstrap 5, and Node.js. Passionate about building responsive, high-performance web applications and intuitive developer tools.',
+  skills: [
+    { category: 'Programming Languages', items: ['JavaScript (ES6+)', 'TypeScript', 'HTML5', 'CSS3'] },
+    { category: 'Frameworks & Libraries', items: ['React.js', 'Redux Toolkit', 'Bootstrap 5', 'Node.js', 'Express.js'] },
+    { category: 'Databases & Tools', items: ['MongoDB', 'Mongoose', 'Git', 'GitHub', 'Vite', 'Postman'] },
+  ],
+  education: [
+    {
+      institution: 'Anna University',
+      degree: 'B.Tech',
+      field: 'Computer Science & Engineering',
+      cgpa: '8.8 CGPA',
+      startDate: '2022',
+      endDate: '2026',
+      location: 'Chennai',
+      description: 'Focus on Data Structures, Algorithms, Software Engineering, and Web Systems.',
+    },
+  ],
+  experience: [
+    {
+      company: 'DevBoard Systems',
+      jobTitle: 'Frontend Engineer Intern',
+      location: 'Remote',
+      startDate: 'Jun 2024',
+      endDate: 'Present',
+      currentlyWorking: true,
+      responsibilities:
+        'Developed interactive dashboard components using React 19 and Bootstrap 5. Improved page load efficiency by 30% through standard optimization.',
+      achievements: 'Integrated GitHub analytics & LeetCode tracking widgets.',
+    },
+  ],
+  projects: [
+    {
+      name: 'DevBoard - Developer Career Management Platform',
+      description:
+        'A comprehensive platform for developers featuring project showcases, job tracking, ATS resume builder, and GitHub analytics.',
+      technologies: 'React, Node.js, Express, MongoDB, Bootstrap 5',
+      githubUrl: 'https://github.com/GOPALAKRISHNAN2006/DevBoard',
+      liveDemoUrl: 'https://dev-board-mauve.vercel.app',
+      startDate: 'Jan 2025',
+      endDate: 'Present',
+      achievements: 'Engineered ATS Compatibility Score calculation algorithm with transparent breakdown.',
+    },
+  ],
+  certifications: [
+    {
+      name: 'Full Stack Web Development Certification',
+      organization: 'DevBoard Academy',
+      issueDate: 'Jan 2025',
+      credentialId: 'DEV-8892',
+      credentialUrl: 'https://devboard.app/cert/DEV-8892',
+    },
+  ],
+  achievements: [
+    {
+      title: 'Top Contributor',
+      description: 'Featured among top 5 code contributors on GitHub Developer Leaderboard.',
+      date: 'Dec 2024',
+    },
+  ],
+  languages: [
+    { language: 'English', proficiency: 'Full Professional' },
+    { language: 'Tamil', proficiency: 'Native' },
+  ],
+  sectionOrder: [
+    'summary',
+    'skills',
+    'experience',
+    'projects',
+    'education',
+    'certifications',
+    'achievements',
+    'languages',
+  ],
+  template: 'ats-classic',
+  atsScore: 85,
+  atsBreakdown: {
+    contact: 10,
+    sections: 15,
+    keywords: 20,
+    skills: 18,
+    experience: 12,
+    formatting: 8,
+    completeness: 4,
+  },
+};
 
-  const [eduForm, setEduForm] = useState({
-    _id: null,
-    institute: "",
-    degree: "",
-    year: "",
-    cgpa: "",
-  });
-  const [eduEditIndex, setEduEditIndex] = useState(null);
+const Resume = () => {
+  const [resumesList, setResumesList] = useState([]);
+  const [activeResumeId, setActiveResumeId] = useState(null);
+  const [resumeData, setResumeData] = useState(DEFAULT_RESUME_DATA);
 
-  const [certForm, setCertForm] = useState({
-    _id: null,
-    title: "",
-    issuer: "",
-    year: "",
-  });
-  const [certEditIndex, setCertEditIndex] = useState(null);
+  const [loadingResumes, setLoadingResumes] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
-  const [projForm, setProjForm] = useState({
-    _id: null,
-    name: "",
-    description: "",
-    techStack: "",
-    url: "",
-  });
-  const [projEditIndex, setProjEditIndex] = useState(null);
+  // Upload Modal state
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
-  const completionItems = data
-    ? [
-      {
-        label: "Professional headline",
-        done: Boolean(data.headline),
-      },
-      {
-        label: "Career summary",
-        done: Boolean(data.summary),
-      },
-      {
-        label: "Add 3+ skills",
-        done: (data.skills?.length || 0) >= 3,
-      },
-      {
-        label: "Work experience",
-        done: (data.experience?.length || 0) > 0,
-      },
-      {
-        label: "Education",
-        done: (data.education?.length || 0) > 0,
-      },
-      {
-        label: "Certification",
-        done: (data.certifications?.length || 0) > 0,
-      },
-    ]
-    : [];
+  // ATS Analysis results state
+  const [atsAnalysis, setAtsAnalysis] = useState(null);
 
-  const completedCount = completionItems.filter(
-    (item) => item.done
-  ).length;
-
-  const completion =
-    Math.round(
-      (completedCount / completionItems.length) * 100
-    ) || 0;
-
-  const load = async () => {
-    try {
-      const { data: resData } =
-        await api.get("/user/resume");
-
-      setData(
-        resData || {
-          headline: "",
-          summary: "",
-          skills: [],
-          experience: [],
-          education: [],
-          certifications: [],
-          projects: [],
-        }
-      );
-    } catch {
-      setData({
-        headline: "",
-        summary: "",
-        skills: [],
-        experience: [],
-        education: [],
-        certifications: [],
-        projects: [],
-      });
-    } finally {
-      setLoaded(true);
-    }
-  };
-
+  // Fetch list of resumes on load
   useEffect(() => {
-    load();
+    fetchResumes();
   }, []);
 
-  const saveOverall = async (updatedData) => {
+  const fetchResumes = async () => {
     try {
-      const isNew = !data?._id;
+      setLoadingResumes(true);
+      const list = await getResumes();
+      setResumesList(list);
 
-      if (isNew) {
-        await api.post("/user/resume", updatedData);
+      if (list && list.length > 0) {
+        loadResumeDetails(list[0]._id);
       } else {
-        await api.put("/user/resume", updatedData);
+        await handleCreateNewResume();
+      }
+    } catch (err) {
+      console.error('Failed to fetch resumes:', err);
+      toast.error('Failed to load saved resumes');
+    } finally {
+      setLoadingResumes(false);
+    }
+  };
+
+  const loadResumeDetails = async (id) => {
+    try {
+      setActiveResumeId(id);
+      const data = await getResumeById(id);
+      setResumeData(data);
+
+      if (id) {
+        const analysis = await analyzeResume(id);
+        setAtsAnalysis(analysis);
+      }
+    } catch (err) {
+      console.error('Error loading resume:', err);
+      toast.error('Failed to load selected resume details');
+    }
+  };
+
+  const handleCreateNewResume = async () => {
+    try {
+      setSaving(true);
+      const res = await createResume(DEFAULT_RESUME_DATA);
+      const newResume = res.resume;
+      toast.success('New blank resume version created!');
+      setResumesList((prev) => [newResume, ...prev]);
+      setActiveResumeId(newResume._id);
+      setResumeData(newResume);
+    } catch (err) {
+      console.error('Error creating resume:', err);
+      toast.error('Failed to create new resume');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleResumeParsedSuccess = (newResume) => {
+    setResumesList((prev) => [newResume, ...prev]);
+    setActiveResumeId(newResume._id);
+    setResumeData(newResume);
+    analyzeResume(newResume._id).then((analysis) => setAtsAnalysis(analysis));
+  };
+
+  const handleSaveResume = async () => {
+    if (!activeResumeId) return;
+
+    try {
+      setSaving(true);
+      const res = await updateResume(activeResumeId, resumeData);
+      setResumeData(res.resume);
+      toast.success('Resume saved successfully!');
+
+      setResumesList((prev) =>
+        prev.map((r) => (r._id === activeResumeId ? res.resume : r))
+      );
+    } catch (err) {
+      console.error('Error saving resume:', err);
+      toast.error('Failed to save resume');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDuplicateResume = async (id) => {
+    try {
+      toast.loading('Duplicating resume...', { id: 'dup-toast' });
+      const res = await duplicateResume(id);
+      const newCopy = res.resume;
+      setResumesList((prev) => [newCopy, ...prev]);
+      loadResumeDetails(newCopy._id);
+      toast.success('Resume version duplicated!', { id: 'dup-toast' });
+    } catch (err) {
+      console.error('Error duplicating resume:', err);
+      toast.error('Failed to duplicate resume', { id: 'dup-toast' });
+    }
+  };
+
+  const handleDeleteResume = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this resume version?')) return;
+
+    try {
+      toast.loading('Deleting resume...', { id: 'del-toast' });
+      await deleteResume(id);
+      const updatedList = resumesList.filter((r) => r._id !== id);
+      setResumesList(updatedList);
+
+      toast.success('Resume deleted successfully', { id: 'del-toast' });
+
+      if (updatedList.length > 0) {
+        loadResumeDetails(updatedList[0]._id);
+      } else {
+        handleCreateNewResume();
+      }
+    } catch (err) {
+      console.error('Error deleting resume:', err);
+      toast.error('Failed to delete resume', { id: 'del-toast' });
+    }
+  };
+
+  const handleAnalyzeAts = async () => {
+    if (!activeResumeId) return;
+
+    try {
+      setAnalyzing(true);
+      toast.loading('Running rule-based ATS analysis...', { id: 'ats-run' });
+      const result = await analyzeResume(activeResumeId);
+      setAtsAnalysis(result);
+
+      if (result.atsScore !== undefined) {
+        setResumeData((prev) => ({
+          ...prev,
+          atsScore: result.atsScore,
+          atsBreakdown: result.breakdown,
+        }));
       }
 
-      toast.success("Resume updated");
-      await load();
-      return true;
-    } catch (e) {
-      toast.error(
-        e.response?.data?.message ||
-        "Unable to save resume"
-      );
-      return false;
+      toast.success(`Analysis completed! ATS Score: ${result.atsScore}/100`, { id: 'ats-run' });
+    } catch (err) {
+      console.error('Analysis error:', err);
+      toast.error('Failed to analyze resume', { id: 'ats-run' });
+    } finally {
+      setAnalyzing(false);
     }
   };
 
-  /* Summary Handlers */
+  const handleJobMatch = async (jobDescription) => {
+    if (!activeResumeId) return;
 
-  const openSummary = () => {
-    setSummaryForm({
-      headline: data.headline || "",
-      summary: data.summary || "",
-      skills: Array.isArray(data.skills)
-        ? data.skills.join(", ")
-        : "",
-    });
-
-    setShowSummary(true);
-  };
-
-  const saveSummary = (e) => {
-    e.preventDefault();
-
-    saveOverall({
-      ...data,
-      headline: summaryForm.headline,
-      summary: summaryForm.summary,
-      skills: summaryForm.skills
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean),
-    });
-
-    setShowSummary(false);
-  };
-
-  /* Experience Handlers */
-
-  const openExp = (item = null, index = null) => {
-    if (item) {
-      setExpForm({
-        _id: item._id || null,
-        company: item.company || "",
-        role: item.role || "",
-        duration: item.duration || "",
-        description: item.description || "",
+    try {
+      setAnalyzing(true);
+      toast.loading('Analyzing job description & matching keywords...', { id: 'job-match' });
+      const result = await analyzeJobMatch(activeResumeId, {
+        jobDescription,
+        targetRole: resumeData.targetRole,
       });
-    } else {
-      setExpForm({
-        _id: null,
-        company: "",
-        role: "",
-        duration: "",
-        description: "",
-      });
-    }
 
-    setExpEditIndex(index);
-    setShowExp(true);
-  };
+      setAtsAnalysis(result);
+      if (result.atsScore !== undefined) {
+        setResumeData((prev) => ({
+          ...prev,
+          atsScore: result.atsScore,
+          atsBreakdown: result.breakdown,
+        }));
+      }
 
-  const saveExp = async (e) => {
-    e.preventDefault();
-
-    const currentData = data || {
-      headline: "",
-      summary: "",
-      skills: [],
-      experience: [],
-      education: [],
-      certifications: [],
-    };
-
-    let newExp = [...(currentData.experience || [])];
-    const expToSave = {
-      company: expForm.company,
-      role: expForm.role,
-      duration: expForm.duration,
-      description: expForm.description,
-      ...(expForm._id ? { _id: expForm._id } : {}),
-    };
-
-    if (expEditIndex !== null && expEditIndex >= 0) {
-      newExp[expEditIndex] = expToSave;
-    } else {
-      newExp.push(expToSave);
-    }
-
-    const saved = await saveOverall({
-      ...currentData,
-      experience: newExp,
-    });
-
-    if (saved) {
-      setExpEditIndex(null);
-      setShowExp(false);
+      toast.success(`Job match score evaluated: ${result.atsScore}/100!`, { id: 'job-match' });
+    } catch (err) {
+      console.error('Job match error:', err);
+      toast.error('Failed to analyze job match', { id: 'job-match' });
+    } finally {
+      setAnalyzing(false);
     }
   };
 
-  const deleteExp = (index) => {
-    if (!window.confirm("Delete this experience?"))
-      return;
-
-    saveOverall({
-      ...data,
-      experience: data.experience.filter(
-        (_, currentIndex) => currentIndex !== index
-      ),
-    });
+  const handleDownloadPdf = () => {
+    const filename = `${resumeData.personalInfo?.name || 'Resume'}_${resumeData.targetRole || 'Developer'}.pdf`;
+    downloadResumePdf('resume-pdf-container', filename);
   };
 
-  /* Education Handlers */
-
-  const openEdu = (item = null, index = null) => {
-    if (item) {
-      setEduForm({
-        _id: item._id || null,
-        institute: item.institute || "",
-        degree: item.degree || "",
-        year: item.year || "",
-        cgpa: item.cgpa || "",
-      });
-    } else {
-      setEduForm({
-        _id: null,
-        institute: "",
-        degree: "",
-        year: "",
-        cgpa: "",
-      });
-    }
-
-    setEduEditIndex(index);
-    setShowEdu(true);
-  };
-
-  const saveEdu = async (e) => {
-    e.preventDefault();
-
-    const currentData = data || {
-      headline: "",
-      summary: "",
-      skills: [],
-      experience: [],
-      education: [],
-      certifications: [],
-    };
-
-    let newEdu = [...(currentData.education || [])];
-    const eduToSave = {
-      institute: eduForm.institute,
-      degree: eduForm.degree,
-      year: eduForm.year,
-      cgpa: eduForm.cgpa,
-      ...(eduForm._id ? { _id: eduForm._id } : {}),
-    };
-
-    if (eduEditIndex !== null && eduEditIndex >= 0) {
-      newEdu[eduEditIndex] = eduToSave;
-    } else {
-      newEdu.push(eduToSave);
-    }
-
-    const saved = await saveOverall({
-      ...currentData,
-      education: newEdu,
-    });
-
-    if (saved) {
-      setEduEditIndex(null);
-      setShowEdu(false);
-    }
-  };
-
-  const deleteEdu = (index) => {
-    if (!window.confirm("Delete this education?"))
-      return;
-
-    saveOverall({
-      ...data,
-      education: data.education.filter(
-        (_, currentIndex) => currentIndex !== index
-      ),
-    });
-  };
-
-  /* Certification Handlers */
-
-  const openCert = (item = null, index = null) => {
-    if (item) {
-      setCertForm({
-        _id: item._id || null,
-        title: item.title || "",
-        issuer: item.issuer || "",
-        year: item.year || "",
-      });
-    } else {
-      setCertForm({
-        _id: null,
-        title: "",
-        issuer: "",
-        year: "",
-      });
-    }
-
-    setCertEditIndex(index);
-    setShowCert(true);
-  };
-
-  const saveCert = async (e) => {
-    e.preventDefault();
-
-    const currentData = data || {
-      headline: "",
-      summary: "",
-      skills: [],
-      experience: [],
-      education: [],
-      certifications: [],
-    };
-
-    let newCert = [...(currentData.certifications || [])];
-    const certToSave = {
-      title: certForm.title,
-      issuer: certForm.issuer,
-      year: certForm.year,
-      ...(certForm._id ? { _id: certForm._id } : {}),
-    };
-
-    if (certEditIndex !== null && certEditIndex >= 0) {
-      newCert[certEditIndex] = certToSave;
-    } else {
-      newCert.push(certToSave);
-    }
-
-    const saved = await saveOverall({
-      ...currentData,
-      certifications: newCert,
-    });
-
-    if (saved) {
-      setCertEditIndex(null);
-      setShowCert(false);
-    }
-  };
-
-  const deleteCert = (index) => {
-    if (!window.confirm("Delete this certification?"))
-      return;
-
-    saveOverall({
-      ...data,
-      certifications: data.certifications.filter(
-        (_, currentIndex) => currentIndex !== index
-      ),
-    });
-  };
-
-  /* Project Handlers */
-
-  const openProj = (item = null, index = null) => {
-    if (item) {
-      setProjForm({
-        _id: item._id || null,
-        name: item.name || "",
-        description: item.description || "",
-        techStack: item.techStack || "",
-        url: item.url || "",
-      });
-    } else {
-      setProjForm({
-        _id: null,
-        name: "",
-        description: "",
-        techStack: "",
-        url: "",
-      });
-    }
-
-    setProjEditIndex(index);
-    setShowProj(true);
-  };
-
-  const saveProj = async (e) => {
-    e.preventDefault();
-
-    const currentData = data || {
-      headline: "",
-      summary: "",
-      skills: [],
-      experience: [],
-      education: [],
-      certifications: [],
-      projects: [],
-    };
-
-    let newProj = [...(currentData.projects || [])];
-    const projToSave = {
-      name: projForm.name,
-      description: projForm.description,
-      techStack: projForm.techStack,
-      url: projForm.url,
-      ...(projForm._id ? { _id: projForm._id } : {}),
-    };
-
-    if (projEditIndex !== null && projEditIndex >= 0) {
-      newProj[projEditIndex] = projToSave;
-    } else {
-      newProj.push(projToSave);
-    }
-
-    const saved = await saveOverall({
-      ...currentData,
-      projects: newProj,
-    });
-
-    if (saved) {
-      setProjEditIndex(null);
-      setShowProj(false);
-    }
-  };
-
-  const deleteProj = (index) => {
-    if (!window.confirm("Delete this project?"))
-      return;
-
-    saveOverall({
-      ...data,
-      projects: data.projects.filter(
-        (_, currentIndex) => currentIndex !== index
-      ),
-    });
-  };
-
-  if (!loaded) {
-    return (
-      <Layout>
-        <Loader />
-      </Layout>
-    );
-  }
-
-  const printResume = () => {
-    setPreview(true);
-
-    setTimeout(() => window.print(), 150);
-  };
+  const currentScore = atsAnalysis?.atsScore ?? resumeData.atsScore ?? 85;
+  const currentBreakdown = atsAnalysis?.breakdown || resumeData.atsBreakdown || {};
 
   return (
-    <Layout>
-      {/* ================================================= */}
-      {/* PAGE HEADER */}
-      {/* ================================================= */}
+    <div className="container-fluid py-3 px-lg-4 resume-builder-page">
+      {/* Upload Modal */}
+      <ResumeUploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onSuccess={handleResumeParsedSuccess}
+      />
 
-      <div
-        className="section-head resume-page-head mb-4"
-        data-testid="resume-page-header"
-      >
-        <div>
-          <div className="resume-eyebrow">
-            <FiZap /> CAREER WORKSPACE
-          </div>
+      {/* Top Toolbar */}
+      <ResumeToolbar
+        title={resumeData.title}
+        onTitleChange={(val) => setResumeData((prev) => ({ ...prev, title: val }))}
+        template={resumeData.template}
+        onTemplateChange={(val) => setResumeData((prev) => ({ ...prev, template: val }))}
+        onSave={handleSaveResume}
+        onDownloadPdf={handleDownloadPdf}
+        onAnalyze={handleAnalyzeAts}
+        onOpenUploadModal={() => setShowUploadModal(true)}
+        saving={saving}
+        analyzing={analyzing}
+      />
 
-          <h1
-            className="page-title"
-            data-testid="resume-page-title"
-          >
-            Resume Builder
-          </h1>
+      {/* Version Selector */}
+      <ResumeVersionSelector
+        resumes={resumesList}
+        activeResumeId={activeResumeId}
+        onSelectResume={loadResumeDetails}
+        onCreateNew={handleCreateNewResume}
+        onOpenUploadModal={() => setShowUploadModal(true)}
+        onDuplicate={handleDuplicateResume}
+        onDelete={handleDeleteResume}
+      />
 
-          <p
-            className="page-subtitle"
-            data-testid="resume-page-subtitle"
-          >
-            Craft a sharper professional story, then
-            download a ready-to-share version.
-          </p>
-        </div>
-
-        <div className="resume-head-actions">
-
-          <button
-            className="btn btn-light"
-            data-testid="resume-preview-button"
-            onClick={() => setPreview(true)}
-          >
-            <FiEye /> Preview
-          </button>
-
-          <button
-            className="btn btn-primary"
-            data-testid="resume-download-button"
-            onClick={printResume}
-          >
-            <FiDownload /> Download PDF
-          </button>
-
-        </div>
-      </div>
-
-
-      {/* ================================================= */}
-      {/* RESUME PROGRESS */}
-      {/* ================================================= */}
-
-      <div
-        className="resume-command-center mb-4"
-        data-testid="resume-readiness-section"
-      >
-        <div className="resume-progress-block">
-
-          <div
-            className="resume-score-ring"
-            style={{
-              "--progress": `${completion * 3.6}deg`,
-            }}
-            data-testid="resume-completion-score"
-          >
-            <span>{completion}%</span>
-          </div>
-
-          <div>
-
-            <span className="resume-kicker">
-              Resume readiness
-            </span>
-
-            <h5 data-testid="resume-completion-message">
-              {completion === 100
-                ? "Ready to impress"
-                : `${completedCount} of ${completionItems.length} essentials complete`}
-            </h5>
-
-            <p>
-              {completion === 100
-                ? "Your profile has all the important building blocks."
-                : "A complete resume gives recruiters a clearer picture of your impact."}
-            </p>
-
-          </div>
-        </div>
-
-        <div className="resume-checklist">
-
-          {completionItems
-            .slice(0, 4)
-            .map((item) => (
-              <div
-                key={item.label}
-                className={
-                  item.done ? "check-done" : ""
-                }
-                data-testid={`resume-check-${item.label
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, "-")}`}
-              >
-                <FiCheckCircle />
-                {item.label}
-              </div>
-            ))}
-
-        </div>
-
-        <button
-          className="resume-cta"
-          data-testid="resume-polish-button"
-          onClick={openSummary}
-        >
-          <FiTarget />
-
-          <span>
-            <strong>Polish your profile</strong>
-            <small>
-              Start with your headline and key skills
-            </small>
-          </span>
-
-          <FiArrowRight />
-        </button>
-
-      </div>
-
-
-      {/* ================================================= */}
-      {/* RESUME SECTIONS */}
-      {/* ================================================= */}
-
+      {/* Split-Screen Main Layout */}
       <div className="row g-4">
+        {/* LEFT PANEL: Editor & Job Matcher */}
+        <div className="col-lg-6 col-md-12">
+          <div className="d-flex flex-column gap-3">
+            {/* Editor Container */}
+            <ResumeEditor data={resumeData} onChange={setResumeData} />
 
-        {/* ================================================= */}
-        {/* SUMMARY */}
-        {/* ================================================= */}
-
-        <div className="col-12">
-
-          <div
-            className="card resume-card p-4"
-            data-testid="resume-summary-section"
-          >
-
-            <div className="resume-section-header">
-
-              <div className="d-flex align-items-center gap-2">
-                <FiFileText className="text-primary" />
-
-                <h5 className="m-0">
-                  Profile Summary & Skills
-                </h5>
-              </div>
-
-              <button
-                className="btn btn-light btn-sm"
-                data-testid="resume-edit-summary-button"
-                onClick={openSummary}
-              >
-                <FiEdit2 /> Edit
-              </button>
-
-            </div>
-
-            <div className="resume-content mt-3">
-
-              <h4
-                className="fw-bold"
-                data-testid="resume-headline"
-              >
-                {data.headline ||
-                  "Add a professional headline"}
-              </h4>
-
-              <p
-                className="text-muted mt-2"
-                data-testid="resume-summary-text"
-              >
-                {data.summary ||
-                  "Add a summary to tell recruiters about yourself."}
-              </p>
-
-              <div className="mt-3">
-
-                <h6 className="text-uppercase small fw-bold text-secondary mb-2">
-                  Skills
-                </h6>
-
-                {data.skills?.length > 0 ? (
-
-                  <div
-                    className="d-flex flex-wrap gap-2"
-                    data-testid="resume-skills-list"
-                  >
-                    {data.skills.map((s, index) => (
-                      <span
-                        key={`${s}-${index}`}
-                        className="badge skill-badge"
-                        data-testid={`resume-skill-${index}`}
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-
-                ) : (
-
-                  <span
-                    className="text-muted small"
-                    data-testid="resume-no-skills"
-                  >
-                    No skills added.
-                  </span>
-
-                )}
-
-              </div>
-
-            </div>
-
+            {/* Job Description Analyzer */}
+            <JobDescriptionAnalyzer
+              targetRole={resumeData.targetRole}
+              onTargetRoleChange={(val) => setResumeData((prev) => ({ ...prev, targetRole: val }))}
+              onAnalyze={handleJobMatch}
+              loading={analyzing}
+            />
           </div>
-
         </div>
 
-
-        {/* ================================================= */}
-        {/* EXPERIENCE */}
-        {/* ================================================= */}
-
-        <div className="col-12">
-
-          <div
-            className="card resume-card p-4"
-            data-testid="resume-experience-section"
-          >
-
-            <div className="resume-section-header">
-
-              <div className="d-flex align-items-center gap-2">
-                <FiBriefcase
-                  className="text-purple"
-                  style={{ color: "#8b5cf6" }}
-                />
-
-                <h5 className="m-0">
-                  Experience
-                </h5>
+        {/* RIGHT PANEL: Live Resume Preview & ATS Analysis */}
+        <div className="col-lg-6 col-md-12">
+          <div className="d-flex flex-column gap-3">
+            {/* ATS Score Overview */}
+            <div className="row g-3">
+              <div className="col-md-6">
+                <ATSScoreCard score={currentScore} targetRole={resumeData.targetRole} />
               </div>
-
-              <button
-                className="btn btn-primary btn-sm"
-                data-testid="resume-add-experience-button"
-                onClick={() => openExp()}
-              >
-                <FiPlus /> Add
-              </button>
-
-            </div>
-
-            <div className="resume-content mt-4">
-
-              {data.experience?.length > 0 ? (
-
-                data.experience.map((exp, index) => (
-
-                  <div
-                    key={exp._id}
-                    className="resume-item"
-                    data-testid={`resume-experience-${exp._id || index}`}
-                  >
-
-                    <div className="resume-item-body">
-
-                      <h6
-                        data-testid={`resume-experience-role-${exp._id || index}`}
-                      >
-                        {exp.role}
-                      </h6>
-
-                      <div className="resume-item-meta">
-
-                        <span
-                          data-testid={`resume-experience-company-${exp._id || index}`}
-                        >
-                          {exp.company}
-                        </span>
-
-                        {exp.duration && (
-                          <>
-                            <span className="dot-divider">
-                              •
-                            </span>
-
-                            <span>
-                              {exp.duration}
-                            </span>
-                          </>
-                        )}
-
-                      </div>
-
-                      <p className="resume-item-desc mt-2">
-                        {exp.description}
-                      </p>
-
-                    </div>
-
-                    <div className="resume-item-actions">
-
-                      <button
-                        className="icon-btn"
-                        data-testid={`resume-edit-experience-${exp._id || index}`}
-                        onClick={() => openExp(exp, index)}
-                      >
-                        <FiEdit2 />
-                      </button>
-
-                      <button
-                        className="icon-btn text-danger"
-                        data-testid={`resume-delete-experience-${exp._id || index}`}
-                        onClick={() =>
-                          deleteExp(index)
-                        }
-                      >
-                        <FiTrash2 />
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                ))
-
-              ) : (
-
-                <EmptyState
-                  title="No experience"
-                  text="Add your work history."
-                />
-
-              )}
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        {/* ================================================= */}
-        {/* PROJECTS */}
-        {/* ================================================= */}
-
-        <div className="col-12">
-
-          <div
-            className="card resume-card p-4"
-            data-testid="resume-projects-section"
-          >
-
-            <div className="resume-section-header">
-
-              <div className="d-flex align-items-center gap-2">
-                <FiFolder
-                  className="text-blue"
-                  style={{ color: "#3b82f6" }}
-                />
-
-                <h5 className="m-0">
-                  Projects
-                </h5>
+              <div className="col-md-6">
+                <ATSBreakdown breakdown={currentBreakdown} />
               </div>
-
-              <button
-                className="btn btn-primary btn-sm"
-                data-testid="resume-add-project-button"
-                onClick={() => openProj()}
-              >
-                <FiPlus /> Add
-              </button>
-
             </div>
 
-            <div className="resume-content mt-4">
-
-              {data.projects?.length > 0 ? (
-
-                data.projects.map((proj, index) => (
-
-                  <div
-                    key={proj._id || index}
-                    className="resume-item"
-                    data-testid={`resume-project-${proj._id || index}`}
-                  >
-
-                    <div className="resume-item-body">
-
-                      <h6
-                        data-testid={`resume-project-name-${proj._id || index}`}
-                      >
-                        {proj.name}
-                      </h6>
-
-                      <div className="resume-item-meta">
-                        {proj.techStack && (
-                          <span data-testid={`resume-project-tech-${proj._id || index}`}>
-                            Tech: {proj.techStack}
-                          </span>
-                        )}
-                        {proj.url && (
-                          <>
-                            <span className="dot-divider">•</span>
-                            <a href={proj.url} target="_blank" rel="noreferrer" data-testid={`resume-project-url-${proj._id || index}`}>
-                              Link
-                            </a>
-                          </>
-                        )}
-                      </div>
-
-                      <p className="resume-item-desc mt-2">
-                        {proj.description}
-                      </p>
-
-                    </div>
-
-                    <div className="resume-item-actions">
-
-                      <button
-                        className="icon-btn"
-                        data-testid={`resume-edit-project-${proj._id || index}`}
-                        onClick={() => openProj(proj, index)}
-                      >
-                        <FiEdit2 />
-                      </button>
-
-                      <button
-                        className="icon-btn text-danger"
-                        data-testid={`resume-delete-project-${proj._id || index}`}
-                        onClick={() =>
-                          deleteProj(index)
-                        }
-                      >
-                        <FiTrash2 />
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                ))
-
-              ) : (
-
-                <EmptyState
-                  title="No projects"
-                  text="Add your projects."
+            {/* Keyword Match & Suggestions */}
+            {atsAnalysis && (
+              <>
+                <KeywordMatch
+                  matched={atsAnalysis.matchedKeywords || []}
+                  missing={atsAnalysis.missingKeywords || []}
+                  matchPercentage={atsAnalysis.keywordMatchPercentage || 0}
                 />
+                <SuggestionList suggestions={atsAnalysis.suggestions || []} />
+              </>
+            )}
 
-              )}
-
-            </div>
-
+            {/* Live Real-Time Resume Preview */}
+            <ResumePreview data={resumeData} />
           </div>
-
         </div>
-
-
-        {/* ================================================= */}
-        {/* EDUCATION */}
-        {/* ================================================= */}
-
-        <div className="col-lg-6">
-
-          <div
-            className="card resume-card p-4 h-100"
-            data-testid="resume-education-section"
-          >
-
-            <div className="resume-section-header">
-
-              <div className="d-flex align-items-center gap-2">
-
-                <FiBook
-                  className="text-orange"
-                  style={{ color: "#f59e0b" }}
-                />
-
-                <h5 className="m-0">
-                  Education
-                </h5>
-
-              </div>
-
-              <button
-                className="btn btn-primary btn-sm"
-                data-testid="resume-add-education-button"
-                onClick={() => openEdu()}
-              >
-                <FiPlus /> Add
-              </button>
-
-            </div>
-
-            <div className="resume-content mt-4">
-
-              {data.education?.length > 0 ? (
-
-                data.education.map((edu, index) => (
-
-                  <div
-                    key={edu._id}
-                    className="resume-item"
-                    data-testid={`resume-education-${edu._id || index}`}
-                  >
-
-                    <div className="resume-item-body">
-
-                      <h6
-                        data-testid={`resume-education-degree-${edu._id || index}`}
-                      >
-                        {edu.degree}
-                      </h6>
-
-                      <div className="resume-item-meta">
-
-                        <span
-                          data-testid={`resume-education-institute-${edu._id || index}`}
-                        >
-                          {edu.institute}
-                        </span>
-
-                      </div>
-
-                      <div className="resume-item-meta mt-1">
-
-                        {edu.year && (
-                          <span>
-                            Class of {edu.year}
-                          </span>
-                        )}
-
-                        {edu.cgpa && (
-                          <>
-                            <span className="dot-divider">
-                              •
-                            </span>
-
-                            <span>
-                              CGPA: {edu.cgpa}
-                            </span>
-                          </>
-                        )}
-
-                      </div>
-
-                    </div>
-
-                    <div className="resume-item-actions">
-
-                      <button
-                        className="icon-btn"
-                        data-testid={`resume-edit-education-${edu._id || index}`}
-                        onClick={() => openEdu(edu, index)}
-                      >
-                        <FiEdit2 />
-                      </button>
-
-                      <button
-                        className="icon-btn text-danger"
-                        data-testid={`resume-delete-education-${edu._id || index}`}
-                        onClick={() =>
-                          deleteEdu(index)
-                        }
-                      >
-                        <FiTrash2 />
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                ))
-
-              ) : (
-
-                <EmptyState
-                  title="No education"
-                  text="Add your degrees."
-                />
-
-              )}
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        {/* ================================================= */}
-        {/* CERTIFICATIONS */}
-        {/* ================================================= */}
-
-        <div className="col-lg-6">
-
-          <div
-            className="card resume-card p-4 h-100"
-            data-testid="resume-certifications-section"
-          >
-
-            <div className="resume-section-header">
-
-              <div className="d-flex align-items-center gap-2">
-
-                <FiAward
-                  className="text-green"
-                  style={{ color: "#10b981" }}
-                />
-
-                <h5 className="m-0">
-                  Certifications
-                </h5>
-
-              </div>
-
-              <button
-                className="btn btn-primary btn-sm"
-                data-testid="resume-add-certification-button"
-                onClick={() => openCert()}
-              >
-                <FiPlus /> Add
-              </button>
-
-            </div>
-
-            <div className="resume-content mt-4">
-
-              {data.certifications?.length > 0 ? (
-
-                data.certifications.map((cert, index) => (
-
-                  <div
-                    key={cert._id}
-                    className="resume-item"
-                    data-testid={`resume-certification-${cert._id || index}`}
-                  >
-
-                    <div className="resume-item-body">
-
-                      <h6
-                        data-testid={`resume-certification-title-${cert._id || index}`}
-                      >
-                        {cert.title}
-                      </h6>
-
-                      <div className="resume-item-meta">
-
-                        <span
-                          data-testid={`resume-certification-issuer-${cert._id || index}`}
-                        >
-                          {cert.issuer}
-                        </span>
-
-                        {cert.year && (
-                          <>
-                            <span className="dot-divider">
-                              •
-                            </span>
-
-                            <span>
-                              {cert.year}
-                            </span>
-                          </>
-                        )}
-
-                      </div>
-
-                    </div>
-
-                    <div className="resume-item-actions">
-
-                      <button
-                        className="icon-btn"
-                        data-testid={`resume-edit-certification-${cert._id || index}`}
-                        onClick={() =>
-                          openCert(cert, index)
-                        }
-                      >
-                        <FiEdit2 />
-                      </button>
-
-                      <button
-                        className="icon-btn text-danger"
-                        data-testid={`resume-delete-certification-${cert._id || index}`}
-                        onClick={() =>
-                          deleteCert(index)
-                        }
-                      >
-                        <FiTrash2 />
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                ))
-
-              ) : (
-
-                <EmptyState
-                  title="No certifications"
-                  text="Add your certs."
-                />
-
-              )}
-
-            </div>
-
-          </div>
-
-        </div>
-
       </div>
-
-
-      {/* ================================================= */}
-      {/* PREVIEW MODAL */}
-      {/* ================================================= */}
-
-      <Modal
-        show={preview}
-        onHide={() => setPreview(false)}
-        size="lg"
-        centered
-        dialogClassName="resume-preview-dialog"
-      >
-
-        <Modal.Header
-          closeButton
-          className="resume-preview-header"
-        >
-
-          <div>
-
-            <span className="resume-kicker">
-              LIVE DOCUMENT
-            </span>
-
-            <Modal.Title
-              data-testid="resume-preview-title"
-            >
-              Resume preview
-            </Modal.Title>
-
-          </div>
-
-          <button
-            className="btn btn-primary btn-sm me-4"
-            data-testid="resume-preview-download-button"
-            onClick={printResume}
-          >
-            <FiDownload /> Print / Save PDF
-          </button>
-
-        </Modal.Header>
-
-        <Modal.Body
-          className="resume-preview-paper"
-          data-testid="resume-preview-content"
-        >
-
-          <header className="preview-identity">
-
-            <h1>
-              {data.headline || "Your Name"}
-            </h1>
-
-            <p>
-              {data.headline
-                ? "Professional Profile"
-                : "Add a professional headline to get started"}
-            </p>
-
-          </header>
-
-          {data.summary && (
-            <section>
-              <h2>About</h2>
-              <p>{data.summary}</p>
-            </section>
-          )}
-
-          {data.skills?.length > 0 && (
-            <section>
-              <h2>Core skills</h2>
-
-              <div className="preview-skills">
-
-                {data.skills.map((skill, index) => (
-                  <span key={`${skill}-${index}`}>
-                    {skill}
-                  </span>
-                ))}
-
-              </div>
-            </section>
-          )}
-
-          {data.experience?.length > 0 && (
-            <section>
-              <h2>Experience</h2>
-
-              {data.experience.map(
-                (exp, index) => (
-                  <article
-                    key={exp._id || index}
-                  >
-
-                    <div>
-                      <h3>{exp.role}</h3>
-                      <strong>{exp.company}</strong>
-                    </div>
-
-                    <time>
-                      {exp.duration}
-                    </time>
-
-                    {exp.description && (
-                      <p>
-                        {exp.description}
-                      </p>
-                    )}
-
-                  </article>
-                )
-              )}
-
-            </section>
-          )}
-
-          {data.projects?.length > 0 && (
-            <section>
-              <h2>Projects</h2>
-
-              {data.projects.map(
-                (proj, index) => (
-                  <article
-                    key={proj._id || index}
-                  >
-
-                    <div>
-                      <h3>{proj.name}</h3>
-                      {proj.techStack && <strong>Tech: {proj.techStack}</strong>}
-                    </div>
-
-                    {proj.url && (
-                      <time>
-                        <a href={proj.url} target="_blank" rel="noreferrer">
-                          {proj.url}
-                        </a>
-                      </time>
-                    )}
-
-                    {proj.description && (
-                      <p>
-                        {proj.description}
-                      </p>
-                    )}
-
-                  </article>
-                )
-              )}
-
-            </section>
-          )}
-
-          {data.education?.length > 0 && (
-            <section>
-              <h2>Education</h2>
-
-              {data.education.map(
-                (edu, index) => (
-                  <article
-                    key={edu._id || index}
-                  >
-
-                    <div>
-                      <h3>{edu.degree}</h3>
-                      <strong>
-                        {edu.institute}
-                      </strong>
-                    </div>
-
-                    <time>
-                      {edu.year}
-                      {edu.cgpa
-                        ? ` · CGPA ${edu.cgpa}`
-                        : ""}
-                    </time>
-
-                  </article>
-                )
-              )}
-
-            </section>
-          )}
-
-          {data.certifications?.length > 0 && (
-            <section>
-              <h2>Certifications</h2>
-
-              {data.certifications.map(
-                (cert, index) => (
-                  <article
-                    key={cert._id || index}
-                  >
-
-                    <div>
-                      <h3>{cert.title}</h3>
-                      <strong>
-                        {cert.issuer}
-                      </strong>
-                    </div>
-
-                    <time>
-                      {cert.year}
-                    </time>
-
-                  </article>
-                )
-              )}
-
-            </section>
-          )}
-
-        </Modal.Body>
-
-      </Modal>
-
-
-      {/* ================================================= */}
-      {/* SUMMARY MODAL */}
-      {/* ================================================= */}
-
-      <Modal
-        show={showSummary}
-        onHide={() => setShowSummary(false)}
-        centered
-        contentClassName="app-modal"
-      >
-
-        <form onSubmit={saveSummary}>
-
-          <Modal.Header closeButton>
-
-            <Modal.Title
-              data-testid="resume-summary-modal-title"
-            >
-              Edit Profile Summary
-            </Modal.Title>
-
-          </Modal.Header>
-
-          <Modal.Body>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Professional Headline
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-headline-input"
-                value={summaryForm.headline}
-                onChange={(e) =>
-                  setSummaryForm({
-                    ...summaryForm,
-                    headline: e.target.value,
-                  })
-                }
-                placeholder="e.g. Senior Full Stack Engineer"
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Summary
-              </label>
-
-              <textarea
-                className="form-control"
-                data-testid="resume-summary-input"
-                rows="4"
-                value={summaryForm.summary}
-                onChange={(e) =>
-                  setSummaryForm({
-                    ...summaryForm,
-                    summary: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Skills (comma separated)
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-skills-input"
-                value={summaryForm.skills}
-                onChange={(e) =>
-                  setSummaryForm({
-                    ...summaryForm,
-                    skills: e.target.value,
-                  })
-                }
-                placeholder="React, Node.js, MongoDB"
-              />
-
-            </div>
-
-          </Modal.Body>
-
-          <Modal.Footer>
-
-            <button
-              type="button"
-              className="btn btn-light"
-              data-testid="resume-summary-cancel-button"
-              onClick={() =>
-                setShowSummary(false)
-              }
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              data-testid="resume-summary-save-button"
-            >
-              Save Changes
-            </button>
-
-          </Modal.Footer>
-
-        </form>
-
-      </Modal>
-
-
-      {/* ================================================= */}
-      {/* EXPERIENCE MODAL */}
-      {/* ================================================= */}
-
-      <Modal
-        show={showExp}
-        onHide={() => setShowExp(false)}
-        centered
-        contentClassName="app-modal"
-      >
-
-        <form onSubmit={saveExp}>
-
-          <Modal.Header closeButton>
-
-            <Modal.Title
-              data-testid="resume-experience-modal-title"
-            >
-              {expForm._id
-                ? "Edit"
-                : "Add"}{" "}
-              Experience
-            </Modal.Title>
-
-          </Modal.Header>
-
-          <Modal.Body>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Role / Title
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-experience-role-input"
-                required
-                value={expForm.role}
-                onChange={(e) =>
-                  setExpForm({
-                    ...expForm,
-                    role: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Company
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-experience-company-input"
-                required
-                value={expForm.company}
-                onChange={(e) =>
-                  setExpForm({
-                    ...expForm,
-                    company: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Duration
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-experience-duration-input"
-                placeholder="e.g. Jan 2020 - Present"
-                value={expForm.duration}
-                onChange={(e) =>
-                  setExpForm({
-                    ...expForm,
-                    duration: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Description
-              </label>
-
-              <textarea
-                className="form-control"
-                data-testid="resume-experience-description-input"
-                rows="3"
-                value={expForm.description}
-                onChange={(e) =>
-                  setExpForm({
-                    ...expForm,
-                    description: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-          </Modal.Body>
-
-          <Modal.Footer>
-
-            <button
-              type="button"
-              className="btn btn-light"
-              data-testid="resume-experience-cancel-button"
-              onClick={() =>
-                setShowExp(false)
-              }
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              data-testid="resume-experience-save-button"
-            >
-              Save
-            </button>
-
-          </Modal.Footer>
-
-        </form>
-
-      </Modal>
-
-
-      {/* ================================================= */}
-      {/* EDUCATION MODAL */}
-      {/* ================================================= */}
-
-      <Modal
-        show={showEdu}
-        onHide={() => setShowEdu(false)}
-        centered
-        contentClassName="app-modal"
-      >
-
-        <form onSubmit={saveEdu}>
-
-          <Modal.Header closeButton>
-
-            <Modal.Title
-              data-testid="resume-education-modal-title"
-            >
-              {eduForm._id
-                ? "Edit"
-                : "Add"}{" "}
-              Education
-            </Modal.Title>
-
-          </Modal.Header>
-
-          <Modal.Body>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Degree
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-education-degree-input"
-                required
-                placeholder="B.S. Computer Science"
-                value={eduForm.degree}
-                onChange={(e) =>
-                  setEduForm({
-                    ...eduForm,
-                    degree: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Institution
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-education-institute-input"
-                required
-                value={eduForm.institute}
-                onChange={(e) =>
-                  setEduForm({
-                    ...eduForm,
-                    institute: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="row mb-3">
-
-              <div className="col-6">
-
-                <label className="form-label">
-                  Graduation Year
-                </label>
-
-                <input
-                  className="form-control"
-                  data-testid="resume-education-year-input"
-                  value={eduForm.year}
-                  onChange={(e) =>
-                    setEduForm({
-                      ...eduForm,
-                      year: e.target.value,
-                    })
-                  }
-                />
-
-              </div>
-
-              <div className="col-6">
-
-                <label className="form-label">
-                  CGPA / Grade
-                </label>
-
-                <input
-                  className="form-control"
-                  data-testid="resume-education-cgpa-input"
-                  value={eduForm.cgpa}
-                  onChange={(e) =>
-                    setEduForm({
-                      ...eduForm,
-                      cgpa: e.target.value,
-                    })
-                  }
-                />
-
-              </div>
-
-            </div>
-
-          </Modal.Body>
-
-          <Modal.Footer>
-
-            <button
-              type="button"
-              className="btn btn-light"
-              data-testid="resume-education-cancel-button"
-              onClick={() =>
-                setShowEdu(false)
-              }
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              data-testid="resume-education-save-button"
-            >
-              Save
-            </button>
-
-          </Modal.Footer>
-
-        </form>
-
-      </Modal>
-
-
-      {/* ================================================= */}
-      {/* CERTIFICATION MODAL */}
-      {/* ================================================= */}
-
-      <Modal
-        show={showCert}
-        onHide={() => setShowCert(false)}
-        centered
-        contentClassName="app-modal"
-      >
-
-        <form onSubmit={saveCert}>
-
-          <Modal.Header closeButton>
-
-            <Modal.Title
-              data-testid="resume-certification-modal-title"
-            >
-              {certForm._id
-                ? "Edit"
-                : "Add"}{" "}
-              Certification
-            </Modal.Title>
-
-          </Modal.Header>
-
-          <Modal.Body>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Certification Title
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-certification-title-input"
-                placeholder="e.g. AWS Certified Developer"
-                required
-                value={certForm.title}
-                onChange={(e) =>
-                  setCertForm({
-                    ...certForm,
-                    title: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Issuing Organization
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-certification-issuer-input"
-                placeholder="e.g. Amazon Web Services"
-                required
-                value={certForm.issuer}
-                onChange={(e) =>
-                  setCertForm({
-                    ...certForm,
-                    issuer: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Year
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-certification-year-input"
-                placeholder="e.g. 2024"
-                value={certForm.year}
-                onChange={(e) =>
-                  setCertForm({
-                    ...certForm,
-                    year: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-          </Modal.Body>
-
-          <Modal.Footer>
-
-            <button
-              type="button"
-              className="btn btn-light"
-              data-testid="resume-certification-cancel-button"
-              onClick={() =>
-                setShowCert(false)
-              }
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              data-testid="resume-certification-save-button"
-            >
-              Save
-            </button>
-
-          </Modal.Footer>
-
-        </form>
-
-      </Modal>
-
-
-      {/* ================================================= */}
-      {/* PROJECT MODAL */}
-      {/* ================================================= */}
-
-      <Modal
-        show={showProj}
-        onHide={() => setShowProj(false)}
-        centered
-        contentClassName="app-modal"
-      >
-
-        <form onSubmit={saveProj}>
-
-          <Modal.Header closeButton>
-
-            <Modal.Title
-              data-testid="resume-project-modal-title"
-            >
-              {projForm._id
-                ? "Edit"
-                : "Add"}{" "}
-              Project
-            </Modal.Title>
-
-          </Modal.Header>
-
-          <Modal.Body>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Project Name
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-project-name-input"
-                placeholder="e.g. Portfolio Website"
-                required
-                value={projForm.name}
-                onChange={(e) =>
-                  setProjForm({
-                    ...projForm,
-                    name: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Tech Stack
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-project-techstack-input"
-                placeholder="e.g. React, Node.js, CSS"
-                value={projForm.techStack}
-                onChange={(e) =>
-                  setProjForm({
-                    ...projForm,
-                    techStack: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Project Link
-              </label>
-
-              <input
-                className="form-control"
-                data-testid="resume-project-url-input"
-                placeholder="https://github.com/..."
-                value={projForm.url}
-                onChange={(e) =>
-                  setProjForm({
-                    ...projForm,
-                    url: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-            <div className="mb-3">
-
-              <label className="form-label">
-                Description
-              </label>
-
-              <textarea
-                className="form-control"
-                data-testid="resume-project-description-input"
-                rows="3"
-                value={projForm.description}
-                onChange={(e) =>
-                  setProjForm({
-                    ...projForm,
-                    description: e.target.value,
-                  })
-                }
-              />
-
-            </div>
-
-          </Modal.Body>
-
-          <Modal.Footer>
-
-            <button
-              type="button"
-              className="btn btn-light"
-              data-testid="resume-project-cancel-button"
-              onClick={() =>
-                setShowProj(false)
-              }
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              data-testid="resume-project-save-button"
-            >
-              Save
-            </button>
-
-          </Modal.Footer>
-
-        </form>
-
-      </Modal>
-
-    </Layout>
+    </div>
   );
-}
+};
+
+export default Resume;

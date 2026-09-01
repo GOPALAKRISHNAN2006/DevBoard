@@ -43,6 +43,7 @@ app.use("/api/project", projectRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/leetcode", leetcodeRoutes);
 app.use("/api/user/resume", resumeRoutes);
+app.use("/api/resume", resumeRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notes", noteRoutes);

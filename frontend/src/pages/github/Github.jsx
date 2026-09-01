@@ -1,187 +1,293 @@
-import { useEffect, useState } from 'react';
-import { FiGithub, FiStar, FiGitBranch, FiCode, FiExternalLink, FiBook } from 'react-icons/fi';
-import { getPublicGithubProfile, getPublicGithubRepos } from '../../api/githubPublic';
-import { useAuth } from '../../context/AuthContext';
-import Layout from '../../components/Layout';
-import EmptyState from '../../components/EmptyState';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { FiGithub, FiExternalLink, FiRefreshCw, FiAlertCircle } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import './Github.css';
+import toast from 'react-hot-toast';
+
+import api from '../../api/axios';
+import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
+import EmptyState from '../../components/EmptyState';
+
+import GithubProfileHero from '../../components/github/GithubProfileHero';
+import GithubOverviewStats from '../../components/github/GithubOverviewStats';
+import GithubProfileStrength from '../../components/github/GithubProfileStrength';
+import GithubInsights from '../../components/github/GithubInsights';
+import LanguageAnalytics from '../../components/github/LanguageAnalytics';
+import RepositoryAnalytics from '../../components/github/RepositoryAnalytics';
+import TopRepositories from '../../components/github/TopRepositories';
+import RecentRepositories from '../../components/github/RecentRepositories';
+import RepositorySearchFilterSort from '../../components/github/RepositorySearchFilterSort';
+import RepositoryDetailsModal from '../../components/github/RepositoryDetailsModal';
+import ProjectIntegrationCard from '../../components/github/ProjectIntegrationCard';
+import ResumeGithubComparison from '../../components/github/ResumeGithubComparison';
+import GithubProfileChecklist from '../../components/github/GithubProfileChecklist';
+import GithubProfileReadme from '../../components/github/GithubProfileReadme';
+import RepositoryQualityCard from '../../components/github/RepositoryQualityCard';
+import GithubCareerInsights from '../../components/github/GithubCareerInsights';
 
 export default function Github() {
-  const { user, refreshUser } = useAuth();
-  const [profile, setProfile] = useState(undefined);
-  const [repos, setRepos] = useState([]);
-  const [error, setError] = useState("");
-  const [isRefreshingUser, setIsRefreshingUser] = useState(true);
-  const username = user?.githubUsername;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    let active = true;
-    refreshUser()
-      .catch(() => {})
-      .finally(() => { if (active) setIsRefreshingUser(false); });
-    return () => { active = false; };
-  }, [refreshUser]);
+  // Search, Filter & Sort state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('All');
+  const [sortBy, setSortBy] = useState('updated');
 
-  useEffect(() => {
-    if (isRefreshingUser) return;
-    if (!username) {
-      return;
+  // Modal State
+  const [selectedRepoName, setSelectedRepoName] = useState(null);
+
+  const fetchAnalytics = useCallback(async (forceRefresh = false) => {
+    try {
+      if (forceRefresh) setRefreshing(true);
+      else setLoading(true);
+      setError(null);
+
+      const res = await api.get(`/github/analytics${forceRefresh ? '?forceRefresh=true' : ''}`);
+      setData(res.data);
+
+      if (forceRefresh) {
+        toast.success('GitHub statistics updated successfully');
+      }
+    } catch (err) {
+      console.error('Fetch GitHub analytics error:', err);
+      const msg = err.response?.data?.message || 'Unable to load GitHub developer analytics.';
+      setError(msg);
+      if (forceRefresh) toast.error(msg);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-    getPublicGithubProfile(username)
-      .then((profileData) => {
-        setProfile(profileData);
-        setError("");
-      })
-      .catch((err) => {
-        setProfile(null);
-        setError(err.response?.data?.message || "Unable to connect to GitHub right now.");
-      });
+  }, []);
 
-    getPublicGithubRepos(username)
-      .then((reposData) => {
-        const sorted = Array.isArray(reposData)
-          ? reposData.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-          : [];
-        setRepos(sorted);
-      })
-      .catch((err) => {
-        setRepos([]);
-        setError((current) => current || err.response?.data?.message || "Unable to load GitHub repositories.");
-      });
-  }, [username, isRefreshingUser]);
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
-  const isLoading = isRefreshingUser || (Boolean(username) && profile === undefined);
+  const rawRepos = data?.repositories?.items || [];
+  const languagesList = data?.languages?.map((l) => l.language) || [];
 
-  if (!username || (!profile && !isLoading)) {
+  // Filter & Sort Repositories
+  const filteredAndSortedRepos = useMemo(() => {
+    let result = [...rawRepos];
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (r) =>
+          r.name.toLowerCase().includes(q) ||
+          (r.description && r.description.toLowerCase().includes(q))
+      );
+    }
+
+    // Language filter
+    if (selectedLanguage !== 'All') {
+      result = result.filter(
+        (r) => r.language && r.language.toLowerCase() === selectedLanguage.toLowerCase()
+      );
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      if (sortBy === 'stars') return (b.stargazers_count || 0) - (a.stargazers_count || 0);
+      if (sortBy === 'forks') return (b.forks_count || 0) - (a.forks_count || 0);
+      if (sortBy === 'name') return a.name.localeCompare(b.name);
+      if (sortBy === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+      // Default: updated
+      return new Date(b.updated_at) - new Date(a.updated_at);
+    });
+
+    return result;
+  }, [rawRepos, searchQuery, selectedLanguage, sortBy]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="py-5 text-center">
+          <Loader />
+          <p className="text-muted mt-3 fw-medium">Loading GitHub Developer Analytics...</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error && !data) {
     return (
       <Layout>
         <div className="section-head">
           <div>
-            <h1 className="page-title" data-testid="github-page-title">GitHub</h1>
+            <h1 className="page-title">GitHub</h1>
             <p className="page-subtitle">Your coding footprint.</p>
           </div>
         </div>
         <EmptyState
-          title={error ? "Could not load GitHub" : "GitHub not connected"}
-          text={error || "Add your GitHub username in Profile Settings to see your activity."}
-          action={<Link to="/profile" className="btn btn-primary mt-3">Go to Profile Settings</Link>}
+          title="Could not load GitHub Data"
+          text={error}
+          action={
+            <Link to="/profile" className="btn btn-primary mt-3">
+              Go to Profile Settings
+            </Link>
+          }
         />
       </Layout>
     );
   }
 
+  const profile = data?.profile || {};
+  const repositories = data?.repositories || {};
+  const languages = data?.languages || [];
+  const analytics = data?.analytics || {};
+  const profileStrength = data?.profileStrength || {};
+
   return (
     <Layout>
-      <div className="section-head">
+      {/* ============================= */}
+      {/* PAGE HEADER */}
+      {/* ============================= */}
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
-          <h1 className="page-title"
-           data-testid="github-page-title">GitHub</h1>
-          <p className="page-subtitle"
-          data-testid="github-username">Your coding footprint — @{profile?.login || username}</p>
+          <h1 className="h3 fw-bold text-dark mb-1">GitHub Developer Analytics</h1>
+          <p className="text-muted small mb-0">
+            Your coding activity, repositories and open-source progress.
+          </p>
         </div>
-        {profile && <a href={profile.html_url} target="_blank" rel="noreferrer" className="btn btn-primary">
-          <FiGithub /> Open GitHub
-        </a>}
-      </div>
 
-      {isLoading ? (
-        <div className="github-loading-grid" aria-label="Loading GitHub details">
-          <div className="github-skeleton github-skeleton-profile" />
-          <div className="row g-3 mt-1">
-            {[1, 2, 3, 4].map((item) => <div className="col-6 col-lg-3" key={item}><div className="github-skeleton github-skeleton-stat" /></div>)}
-          </div>
-          <div className="github-skeleton github-skeleton-repos" />
-        </div>
-      ) : <>
-      {/* Profile Card */}
-      <div className="card p-4 mb-4">
-        <div className="d-flex align-items-center gap-3">
-          <img
-            src={profile.avatar_url}
-            className="rounded-circle"
-            width="72"
-            height="72"
-            alt="avatar"
-            loading="lazy"
-            decoding="async"
-          />
-          <div>
-            <h4 className="mb-1 fw-bold">{profile.name || profile.login}</h4>
-            <a href={profile.html_url} target="_blank" rel="noreferrer" className="text-muted small">
-              @{profile.login}
+        <div className="d-flex align-items-center gap-2">
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm fw-bold d-flex align-items-center gap-2"
+            onClick={() => fetchAnalytics(true)}
+            disabled={refreshing}
+          >
+            <FiRefreshCw className={refreshing ? 'spin' : ''} />
+            {refreshing ? 'Refreshing...' : 'Refresh Stats'}
+          </button>
+
+          {profile.profileUrl && (
+            <a
+              href={profile.profileUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-dark btn-sm fw-bold d-flex align-items-center gap-1"
+            >
+              <FiGithub /> Open GitHub <FiExternalLink />
             </a>
-            {profile.bio && <p className="text-muted mb-0 mt-1 small">{profile.bio}</p>}
-          </div>
-        </div>
-        <div className="row g-3 mt-3">
-          {[
-            [FiGithub, "Repositories", profile.public_repos],
-            [FiStar, "Followers", profile.followers],
-            [FiGitBranch, "Following", profile.following],
-            [FiCode, "Public Gists", profile.public_gists],
-          ].map(([I, l, v]) => (
-            <div className="col-6 col-lg-3" key={l}>
-              <div className="card p-3 text-center">
-                <I size={20} className="mb-2 mx-auto d-block text-muted" />
-                <h4 className="fw-bold mb-0">{v || 0}</h4>
-                <small className="text-muted">{l}</small>
-              </div>
-            </div>
-          ))}
+          )}
         </div>
       </div>
 
-      {/* Repositories */}
-      <div className="section-head mb-3">
-        <h5 className="m-0"
-         data-testid="github-repositories-title">All Repositories</h5>
-        <span className="badge bg-light text-dark border">{repos.length} repos</span>
-      </div>
-      {repos.length > 0 ? (
-        <div className="row g-3">
-          {repos.map(repo => (
-            <div className="col-md-6 col-lg-4" key={repo.id}>
-              <div className="card p-3 h-100 d-flex flex-column justify-content-between">
-                <div>
-                  <div className="d-flex align-items-start justify-content-between gap-2">
-                    <div className="d-flex align-items-center gap-2">
-                      <FiBook size={14} className="text-muted flex-shrink-0" />
-                      <strong className="text-truncate" 
-                      data-testid={`github-repository-${repo.id}`}style={{maxWidth: 160}}
-                       data-testid={`github-repository-${repo.id}`}>{repo.name}</strong>
+      {/* SECTION 1 — PROFILE HERO */}
+      <GithubProfileHero profile={profile} />
+
+      {/* SECTION 2 — GITHUB OVERVIEW */}
+      <GithubOverviewStats profile={profile} repositories={repositories} languages={languages} />
+
+      {/* SECTION 3 — DEVBOARD PROFILE STRENGTH */}
+      <GithubProfileStrength profileStrength={profileStrength} />
+
+      {/* SECTION 4 & 5 — GITHUB INSIGHTS */}
+      <GithubInsights profile={profile} repositories={repositories} languages={languages} />
+
+      {/* SECTION 6 — LANGUAGE ANALYTICS */}
+      <LanguageAnalytics languages={languages} />
+
+      {/* SECTION 7 — REPOSITORY ANALYTICS */}
+      <RepositoryAnalytics analytics={analytics} />
+
+      {/* SECTION 8 — TOP REPOSITORIES */}
+      <TopRepositories repositories={rawRepos} onSelectRepo={(name) => setSelectedRepoName(name)} />
+
+      {/* SECTION 9 — RECENT REPOSITORIES */}
+      <RecentRepositories repositories={rawRepos} onSelectRepo={(name) => setSelectedRepoName(name)} />
+
+      {/* SECTION 10, 11, 12 — SEARCH, FILTER & SORT */}
+      <RepositorySearchFilterSort
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={setSelectedLanguage}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        availableLanguages={languagesList}
+      />
+
+      {/* FILTERED REPOSITORY GRID */}
+      <div className="card shadow-sm border-0 bg-white p-4 mb-4">
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <h3 className="h6 fw-bold text-dark text-uppercase mb-0">
+            Filtered Repositories ({filteredAndSortedRepos.length})
+          </h3>
+        </div>
+
+        {filteredAndSortedRepos.length === 0 ? (
+          <div className="text-center py-4 bg-light rounded border">
+            <p className="text-muted small mb-0">No repositories match your filter criteria.</p>
+          </div>
+        ) : (
+          <div className="row g-3">
+            {filteredAndSortedRepos.map((repo, idx) => (
+              <div key={idx} className="col-12 col-md-6 col-lg-4">
+                <div className="p-3 bg-light rounded border h-100 d-flex flex-column justify-content-between">
+                  <div>
+                    <div className="d-flex align-items-start justify-content-between gap-2 mb-2">
+                      <strong className="text-dark text-truncate" style={{ maxWidth: '160px' }}>
+                        {repo.name}
+                      </strong>
+                      <a href={repo.html_url} target="_blank" rel="noreferrer" className="text-muted">
+                        <FiExternalLink />
+                      </a>
                     </div>
-                    <a href={repo.html_url} target="_blank" rel="noreferrer" className="text-muted flex-shrink-0">
-                      <FiExternalLink size={14} />
-                    </a>
+                    {repo.description && (
+                      <p className="text-secondary extra-small mb-2 text-justify">
+                        {repo.description.length > 80 ? `${repo.description.slice(0, 80)}…` : repo.description}
+                      </p>
+                    )}
                   </div>
-                  {repo.description && (
-                    <p className="text-muted small mt-2 mb-0" style={{lineHeight: 1.5}}>
-                      {repo.description.slice(0, 100)}{repo.description.length > 100 ? "…" : ""}
-                    </p>
-                  )}
-                </div>
-                <div className="d-flex align-items-center gap-3 mt-3">
-                  {repo.language && (
-                    <span className="small text-muted">
-                      <span className="repo-lang-dot" /> {repo.language}
-                    </span>
-                  )}
-                  <span className="small text-muted d-flex align-items-center gap-1">
-                    <FiStar size={12} /> {repo.stargazers_count}
-                  </span>
-                  <span className="small text-muted d-flex align-items-center gap-1">
-                    <FiGitBranch size={12} /> {repo.forks_count}
-                  </span>
+
+                  <div className="d-flex align-items-center justify-content-between pt-2 border-top extra-small text-muted">
+                    <span>{repo.language || '—'}</span>
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-link p-0 extra-small fw-semibold text-primary text-decoration-none"
+                      onClick={() => setSelectedRepoName(repo.name)}
+                    >
+                      View Details ↗
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <EmptyState title="No repositories" text="No public repositories found." />
-      )}
-      </>}
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* SECTION 15 — PORTFOLIO PROJECT INTEGRATION */}
+      <ProjectIntegrationCard projectMatches={data?.projectMatches} />
+
+      {/* SECTION 16 — RESUME INTEGRATION */}
+      <ResumeGithubComparison resumeMatches={data?.resumeProjectsMatches} />
+
+      {/* SECTION 17 — PROFILE CHECKLIST */}
+      <GithubProfileChecklist profile={profile} repositories={repositories} hasProfileReadme={data?.hasProfileReadme} />
+
+      {/* SECTION 18 — PROFILE README */}
+      <GithubProfileReadme
+        hasProfileReadme={data?.hasProfileReadme}
+        profileReadmeUrl={data?.profileReadmeUrl}
+        username={profile.username}
+      />
+
+      {/* SECTION 19 — REPOSITORY QUALITY */}
+      <RepositoryQualityCard topRepositories={repositories.topItems} />
+
+      {/* SECTION 20 — CAREER INSIGHTS */}
+      <GithubCareerInsights profile={profile} repositories={repositories} profileStrength={profileStrength} />
+
+      {/* SECTION 13 — REPOSITORY DETAILS MODAL */}
+      <RepositoryDetailsModal repoName={selectedRepoName} onClose={() => setSelectedRepoName(null)} />
     </Layout>
   );
 }

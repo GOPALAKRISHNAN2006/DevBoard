@@ -1,1 +1,67 @@
-.filter-select{width:170px}.icon-btn{border:0;background:transparent;color:var(--text-tertiary);padding:6px;border-radius:6px}.icon-btn:hover{color:#4f46e5;background:#eef2ff}.modal label{font-size:.8rem;font-weight:600;margin-bottom:5px;display:block}
+/* Jobs.css */
+
+.filter-select {
+  width: auto;
+  min-width: 150px;
+}
+
+.search-box {
+  max-width: 380px;
+}
+
+.status {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.status.Applied, .status.applied {
+  background: rgba(10, 102, 194, 0.1);
+  color: #0a66c2;
+  border: 1px solid rgba(10, 102, 194, 0.2);
+}
+
+.status.Assessment, .status.assessment {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status.Interview, .status.interview {
+  background: rgba(139, 92, 246, 0.1);
+  color: #7c3aed;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.status.Offer, .status.offer {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status.Rejected, .status.rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.icon-btn {
+  background: transparent;
+  border: 0;
+  color: #64748b;
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.icon-btn:hover {
+  color: #0a66c2;
+}
+
+.icon-btn.text-danger:hover {
+  color: #dc2626;
+}
