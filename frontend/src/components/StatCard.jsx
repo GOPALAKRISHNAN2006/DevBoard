@@ -4,8 +4,9 @@ export default function StatCard({
   icon: Icon,
   label,
   value,
-  tone = "indigo",
+  tone = "blue",
   subtitle = "",
+  trend = "",
 }) {
   const getToneClass = (t) => {
     switch (t) {
@@ -25,16 +26,22 @@ export default function StatCard({
   };
 
   return (
-    <div className="stat-card card h-100 shadow-sm border-0 bg-white p-3">
+    <div className="stat-card card interactive-card h-100 p-3">
       <div className="d-flex align-items-center justify-content-between mb-2">
         <div className={`p-2 rounded-3 d-flex align-items-center justify-content-center ${getToneClass(tone)}`}>
           <Icon size={20} />
         </div>
-        {subtitle && <span className="extra-small text-muted fw-semibold">{subtitle}</span>}
+        {(subtitle || trend) && (
+          <span className="extra-small text-muted fw-semibold badge bg-light border">
+            {trend || subtitle}
+          </span>
+        )}
       </div>
       <div>
-        <p className="text-muted extra-small fw-semibold mb-1 text-uppercase tracking-wider">{label}</p>
-        <h3 className="h4 fw-bold text-dark mb-0">{value ?? 0}</h3>
+        <p className="text-muted extra-small fw-semibold mb-1 text-uppercase tracking-wider">
+          {label}
+        </p>
+        <h3 className="h4 fw-bold mb-0">{value ?? 0}</h3>
       </div>
     </div>
   );

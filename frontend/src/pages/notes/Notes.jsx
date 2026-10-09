@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 import {
   FiPlus,
@@ -10,6 +10,12 @@ import {
   FiX,
   FiSave,
   FiEdit3,
+  FiCheck,
+  FiCode,
+  FiList,
+  FiBold,
+  FiItalic,
+  FiBookOpen,
 } from "react-icons/fi";
 import api from "../../api/axios";
 import Layout from "../../components/Layout";
@@ -17,7 +23,7 @@ import EmptyState from "../../components/EmptyState";
 import useDebounce from "../../hooks/useDebounce";
 import "./Notes.css";
 
-// Memoized Note Item Component to avoid unnecessary DOM operations
+// Memoized Note Item Component
 const NoteItem = React.memo(({ note, isActive, onOpen, onToggle, onDelete }) => {
   return (
     <div
@@ -26,9 +32,9 @@ const NoteItem = React.memo(({ note, isActive, onOpen, onToggle, onDelete }) => 
       onClick={() => onOpen(note)}
     >
       <div className="note-item-header">
-        <span className="note-item-title">{note.title || "Untitled"}</span>
+        <span className="note-item-title">{note.title || "Untitled Note"}</span>
         <div className="note-item-actions">
-          {note.isPinned && <FiMapPin className="pin-indicator text-warning" />}
+          {note.isPinned && <FiMapPin className="text-warning me-1" size={13} />}
           <button
             type="button"
             className="note-action-btn"
@@ -38,7 +44,6 @@ const NoteItem = React.memo(({ note, isActive, onOpen, onToggle, onDelete }) => 
               onOpen(note);
             }}
             title="Edit note"
-            aria-label={`Edit ${note.title || "note"}`}
           >
             <FiEdit3 />
           </button>
@@ -50,7 +55,7 @@ const NoteItem = React.memo(({ note, isActive, onOpen, onToggle, onDelete }) => 
               e.stopPropagation();
               onToggle(note, "isPinned");
             }}
-            title={note.isPinned ? "Unpin" : "Pin"}
+            title={note.isPinned ? "Unpin note" : "Pin note"}
           >
             <FiMapPin />
           </button>
@@ -81,7 +86,7 @@ const NoteItem = React.memo(({ note, isActive, onOpen, onToggle, onDelete }) => 
         </div>
       </div>
       <p className="note-item-preview">
-        {note.content?.slice(0, 80) || "No content…"}
+        {note.content?.slice(0, 95) || "No content…"}
       </p>
       {note.tags?.length > 0 && (
         <div className="note-item-tags">
@@ -93,7 +98,7 @@ const NoteItem = React.memo(({ note, isActive, onOpen, onToggle, onDelete }) => 
         </div>
       )}
       <span className="note-item-date">
-        {new Date(note.updatedAt).toLocaleDateString()}
+        {new Date(note.updatedAt || Date.now()).toLocaleDateString()}
       </span>
     </div>
   );
@@ -108,20 +113,38 @@ export default function Notes() {
   const [isNew, setIsNew] = useState(false);
   const [form, setForm] = useState({ title: "", content: "", tags: "" });
   const [loading, setLoading] = useState(true);
+  const [saveStatus, setSaveStatus] = useState("saved"); // "saved" | "saving"
+  const [deleteModalNote, setDeleteModalNote] = useState(null);
   const saveTimeout = useRef(null);
 
   const load = useCallback(async () => {
     try {
+      const apiFilter = filter === "archived" ? "archived" : "active";
       const { data } = await api.get(
-        `/notes?search=${debouncedSearch}&filter=${filter}`
+        `/notes?search=${debouncedSearch}&filter=${apiFilter}`
       );
-      setNotes(Array.isArray(data) ? data : []);
+      let list = Array.isArray(data) ? data : [];
+      if (filter === "pinned") {
+        list = list.filter((n) => n.isPinned);
+      }
+      setNotes(list);
+
+      // Auto-select first note if none active
+      if (!active && !isNew && list.length > 0) {
+        setActive(list[0]);
+        setForm({
+          title: list[0].title || "",
+          content: list[0].content || "",
+          tags: list[0].tags?.join(", ") || "",
+        });
+      }
     } catch {
       setNotes([]);
+      toast.error("Could not load notes");
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, filter]);
+  }, [debouncedSearch, filter, active, isNew]);
 
   useEffect(() => {
     load();
@@ -131,18 +154,21 @@ export default function Notes() {
     setIsNew(false);
     setActive(note);
     setForm({
-      title: note.title,
-      content: note.content,
+      title: note.title || "",
+      content: note.content || "",
       tags: note.tags?.join(", ") || "",
     });
+    setSaveStatus("saved");
   }, []);
 
   const openNew = useCallback(() => {
     setIsNew(true);
     setActive(null);
     setForm({ title: "", content: "", tags: "" });
+    setSaveStatus("saved");
   }, []);
 
+  // Save explicitly
   const save = async () => {
     const body = {
       title: form.title || "Untitled",
@@ -153,6 +179,7 @@ export default function Notes() {
         .filter(Boolean),
     };
     try {
+      setSaveStatus("saving");
       if (isNew) {
         const { data } = await api.post("/notes", body);
         toast.success("Note created");
@@ -165,34 +192,68 @@ export default function Notes() {
         setActive(data.note);
         load();
       }
+      setSaveStatus("saved");
     } catch {
       toast.error("Could not save note");
+      setSaveStatus("saved");
     }
   };
 
-  const autoSave = (field, value) => {
+  // Debounced Auto-save
+  const handleFieldChange = (field, value) => {
     setForm((f) => ({ ...f, [field]: value }));
+    setSaveStatus("saving");
     if (saveTimeout.current) clearTimeout(saveTimeout.current);
-    saveTimeout.current = setTimeout(() => {
+
+    saveTimeout.current = setTimeout(async () => {
       if (!isNew && active) {
-        api
-          .put(`/notes/${active._id}`, {
+        try {
+          await api.put(`/notes/${active._id}`, {
             title: field === "title" ? value : form.title,
             content: field === "content" ? value : form.content,
             tags: (field === "tags" ? value : form.tags)
               .split(",")
               .map((t) => t.trim())
               .filter(Boolean),
-          })
-          .catch(() => {});
+          });
+          setSaveStatus("saved");
+        } catch {
+          setSaveStatus("saved");
+        }
+      } else {
+        setSaveStatus("saved");
       }
     }, 1200);
+  };
+
+  // Formatting helpers to insert markdown snippets
+  const insertFormatting = (prefix, suffix = "") => {
+    const textarea = document.getElementById("note-editor-body");
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = form.content;
+    const selected = text.substring(start, end);
+    const replacement = `${prefix}${selected || "text"}${suffix}`;
+
+    const newContent = text.substring(0, start) + replacement + text.substring(end);
+    handleFieldChange("content", newContent);
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(
+        start + prefix.length,
+        start + prefix.length + (selected.length || 4)
+      );
+    }, 50);
   };
 
   const toggle = useCallback(
     async (note, field) => {
       try {
         await api.put(`/notes/${note._id}`, { [field]: !note[field] });
+        toast.success(`Note ${field === "isPinned" ? (note.isPinned ? "unpinned" : "pinned") : (note.isArchived ? "unarchived" : "archived")}`);
         load();
         if (active?._id === note._id)
           setActive((n) => ({ ...n, [field]: !n[field] }));
@@ -203,43 +264,44 @@ export default function Notes() {
     [load, active]
   );
 
-  const remove = useCallback(
-    async (note) => {
-      if (!window.confirm("Delete this note?")) return;
-      try {
-        await api.delete(`/notes/${note._id}`);
-        toast.success("Note deleted");
-        if (active?._id === note._id) {
-          setActive(null);
-          setIsNew(false);
-        }
-        load();
-      } catch {
-        toast.error("Could not delete note");
+  const confirmDelete = async (note) => {
+    try {
+      await api.delete(`/notes/${note._id}`);
+      toast.success("Note deleted");
+      if (active?._id === note._id) {
+        setActive(null);
+        setIsNew(false);
       }
-    },
-    [load, active]
-  );
-
-  const close = () => {
-    setActive(null);
-    setIsNew(false);
+      setDeleteModalNote(null);
+      load();
+    } catch {
+      toast.error("Could not delete note");
+    }
   };
+
+  // Compute Word & Character counts
+  const wordCount = useMemo(() => {
+    if (!form.content.trim()) return 0;
+    return form.content.trim().split(/\s+/).length;
+  }, [form.content]);
 
   return (
     <Layout>
-      <div className="notes-page">
-        {/* Sidebar */}
+      <div className="notes-page animate-slide-up">
+        {/* Left Sidebar */}
         <aside className="notes-sidebar">
           <div className="notes-sidebar-header">
-            <h1 className="page-title">Notes</h1>
+            <div>
+              <h1 className="page-title fs-5 mb-0">Notes</h1>
+              <span className="text-muted extra-small">{notes.length} items</span>
+            </div>
             <button
               type="button"
               className="btn btn-primary btn-sm fw-bold d-flex align-items-center gap-1"
               onClick={openNew}
               data-testid="new-note-button"
             >
-              <FiPlus /> New
+              <FiPlus /> New Note
             </button>
           </div>
 
@@ -255,31 +317,27 @@ export default function Notes() {
           </div>
 
           <div className="notes-filters">
-            {["active", "archived"].map((f) => (
+            {[
+              ["active", "All"],
+              ["pinned", "Pinned"],
+              ["archived", "Archived"],
+            ].map(([val, label]) => (
               <button
+                key={val}
                 type="button"
-                key={f}
-                className={`filter-pill ${filter === f ? "active" : ""}`}
-                data-testid={`notes-filter-${f}`}
-                onClick={() => setFilter(f)}
+                className={`filter-pill ${filter === val ? "active" : ""}`}
+                onClick={() => setFilter(val)}
               >
-                {f === "active" ? "All Notes" : "Archived"}
+                {label}
               </button>
             ))}
           </div>
 
           <div className="notes-list">
-            {loading ? (
-              <div className="notes-skeleton">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="note-skeleton-item p-3 bg-light rounded mb-2" />
-                ))}
+            {notes.length === 0 ? (
+              <div className="p-4 text-center text-muted extra-small">
+                {search ? "No matching notes found." : "No notes yet. Create your first note above!"}
               </div>
-            ) : notes.length === 0 ? (
-              <EmptyState
-                title="No notes found"
-                text="Create your first note."
-              />
             ) : (
               notes.map((note) => (
                 <NoteItem
@@ -288,85 +346,182 @@ export default function Notes() {
                   isActive={active?._id === note._id}
                   onOpen={openNote}
                   onToggle={toggle}
-                  onDelete={remove}
+                  onDelete={(n) => setDeleteModalNote(n)}
                 />
               ))
             )}
           </div>
         </aside>
 
-        {/* Editor */}
+        {/* Right Editor Area */}
         <main className="notes-editor">
           {active || isNew ? (
             <>
+              {/* Editor Top Toolbar */}
               <div className="editor-toolbar">
-                <input
-                  className="editor-title"
-                  placeholder="Note title…"
-                  data-testid="note-title-input"
-                  value={form.title}
-                  onChange={(e) => autoSave("title", e.target.value)}
-                />
-                <div className="editor-toolbar-actions d-flex gap-2">
+                <div className="editor-actions-left">
+                  <button
+                    type="button"
+                    className="format-btn"
+                    title="Bold"
+                    onClick={() => insertFormatting("**", "**")}
+                  >
+                    <FiBold />
+                  </button>
+                  <button
+                    type="button"
+                    className="format-btn"
+                    title="Italic"
+                    onClick={() => insertFormatting("*", "*")}
+                  >
+                    <FiItalic />
+                  </button>
+                  <button
+                    type="button"
+                    className="format-btn"
+                    title="Code block"
+                    onClick={() => insertFormatting("```\n", "\n```")}
+                  >
+                    <FiCode />
+                  </button>
+                  <button
+                    type="button"
+                    className="format-btn"
+                    title="Bullet list"
+                    onClick={() => insertFormatting("- ")}
+                  >
+                    <FiList />
+                  </button>
+                </div>
+
+                <div className="editor-actions-right">
+                  <div className="editor-status-badge">
+                    <span
+                      className={`editor-status-dot ${saveStatus === "saving" ? "saving" : ""}`}
+                    />
+                    <span>{saveStatus === "saving" ? "Saving..." : "Saved"}</span>
+                  </div>
+
+                  {active && (
+                    <button
+                      type="button"
+                      className={`btn btn-sm ${active.isPinned ? "btn-warning" : "btn-light"}`}
+                      onClick={() => toggle(active, "isPinned")}
+                      title="Pin note"
+                    >
+                      <FiMapPin /> {active.isPinned ? "Pinned" : "Pin"}
+                    </button>
+                  )}
+
                   <button
                     type="button"
                     className="btn btn-primary btn-sm fw-bold d-flex align-items-center gap-1"
-                    data-testid="save-note-button"
                     onClick={save}
+                    data-testid="save-note-button"
                   >
                     <FiSave /> Save
                   </button>
-                  <button
-                    type="button"
-                    className="btn btn-light btn-sm fw-bold"
-                    data-testid="close-note-button"
-                    onClick={close}
-                  >
-                    <FiX />
-                  </button>
                 </div>
               </div>
 
-              <div className="editor-meta">
-                <div className="editor-tags-row">
-                  <FiTag className="tag-icon text-muted" />
-                  <input
-                    className="editor-tags-input"
-                    placeholder="Tags (comma separated)…"
-                    data-testid="note-tags-input"
-                    value={form.tags}
-                    onChange={(e) => autoSave("tags", e.target.value)}
-                  />
-                </div>
+              {/* Title Input */}
+              <input
+                className="editor-title"
+                placeholder="Note Title..."
+                data-testid="note-title-input"
+                value={form.title}
+                onChange={(e) => handleFieldChange("title", e.target.value)}
+              />
+
+              {/* Tags Input */}
+              <div className="editor-tags-row">
+                <FiTag className="text-muted" size={14} />
+                <input
+                  className="editor-tags-input"
+                  placeholder="Add tags separated by commas (e.g. Architecture, Interview, React)"
+                  data-testid="note-tags-input"
+                  value={form.tags}
+                  onChange={(e) => handleFieldChange("tags", e.target.value)}
+                />
               </div>
 
+              {/* Body Textarea */}
               <textarea
+                id="note-editor-body"
                 className="editor-body"
-                placeholder="Start writing your note… (Markdown supported)"
+                placeholder="Write your developer notes, snippets, system architecture thoughts..."
                 data-testid="note-content-input"
                 value={form.content}
-                onChange={(e) => autoSave("content", e.target.value)}
-                spellCheck
+                onChange={(e) => handleFieldChange("content", e.target.value)}
               />
+
+              {/* Editor Meta Footer */}
+              <div className="editor-footer-meta">
+                <span>
+                  {wordCount} words • {form.content.length} characters
+                </span>
+                <span>
+                  Markdown syntax supported (*bold*, - lists, `code`)
+                </span>
+              </div>
             </>
           ) : (
             <div className="editor-empty">
-              <FiEdit3 size={40} className="mb-2 text-muted" />
-              <h3 className="h5 fw-bold text-dark mb-1">Select or create a note</h3>
+              <FiBookOpen size={48} className="mb-3 opacity-50" />
+              <h5 className="fw-bold">No Note Selected</h5>
               <p className="small text-muted mb-3">
-                Pick a note from the list or hit <strong>New</strong> to start writing.
+                Select an existing note from the left sidebar or create a new scratchpad.
               </p>
               <button
                 type="button"
-                className="btn btn-primary btn-sm fw-bold d-flex align-items-center gap-1"
+                className="btn btn-primary btn-sm"
                 onClick={openNew}
               >
-                <FiPlus /> New Note
+                <FiPlus /> Create New Note
               </button>
             </div>
           )}
         </main>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalNote && (
+        <div
+          className="app-modal-backdrop"
+          onMouseDown={() => setDeleteModalNote(null)}
+        >
+          <div className="app-modal" onMouseDown={(e) => e.stopPropagation()}>
+            <div className="app-modal-head">
+              <h5>Delete Note</h5>
+              <button type="button" onClick={() => setDeleteModalNote(null)}>
+                <FiX />
+              </button>
+            </div>
+            <div className="p-4">
+              <p className="mb-4">
+                Are you sure you want to delete{" "}
+                <strong>{deleteModalNote.title || "this note"}</strong>?
+              </p>
+              <div className="d-flex justify-content-end gap-2">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setDeleteModalNote(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => confirmDelete(deleteModalNote)}
+                >
+                  Delete Note
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

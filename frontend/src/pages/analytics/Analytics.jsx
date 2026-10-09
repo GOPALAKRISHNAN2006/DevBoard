@@ -26,6 +26,8 @@ import {
   FiGithub,
 } from "react-icons/fi";
 import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import Layout from "../../components/Layout";
 import Loader from "../../components/Loader";
 
@@ -49,33 +51,10 @@ ChartJS.register(
   Filler
 );
 
-const CHART_OPTS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "bottom",
-      labels: { color: "#64748b", font: { family: "Inter" } },
-    },
-  },
-  scales: {
-    x: { ticks: { color: "#64748b" }, grid: { color: "rgba(0,0,0,0.04)" } },
-    y: { ticks: { color: "#64748b" }, grid: { color: "rgba(0,0,0,0.04)" } },
-  },
-};
-
-const PIE_OPTS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "bottom",
-      labels: { color: "#64748b", font: { family: "Inter" } },
-    },
-  },
-};
-
 export default function Analytics() {
+  const { user } = useAuth();
+  const { theme } = useTheme();
+
   const [jobs, setJobs] = useState([]);
   const [projects, setProjects] = useState([]);
   const [leetcode, setLeetcode] = useState(null);
@@ -90,6 +69,8 @@ export default function Analytics() {
   const loadAllAnalytics = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
+
+    const ghUsername = user?.githubUsername || "GOPALAKRISHNAN2006";
 
     try {
       await Promise.all([
@@ -106,7 +87,7 @@ export default function Analytics() {
           .then((r) => setLeetcode(r.data))
           .catch(() => {}),
         api
-          .get("/github/stats?username=GOPALAKRISHNAN2006")
+          .get(`/github/stats?username=${ghUsername}`)
           .then((r) => setGithub(r.data))
           .catch(() => {}),
         api
@@ -128,7 +109,7 @@ export default function Analytics() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     loadAllAnalytics();
