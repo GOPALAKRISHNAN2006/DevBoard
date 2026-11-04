@@ -23,6 +23,7 @@ import Loader from "../../components/Loader";
 import EmptyState from "../../components/EmptyState";
 import Pagination from "../../components/Pagination";
 import useDebounce from "../../hooks/useDebounce";
+import SEO from "../../components/SEO";
 import "./Projects.css";
 
 const blank = {
@@ -161,6 +162,11 @@ export default function Projects() {
   if (items === null) {
     return (
       <Layout>
+        <SEO
+          title="Project Portfolio Manager – DevBoard"
+          description="Manage, showcase, and edit your developer portfolio projects, live demos, and GitHub repository links."
+          robots="noindex, nofollow"
+        />
         <Loader />
       </Layout>
     );
@@ -181,6 +187,11 @@ export default function Projects() {
 
   return (
     <Layout>
+      <SEO
+        title="Project Portfolio Manager – DevBoard"
+        description="Manage, showcase, and edit your developer portfolio projects, live demos, and GitHub repository links."
+        robots="noindex, nofollow"
+      />
       {/* Header */}
       <div className="section-head animate-slide-up">
         <div>

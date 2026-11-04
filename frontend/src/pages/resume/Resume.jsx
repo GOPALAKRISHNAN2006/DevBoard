@@ -24,6 +24,7 @@ import SuggestionList from '../../components/resume/ats/SuggestionList';
 import JobDescriptionAnalyzer from '../../components/resume/ats/JobDescriptionAnalyzer';
 
 import { downloadResumePdf } from '../../utils/pdfGenerator';
+import SEO from '../../components/SEO';
 import './Resume.css';
 
 const DEFAULT_RESUME_DATA = {
@@ -327,6 +328,11 @@ const Resume = () => {
 
   return (
     <div className="container-fluid py-3 px-lg-4 resume-builder-page">
+      <SEO
+        title="ATS Resume Builder – DevBoard"
+        description="Build, format, and optimize ATS-friendly developer resumes with automated keyword matching and scoring."
+        robots="noindex, nofollow"
+      />
       {/* Upload Modal */}
       <ResumeUploadModal
         isOpen={showUploadModal}

@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import { FiCommand, FiArrowLeft, FiEye, FiEyeOff, FiZap } from "react-icons/fi";
+import SEO from "../../components/SEO";
 import "./Login.css";
 
 export default function Login() {
@@ -46,6 +47,12 @@ export default function Login() {
 
   return (
     <div className="auth-page" data-testid="login-page">
+      <SEO
+        title="Sign In to DevBoard – Developer Career Workspace"
+        description="Sign in to DevBoard to access your developer dashboard, track job applications, monitor GitHub and LeetCode analytics, and update your portfolio."
+        canonical="https://dev-board-mauve.vercel.app/login"
+        robots="noindex, follow"
+      />
       <div className="auth-panel">
         <div className="auth-brand">
           <Link to="/" className="auth-brand-logo">

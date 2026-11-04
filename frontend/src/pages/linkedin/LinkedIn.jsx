@@ -22,6 +22,7 @@ import CareerSuggestions from '../../components/linkedin/CareerSuggestions';
 import ProfileChecklist from '../../components/linkedin/ProfileChecklist';
 import EditLinkedInModal from '../../components/linkedin/EditLinkedInModal';
 import SyncProfileModal from '../../components/linkedin/SyncProfileModal';
+import SEO from '../../components/SEO';
 
 export default function LinkedIn() {
   const [data, setData] = useState(null);
@@ -109,6 +110,11 @@ export default function LinkedIn() {
   if (loading) {
     return (
       <Layout>
+        <SEO
+          title="LinkedIn Profile Optimizer – DevBoard"
+          description="Optimize your professional profile headline, skills alignment, and career positioning for tech recruiters."
+          robots="noindex, nofollow"
+        />
         <div className="py-5 text-center">
           <Loader />
           <p className="text-muted mt-3 fw-medium">Loading LinkedIn career profile...</p>
@@ -125,6 +131,11 @@ export default function LinkedIn() {
 
   return (
     <Layout>
+      <SEO
+        title="LinkedIn Profile Optimizer – DevBoard"
+        description="Optimize your professional profile headline, skills alignment, and career positioning for tech recruiters."
+        robots="noindex, nofollow"
+      />
       {/* ============================= */}
       {/* PAGE HEADER */}
       {/* ============================= */}

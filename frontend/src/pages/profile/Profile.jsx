@@ -23,6 +23,7 @@ import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import Layout from "../../components/Layout";
 import Loader from "../../components/Loader";
+import SEO from "../../components/SEO";
 import "./Profile.css";
 
 export default function Profile() {
@@ -93,6 +94,11 @@ export default function Profile() {
   if (!form) {
     return (
       <Layout>
+        <SEO
+          title="Account Settings – DevBoard"
+          description="Manage your DevBoard developer profile, connected usernames, skills, avatar, and account preferences."
+          robots="noindex, nofollow"
+        />
         <Loader />
       </Layout>
     );
@@ -190,6 +196,11 @@ export default function Profile() {
 
   return (
     <Layout>
+      <SEO
+        title="Account Settings – DevBoard"
+        description="Manage your DevBoard developer profile, connected usernames, skills, avatar, and account preferences."
+        robots="noindex, nofollow"
+      />
       {/* PAGE HEADER */}
       <div className="section-head d-flex justify-content-between align-items-center mb-4">
         <div>

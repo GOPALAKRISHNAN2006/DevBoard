@@ -1,0 +1,34 @@
+# Robots.txt for DevBoard (https://dev-board-mauve.vercel.app)
+# Reference: https://www.rfc-editor.org/rfc/rfc9309.html
+#
+# Strategy:
+# 1. Allow search engine crawlers to access all application routes so that route-level
+#    'noindex' directives (implemented in Phase 2) can be discovered and obeyed.
+#    (Blocking via Disallow prevents crawlers from fetching the page to read noindex tags).
+# 2. Prevent crawling of backend/proxy API routes.
+# 3. Ensure all rendering assets (scripts, styles, icons, fonts) remain crawlable.
+
+User-agent: *
+
+# Allow crawling of public marketing and authentication routes
+Allow: /
+Allow: /login
+Allow: /register
+
+# Allow rendering resources required for page hydration and DOM inspection
+Allow: /assets/
+Allow: /favicon.svg
+Allow: /manifest.json
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.svg$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.ico$
+Allow: /*.json$
+
+# Disallow crawling of backend and proxy API endpoints
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://dev-board-mauve.vercel.app/sitemap.xml

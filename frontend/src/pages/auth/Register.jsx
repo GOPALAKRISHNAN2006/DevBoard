@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
 import { FiCommand, FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
+import SEO from "../../components/SEO";
 import "./Register.css";
 
 export default function Register() {
@@ -29,6 +30,12 @@ export default function Register() {
 
   return (
     <div className="auth-page" data-testid="register-page">
+      <SEO
+        title="Create Your DevBoard Account – Developer Career Platform"
+        description="Create your free DevBoard account to track job applications, analyze your GitHub and LeetCode progress, and build ATS-friendly developer resumes."
+        canonical="https://dev-board-mauve.vercel.app/register"
+        robots="noindex, follow"
+      />
       <div className="auth-panel">
         <div className="auth-brand">
           <Link to="/" className="auth-brand-logo">

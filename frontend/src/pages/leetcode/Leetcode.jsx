@@ -20,6 +20,7 @@ import BadgeGrid from '../../components/leetcode/BadgeGrid';
 import ContestCard from '../../components/leetcode/ContestCard';
 import RecentProblems from '../../components/leetcode/RecentProblems';
 import MilestoneTracker from '../../components/leetcode/MilestoneTracker';
+import SEO from '../../components/SEO';
 
 export default function Leetcode() {
   const { user, refreshUser } = useAuth();
@@ -84,6 +85,11 @@ export default function Leetcode() {
   if (loading) {
     return (
       <Layout>
+        <SEO
+          title="LeetCode Progress Tracker – DevBoard"
+          description="Monitor your LeetCode problem-solving statistics, difficulty breakdown, contest ratings, and submission history."
+          robots="noindex, nofollow"
+        />
         <div className="py-5 text-center">
           <Loader />
           <p className="text-muted mt-3 fw-medium">Loading LeetCode analytics...</p>
@@ -94,6 +100,11 @@ export default function Leetcode() {
 
   return (
     <Layout>
+      <SEO
+        title="LeetCode Progress Tracker – DevBoard"
+        description="Monitor your LeetCode problem-solving statistics, difficulty breakdown, contest ratings, and submission history."
+        robots="noindex, nofollow"
+      />
       {/* ============================= */}
       {/* PAGE HEADER */}
       {/* ============================= */}

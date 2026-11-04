@@ -1,8 +1,9 @@
-import html2pdf from 'html2pdf.js';
 import toast from 'react-hot-toast';
 
 /**
  * Utility to generate and download a professional single-page ATS-friendly PDF
+ * html2pdf.js is dynamically imported to keep bundle size minimal and prevent
+ * large canvas/pdf libraries from blocking initial page load.
  */
 export const downloadResumePdf = async (elementId, filename = 'Resume.pdf') => {
   const element = document.getElementById(elementId);
@@ -34,6 +35,8 @@ export const downloadResumePdf = async (elementId, filename = 'Resume.pdf') => {
 
   try {
     toast.loading('Generating single-page PDF...', { id: 'pdf-toast' });
+    const html2pdfModule = await import('html2pdf.js');
+    const html2pdf = html2pdfModule.default || html2pdfModule;
     await html2pdf().set(opt).from(element).save();
     toast.success('Single-page resume downloaded successfully!', { id: 'pdf-toast' });
   } catch (error) {

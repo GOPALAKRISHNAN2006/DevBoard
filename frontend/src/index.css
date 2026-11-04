@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Web fonts (Plus Jakarta Sans & JetBrains Mono) are loaded via parallel <link rel="preconnect"> and <link rel="stylesheet"> in index.html to prevent render-blocking @import chains */
 
 :root {
   /* SaaS Design System Variables (Linear / Vercel / Stripe inspired) */

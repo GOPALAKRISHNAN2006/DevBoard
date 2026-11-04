@@ -36,6 +36,7 @@ import Layout from "../../components/Layout";
 import Loader from "../../components/Loader";
 import StatCard from "../../components/StatCard";
 import EmptyState from "../../components/EmptyState";
+import SEO from "../../components/SEO";
 import "./Dashboard.css";
 
 ChartJS.register(
@@ -226,6 +227,11 @@ export default function Dashboard() {
   if (!data) {
     return (
       <Layout>
+        <SEO
+          title="Dashboard – DevBoard"
+          description="Overview of developer projects, active job application pipeline, resume skills, and upcoming deadlines."
+          robots="noindex, nofollow"
+        />
         <Loader />
       </Layout>
     );
@@ -235,6 +241,11 @@ export default function Dashboard() {
 
   return (
     <Layout>
+      <SEO
+        title="Dashboard – DevBoard"
+        description="Overview of developer projects, active job application pipeline, resume skills, and upcoming deadlines."
+        robots="noindex, nofollow"
+      />
       {/* ======================================================== */}
       {/* HERO WELCOME BANNER */}
       {/* ======================================================== */}

@@ -21,6 +21,7 @@ import api from "../../api/axios";
 import Layout from "../../components/Layout";
 import EmptyState from "../../components/EmptyState";
 import useDebounce from "../../hooks/useDebounce";
+import SEO from "../../components/SEO";
 import "./Notes.css";
 
 // Memoized Note Item Component
@@ -287,6 +288,11 @@ export default function Notes() {
 
   return (
     <Layout>
+      <SEO
+        title="Developer Notes & Scratchpad – DevBoard"
+        description="Capture technical interview notes, code snippets, system design thoughts, and quick developer scratchpad memos."
+        robots="noindex, nofollow"
+      />
       <div className="notes-page animate-slide-up">
         {/* Left Sidebar */}
         <aside className="notes-sidebar">

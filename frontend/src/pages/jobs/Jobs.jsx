@@ -27,6 +27,7 @@ import Loader from "../../components/Loader";
 import EmptyState from "../../components/EmptyState";
 import Pagination from "../../components/Pagination";
 import useDebounce from "../../hooks/useDebounce";
+import SEO from "../../components/SEO";
 import "./Jobs.css";
 
 const blank = {
@@ -161,9 +162,22 @@ export default function Jobs() {
     }
   };
 
+  const isNewJobRoute = location.pathname === "/jobs/new";
+  const seoTitle = isNewJobRoute
+    ? "Add Job Application – DevBoard"
+    : "Job Application Tracker – DevBoard";
+  const seoDescription = isNewJobRoute
+    ? "Add a new job application to your DevBoard pipeline with company details, role, salary, and deadlines."
+    : "Track and organize developer job applications through hiring stages: Applied, Assessment, Interview, and Offer.";
+
   if (items === null) {
     return (
       <Layout>
+        <SEO
+          title={seoTitle}
+          description={seoDescription}
+          robots="noindex, nofollow"
+        />
         <Loader />
       </Layout>
     );
@@ -171,6 +185,11 @@ export default function Jobs() {
 
   return (
     <Layout>
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        robots="noindex, nofollow"
+      />
       {/* Header */}
       <div className="section-head animate-slide-up">
         <div>

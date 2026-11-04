@@ -19,13 +19,14 @@ import {
   FiCheckSquare,
 } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
+import SEO from "../../components/SEO";
+import { getHomepageStructuredData } from "../../utils/structuredData";
 import "./Home.css";
 
 export default function Home() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("jobs");
   const [scrolled, setScrolled] = useState(false);
-  const [tiltStyle, setTiltStyle] = useState({});
 
   // Section Refs for IntersectionObserver Scroll Reveal
   const demoRef = useRef(null);
@@ -35,16 +36,19 @@ export default function Home() {
   const howRef = useRef(null);
   const faqRef = useRef(null);
   const ctaRef = useRef(null);
+  const mockDashRef = useRef(null);
+  const rafIdRef = useRef(null);
 
   useEffect(() => {
+    let isPast = false;
     const handleScroll = () => {
-      if (window.scrollY > 40) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+      const past = window.scrollY > 40;
+      if (past !== isPast) {
+        isPast = past;
+        setScrolled(past);
       }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Scroll Reveal Observer
     const sections = [
@@ -75,32 +79,51 @@ export default function Home() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       observer.disconnect();
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
     };
   }, []);
 
-  // Subtle 3D Tilt handler for hero dashboard preview
+  // High-performance 3D Tilt handler using direct DOM transform and requestAnimationFrame
+  // Eliminates layout thrashing and prevents full-component React re-renders on mouse movement
   const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const card = mockDashRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
     const rotateX = (-y / rect.height) * 4; // max 2 deg
     const rotateY = (x / rect.width) * 4; // max 2 deg
 
-    setTiltStyle({
-      transform: `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(
-        2
-      )}deg)`,
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+    rafIdRef.current = requestAnimationFrame(() => {
+      if (card) {
+        card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+      }
     });
   };
 
   const handleMouseLeave = () => {
-    setTiltStyle({
-      transform: "rotateX(0deg) rotateY(0deg)",
-    });
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+    if (mockDashRef.current) {
+      mockDashRef.current.style.transform = "rotateX(0deg) rotateY(0deg)";
+    }
   };
 
   return (
     <div className="home-page">
+      <SEO
+        title="DevBoard – Developer Career Dashboard & Portfolio Analytics"
+        description="Manage your developer career in one place with GitHub analytics, LeetCode tracking, ATS resume building, job application tracking, and portfolio management."
+        canonical="https://dev-board-mauve.vercel.app/"
+        robots="index, follow"
+        structuredData={getHomepageStructuredData()}
+      />
       {/* Background Grid Pattern */}
       <div className="bg-grid-pattern" />
 
@@ -152,19 +175,23 @@ export default function Home() {
       </nav>
 
       {/* ======================================================== */}
-      {/* HERO SECTION */}
+      {/* MAIN CONTENT */}
       {/* ======================================================== */}
-      <header className="hero-section">
-        <div className="hero-badge">
-          <span className="pulse-dot" /> DEVBOARD &mdash; YOUR DEVELOPER CAREER COMMAND CENTER
-        </div>
-        <h1 className="hero-title">
-          Build. Track. Improve. <br />
-          <span className="text-gradient">Get Hired.</span>
-        </h1>
-        <p className="hero-subtitle">
-          DevBoard consolidates your developer job applications, showcases your production-ready projects, and compiles statistics directly from your GitHub and LeetCode.
-        </p>
+      <main role="main">
+        {/* ======================================================== */}
+        {/* HERO SECTION */}
+        {/* ======================================================== */}
+        <header className="hero-section">
+          <div className="hero-badge">
+            <span className="pulse-dot" /> DEVBOARD &mdash; YOUR DEVELOPER CAREER COMMAND CENTER
+          </div>
+          <h1 className="hero-title">
+            Developer Career Dashboard &amp; <br />
+            <span className="text-gradient">Portfolio Analytics Platform</span>
+          </h1>
+          <p className="hero-subtitle">
+            DevBoard consolidates your job application tracker, developer portfolio management, GitHub analytics, LeetCode progress, and ATS resume builder into a single command center.
+          </p>
 
         <div className="hero-cta">
           {user ? (
@@ -242,7 +269,8 @@ export default function Home() {
       {/* ======================================================== */}
       {/* FEATURE HIGHLIGHT CARDS GRID */}
       {/* ======================================================== */}
-      <section className="container py-4 my-2">
+      <section className="container py-4 my-2" aria-labelledby="core-features-heading">
+        <h2 id="core-features-heading" className="visually-hidden">Core Platform Capabilities</h2>
         <div className="row g-4">
           {/* Card 1: Job Pipeline */}
           <div className="col-12 col-md-6 col-lg-3">
@@ -253,7 +281,7 @@ export default function Home() {
                 </div>
                 <span className="badge bg-success-subtle text-success extra-small">Live Sync</span>
               </div>
-              <h6 className="fw-bold text-dark mb-1">Pipeline Job Tracker</h6>
+              <h3 className="h6 fw-bold text-dark mb-1">Pipeline Job Tracker</h3>
               <p className="extra-small text-muted mb-3">Organize applications from Applied to Interview and Offer.</p>
               <div className="progress mb-2" style={{ height: "6px" }}>
                 <div className="progress-bar bg-primary" style={{ width: "75%" }} />
@@ -274,7 +302,7 @@ export default function Home() {
                 </div>
                 <span className="badge bg-primary-subtle text-primary extra-small">94% Score</span>
               </div>
-              <h6 className="fw-bold text-dark mb-1">ATS Resume Builder</h6>
+              <h3 className="h6 fw-bold text-dark mb-1">ATS Resume Builder</h3>
               <p className="extra-small text-muted mb-3">Export ATS-optimized vector PDFs tailored to job specs.</p>
               <div className="d-flex align-items-center gap-2 extra-small text-success fw-bold">
                 <FiCheckSquare /> Verified Format Ready
@@ -291,7 +319,7 @@ export default function Home() {
                 </div>
                 <span className="badge bg-warning-subtle text-warning extra-small">2.1k Stars</span>
               </div>
-              <h6 className="fw-bold text-dark mb-1">GitHub Developer Sync</h6>
+              <h3 className="h6 fw-bold text-dark mb-1">GitHub Developer Sync</h3>
               <p className="extra-small text-muted mb-3">Analyze repo stars, languages, and commit momentum.</p>
               <div className="d-flex align-items-center gap-2 extra-small text-muted fw-semibold">
                 <FiGitBranch /> 402 Forks Tracked
@@ -308,7 +336,7 @@ export default function Home() {
                 </div>
                 <span className="badge bg-danger-subtle text-danger extra-small">412 Solved</span>
               </div>
-              <h6 className="fw-bold text-dark mb-1">LeetCode Progress</h6>
+              <h3 className="h6 fw-bold text-dark mb-1">LeetCode Progress</h3>
               <p className="extra-small text-muted mb-3">Daily GraphQL problem difficulty breakdown and ranking.</p>
               <div className="d-flex justify-content-between extra-small fw-semibold">
                 <span className="text-success">Easy: 180</span>
@@ -323,7 +351,8 @@ export default function Home() {
       {/* ======================================================== */}
       {/* INTERACTIVE MOCK DASHBOARD PREVIEW WITH 3D TILT */}
       {/* ======================================================== */}
-      <section id="demo" ref={demoRef} className="mock-dashboard-wrapper reveal-section">
+      <section id="demo" ref={demoRef} className="mock-dashboard-wrapper reveal-section" aria-labelledby="interactive-demo-heading">
+        <h2 id="interactive-demo-heading" className="visually-hidden">Interactive Dashboard Experience</h2>
         {/* Floating Micro UI Badges */}
         <div className="floating-badge floating-badge-1">
           <FiBriefcase /> + New Application
@@ -336,8 +365,8 @@ export default function Home() {
         </div>
 
         <div
+          ref={mockDashRef}
           className="mock-dashboard"
-          style={tiltStyle}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >
@@ -368,11 +397,11 @@ export default function Home() {
           </aside>
 
           {/* Mock Dashboard Body */}
-          <main className="mock-dash-main">
+          <div className="mock-dash-main">
             {activeTab === "jobs" && (
               <>
                 <div className="mock-dash-header">
-                  <h4>Applications Overview</h4>
+                  <h3 className="h4 mock-dash-title mb-0">Applications Overview</h3>
                   <span className="badge bg-primary-subtle text-primary border">
                     3 Active Opportunities
                   </span>
@@ -424,7 +453,7 @@ export default function Home() {
             {activeTab === "github" && (
               <>
                 <div className="mock-dash-header">
-                  <h4>GitHub Repository Analytics</h4>
+                  <h3 className="h4 mock-dash-title mb-0">GitHub Repository Analytics</h3>
                   <span className="badge bg-dark-subtle text-dark border">
                     Synced Repositories
                   </span>
@@ -465,7 +494,7 @@ export default function Home() {
             {activeTab === "leetcode" && (
               <>
                 <div className="mock-dash-header">
-                  <h4>LeetCode Problem Solving</h4>
+                  <h3 className="h4 mock-dash-title mb-0">LeetCode Problem Solving</h3>
                   <span className="badge bg-warning-subtle text-warning border">
                     Daily Stats Sync
                   </span>
@@ -490,7 +519,7 @@ export default function Home() {
                 </div>
               </>
             )}
-          </main>
+          </div>
         </div>
       </section>
 
@@ -543,7 +572,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                 <div className="feature-icon">
                   <FiLayers />
                 </div>
-                <h5 className="fw-bold text-dark h6">Build Your Portfolio</h5>
+                <h3 className="fw-bold text-dark h6">Build Your Portfolio</h3>
                 <p className="small text-muted mb-0">
                   Manage, categorize, and showcase your production-ready projects with live demos and GitHub repositories.
                 </p>
@@ -555,7 +584,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                 <div className="feature-icon">
                   <FiBriefcase />
                 </div>
-                <h5 className="fw-bold text-dark h6">Track Applications</h5>
+                <h3 className="fw-bold text-dark h6">Track Applications</h3>
                 <p className="small text-muted mb-0">
                   Never lose track of a job opportunity. Move applications from Applied to Interview and Offer.
                 </p>
@@ -567,7 +596,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                 <div className="feature-icon">
                   <FiCode />
                 </div>
-                <h5 className="fw-bold text-dark h6">Measure Your Progress</h5>
+                <h3 className="fw-bold text-dark h6">Measure Your Progress</h3>
                 <p className="small text-muted mb-0">
                   Connect GitHub and LeetCode to analyze repository stars, language breakdowns, and problem difficulty.
                 </p>
@@ -579,7 +608,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                 <div className="feature-icon">
                   <FiAward />
                 </div>
-                <h5 className="fw-bold text-dark h6">Build a Better Profile</h5>
+                <h3 className="fw-bold text-dark h6">Build a Better Profile</h3>
                 <p className="small text-muted mb-0">
                   Generate ATS-friendly resumes, optimize LinkedIn headlines, and maintain a 100% developer footprint.
                 </p>
@@ -708,7 +737,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
             <div className="col-12 col-md-3">
               <div className="p-3">
                 <div className="h3 fw-bold text-primary mb-2">01</div>
-                <h5 className="fw-bold h6 text-dark">Create your profile</h5>
+                <h3 className="fw-bold h6 text-dark">Create your profile</h3>
                 <p className="extra-small text-muted">
                   Add your skills, location, bio, and career goals.
                 </p>
@@ -718,7 +747,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
             <div className="col-12 col-md-3">
               <div className="p-3">
                 <div className="h3 fw-bold text-purple mb-2">02</div>
-                <h5 className="fw-bold h6 text-dark">Connect your profiles</h5>
+                <h3 className="fw-bold h6 text-dark">Connect your profiles</h3>
                 <p className="extra-small text-muted">
                   Sync GitHub, LeetCode, and LinkedIn handles.
                 </p>
@@ -728,7 +757,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
             <div className="col-12 col-md-3">
               <div className="p-3">
                 <div className="h3 fw-bold text-warning mb-2">03</div>
-                <h5 className="fw-bold h6 text-dark">Track your progress</h5>
+                <h3 className="fw-bold h6 text-dark">Track your progress</h3>
                 <p className="extra-small text-muted">
                   Manage projects, job applications, and notes.
                 </p>
@@ -738,7 +767,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
             <div className="col-12 col-md-3">
               <div className="p-3">
                 <div className="h3 fw-bold text-success mb-2">04</div>
-                <h5 className="fw-bold h6 text-dark">Improve and grow</h5>
+                <h3 className="fw-bold h6 text-dark">Improve and grow</h3>
                 <p className="extra-small text-muted">
                   Use analytics &amp; ATS scores to get hired.
                 </p>
@@ -768,19 +797,19 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
           }}
         >
           <div className="faq-card">
-            <h5>How does GitHub and LeetCode syncing work?</h5>
+            <h3 className="h5 fw-bold text-dark mb-2">How does GitHub and LeetCode syncing work?</h3>
             <p>
               Once you connect your public usernames inside your Profile Settings, our background services fetch your public profile repository metadata and coding stats directly from official APIs to keep your metrics fresh.
             </p>
           </div>
           <div className="faq-card">
-            <h5>Is my personal job tracking info private?</h5>
+            <h3 className="h5 fw-bold text-dark mb-2">Is my personal job tracking info private?</h3>
             <p>
               Yes. Every job application, notes, and uploaded certification detail is locked down securely to your private database user ID. Other users cannot search or access your dashboard metrics.
             </p>
           </div>
           <div className="faq-card">
-            <h5>Can I export my generated resume?</h5>
+            <h3 className="h5 fw-bold text-dark mb-2">Can I export my generated resume?</h3>
             <p>
               Absolutely. The resume section pulls your latest work profile details dynamically, letting you print or save the structured vector layout directly from your browser.
             </p>
@@ -807,9 +836,9 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
             boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
           }}
         >
-          <h3 className="fs-3 fw-bold mb-2 text-dark">
+          <h2 className="fs-3 fw-bold mb-2 text-dark">
             Ready to supercharge your developer career?
-          </h3>
+          </h2>
           <p className="text-muted mb-4 fs-6">
             Join other engineers who are organizing their jobs, profiles, and projects inside DevBoard.
           </p>
@@ -823,6 +852,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
           </div>
         </div>
       </section>
+      </main>
 
       {/* ======================================================== */}
       {/* FOOTER */}

@@ -36,6 +36,7 @@ import SuccessRateCard from "../../components/analytics/SuccessRateCard";
 import CareerProgressCard from "../../components/analytics/CareerProgressCard";
 import InsightsPanel from "../../components/analytics/InsightsPanel";
 import UpcomingDeadlinesCard from "../../components/analytics/UpcomingDeadlinesCard";
+import SEO from "../../components/SEO";
 
 import "./Analytics.css";
 
@@ -222,6 +223,11 @@ export default function Analytics() {
   if (loading)
     return (
       <Layout>
+        <SEO
+          title="Career Analytics – DevBoard"
+          description="Visualize application conversion funnels, response rates, and career milestone metrics with interactive charts."
+          robots="noindex, nofollow"
+        />
         <Loader />
       </Layout>
     );
@@ -364,6 +370,11 @@ export default function Analytics() {
 
   return (
     <Layout>
+      <SEO
+        title="Career Analytics – DevBoard"
+        description="Visualize application conversion funnels, response rates, and career milestone metrics with interactive charts."
+        robots="noindex, nofollow"
+      />
       {/* Page Header */}
       <div className="section-head d-flex justify-content-between align-items-center mb-4">
         <div>

@@ -24,6 +24,7 @@ import GithubProfileChecklist from '../../components/github/GithubProfileCheckli
 import GithubProfileReadme from '../../components/github/GithubProfileReadme';
 import RepositoryQualityCard from '../../components/github/RepositoryQualityCard';
 import GithubCareerInsights from '../../components/github/GithubCareerInsights';
+import SEO from '../../components/SEO';
 
 export default function Github() {
   const [data, setData] = useState(null);
@@ -106,6 +107,11 @@ export default function Github() {
   if (loading) {
     return (
       <Layout>
+        <SEO
+          title="GitHub Analytics – DevBoard"
+          description="Analyze your public GitHub repositories, stars, forks, commit activity, and programming language breakdown."
+          robots="noindex, nofollow"
+        />
         <div className="py-5 text-center">
           <Loader />
           <p className="text-muted mt-3 fw-medium">Loading GitHub Developer Analytics...</p>
@@ -117,6 +123,11 @@ export default function Github() {
   if (error && !data) {
     return (
       <Layout>
+        <SEO
+          title="GitHub Analytics – DevBoard"
+          description="Analyze your public GitHub repositories, stars, forks, commit activity, and programming language breakdown."
+          robots="noindex, nofollow"
+        />
         <div className="section-head">
           <div>
             <h1 className="page-title">GitHub</h1>
@@ -144,6 +155,11 @@ export default function Github() {
 
   return (
     <Layout>
+      <SEO
+        title="GitHub Analytics – DevBoard"
+        description="Analyze your public GitHub repositories, stars, forks, commit activity, and programming language breakdown."
+        robots="noindex, nofollow"
+      />
       {/* ============================= */}
       {/* PAGE HEADER */}
       {/* ============================= */}

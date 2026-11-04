@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import Loader from './components/Loader';
@@ -13,6 +14,7 @@ const Register = lazy(() => import('./pages/auth/Register'));
 
 // Lazy-loaded Public Pages
 const Home = lazy(() => import('./pages/home/Home'));
+const NotFound = lazy(() => import('./pages/notFound/NotFound'));
 
 // Lazy-loaded App Pages
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard'));
@@ -29,39 +31,41 @@ const LinkedIn = lazy(() => import('./pages/linkedin/LinkedIn'));
 export default function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <ThemeProvider>
-          <AuthProvider>
-            <Suspense fallback={<Loader full={true} />}>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+      <HelmetProvider>
+        <BrowserRouter>
+          <ThemeProvider>
+            <AuthProvider>
+              <Suspense fallback={<Loader full={true} />}>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
 
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/jobs" element={<Jobs />} />
-                  <Route path="/jobs/new" element={<Jobs />} />
-                  <Route path="/resume" element={<Resume />} />
-                  <Route path="/github" element={<Github />} />
-                  <Route path="/leetcode" element={<Leetcode />} />
-                  <Route path="/linkedin" element={<LinkedIn />} />
-                  <Route path="/notes" element={<Notes />} />
-                  <Route path="/analytics" element={<Analytics />} />
-                  <Route path="/profile" element={<Profile />} />
-                </Route>
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/projects" element={<Projects />} />
+                    <Route path="/jobs" element={<Jobs />} />
+                    <Route path="/jobs/new" element={<Jobs />} />
+                    <Route path="/resume" element={<Resume />} />
+                    <Route path="/github" element={<Github />} />
+                    <Route path="/leetcode" element={<Leetcode />} />
+                    <Route path="/linkedin" element={<LinkedIn />} />
+                    <Route path="/notes" element={<Notes />} />
+                    <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/profile" element={<Profile />} />
+                  </Route>
 
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Suspense>
-            <Toaster position="top-right" />
-          </AuthProvider>
-        </ThemeProvider>
-      </BrowserRouter>
+                  {/* Fallback 404 Route */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+              <Toaster position="top-right" />
+            </AuthProvider>
+          </ThemeProvider>
+        </BrowserRouter>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }
