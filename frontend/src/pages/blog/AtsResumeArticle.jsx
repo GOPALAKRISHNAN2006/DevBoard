@@ -127,15 +127,18 @@ export default function AtsResumeArticle() {
 
             <h2>2. Writing High-Impact Engineering Bullets (The XYZ Framework)</h2>
             <p>
-              Once your resume passes initial screening, engineering hiring managers evaluate your practical contributions. A widely recommended approach for writing impactful technical bullets is the XYZ framework popularized by former Google Senior Vice President of People Operations Laszlo Bock and referenced in{' '}
+              Once your resume passes initial screening, engineering reviewers evaluate the depth of your practical contributions. A widely cited framework for structuring impactful resume bullets was articulated by Laszlo Bock, former Google Senior Vice President of People Operations (and author of <em>Work Rules!</em>), as detailed in{' '}
               <a
-                href="https://careers.google.com/how-we-hire/"
+                href="https://www.inc.com/bill-murphy-jr/google-recruiters-say-these-5-resume-tips-including-x-y-z-formula-will-improve-your-odds-of-getting-hired-at-google.html"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Google Careers hiring guidance
+                reporting on his resume-writing advice
               </a>
               : <em>&quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;</em>.
+            </p>
+            <p className="extra-small text-muted fst-italic mt-1 mb-3">
+              Note: This framework is general resume-writing advice designed to highlight measurable outcomes for human reviewers, rather than an automated ATS parsing requirement or an official Google application rule.
             </p>
 
             <div className="comparison-grid">

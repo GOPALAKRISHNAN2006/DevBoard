@@ -97,7 +97,7 @@ export default function CodingInterviewArticle() {
               Preparing for data structures and algorithms (DSA) interviews is often one of the most demanding phases of a software engineering job search. Many candidates adopt an ad-hoc approach: they attempt to solve hundreds of problems at random on LeetCode, only to find during live interviews that unfamiliar problem variations remain challenging.
             </p>
             <p>
-              Rather than attempting to memorize hundreds of individual problems in isolation, many candidates and competitive programming educators recommend focusing on recurring algorithmic patterns. Curated community roadmaps—such as Yangshun Tay&apos;s{' '}
+              Rather than attempting to memorize hundreds of individual problems in isolation, many candidates and competitive programming educators recommend focusing on recurring algorithmic patterns. Curated resources—such as Yangshun Tay&apos;s{' '}
               <a
                 href="https://www.techinterviewhandbook.org/best-practice-questions/"
                 target="_blank"
@@ -111,9 +111,9 @@ export default function CodingInterviewArticle() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                NeetCode 150 practice roadmap
+                NeetCode 150 curriculum
               </a>{' '}
-              —popularized this pattern-based approach. Practicing how to recognize and adapt structural patterns across different problem formulations helps build broader problem-solving versatility.
+              (an example of a structured interview-preparation set organized into topic categories)—illustrate this pattern-based study approach. Practicing how to recognize and adapt structural patterns across different problem formulations helps build broader problem-solving versatility.
             </p>
             <p>
               Below is a structured study methodology designed to help organize algorithmic practice efficiently.
