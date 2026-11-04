@@ -109,3 +109,54 @@ export function getHomepageStructuredData() {
   };
 }
 
+/**
+ * Generates tailored Schema.org JSON-LD structured data for public feature landing pages.
+ * Includes WebPage and BreadcrumbList markup.
+ */
+export function getFeaturePageStructuredData({ name, description, path, featureName }) {
+  const url = `${PRODUCTION_DOMAIN}${path}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${url}#webpage`,
+        "url": url,
+        "name": name,
+        "description": description,
+        "isPartOf": {
+          "@id": `${PRODUCTION_DOMAIN}/#website`,
+        },
+        "breadcrumb": {
+          "@id": `${url}#breadcrumb`,
+        },
+        "inLanguage": "en-US",
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": `${PRODUCTION_DOMAIN}/`,
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Features",
+            "item": `${PRODUCTION_DOMAIN}/#features`,
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": featureName,
+            "item": url,
+          },
+        ],
+      },
+    ],
+  };
+}
+

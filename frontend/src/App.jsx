@@ -16,6 +16,14 @@ const Register = lazy(() => import('./pages/auth/Register'));
 const Home = lazy(() => import('./pages/home/Home'));
 const NotFound = lazy(() => import('./pages/notFound/NotFound'));
 
+// Lazy-loaded Feature Landing Pages (Public SEO)
+const JobTrackerFeature = lazy(() => import('./pages/features/JobTrackerFeature'));
+const ResumeBuilderFeature = lazy(() => import('./pages/features/ResumeBuilderFeature'));
+const GithubAnalyticsFeature = lazy(() => import('./pages/features/GithubAnalyticsFeature'));
+const LeetcodeTrackerFeature = lazy(() => import('./pages/features/LeetcodeTrackerFeature'));
+const PortfolioFeature = lazy(() => import('./pages/features/PortfolioFeature'));
+const LinkedinOptimizerFeature = lazy(() => import('./pages/features/LinkedinOptimizerFeature'));
+
 // Lazy-loaded App Pages
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard'));
 const Projects = lazy(() => import('./pages/projects/Projects'));
@@ -39,6 +47,12 @@ export default function App() {
                 <Routes>
                   {/* Public Routes */}
                   <Route path="/" element={<Home />} />
+                  <Route path="/features/job-application-tracker" element={<JobTrackerFeature />} />
+                  <Route path="/features/ats-resume-builder" element={<ResumeBuilderFeature />} />
+                  <Route path="/features/github-analytics" element={<GithubAnalyticsFeature />} />
+                  <Route path="/features/leetcode-tracker" element={<LeetcodeTrackerFeature />} />
+                  <Route path="/features/developer-portfolio" element={<PortfolioFeature />} />
+                  <Route path="/features/linkedin-optimizer" element={<LinkedinOptimizerFeature />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
 

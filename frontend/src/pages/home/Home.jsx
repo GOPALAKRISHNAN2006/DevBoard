@@ -290,6 +290,11 @@ export default function Home() {
                 <span>Applied: 12</span>
                 <span>Offer: 1</span>
               </div>
+              <div className="mt-2 pt-2 border-top">
+                <Link to="/features/job-application-tracker" className="extra-small fw-bold text-primary text-decoration-none">
+                  Explore Job Tracker &rarr;
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -307,6 +312,11 @@ export default function Home() {
               <div className="d-flex align-items-center gap-2 extra-small text-success fw-bold">
                 <FiCheckSquare /> Verified Format Ready
               </div>
+              <div className="mt-2 pt-2 border-top">
+                <Link to="/features/ats-resume-builder" className="extra-small fw-bold text-primary text-decoration-none">
+                  Explore ATS Resume &rarr;
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -323,6 +333,11 @@ export default function Home() {
               <p className="extra-small text-muted mb-3">Analyze repo stars, languages, and commit momentum.</p>
               <div className="d-flex align-items-center gap-2 extra-small text-muted fw-semibold">
                 <FiGitBranch /> 402 Forks Tracked
+              </div>
+              <div className="mt-2 pt-2 border-top">
+                <Link to="/features/github-analytics" className="extra-small fw-bold text-primary text-decoration-none">
+                  Explore GitHub Sync &rarr;
+                </Link>
               </div>
             </div>
           </div>
@@ -342,6 +357,11 @@ export default function Home() {
                 <span className="text-success">Easy: 180</span>
                 <span className="text-warning">Med: 192</span>
                 <span className="text-danger">Hard: 40</span>
+              </div>
+              <div className="mt-2 pt-2 border-top">
+                <Link to="/features/leetcode-tracker" className="extra-small fw-bold text-primary text-decoration-none">
+                  Explore LeetCode Tracker &rarr;
+                </Link>
               </div>
             </div>
           </div>
@@ -573,9 +593,12 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                   <FiLayers />
                 </div>
                 <h3 className="fw-bold text-dark h6">Build Your Portfolio</h3>
-                <p className="small text-muted mb-0">
+                <p className="small text-muted mb-2">
                   Manage, categorize, and showcase your production-ready projects with live demos and GitHub repositories.
                 </p>
+                <Link to="/features/developer-portfolio" className="extra-small fw-bold text-primary text-decoration-none">
+                  Portfolio CMS &rarr;
+                </Link>
               </div>
             </div>
 
@@ -585,9 +608,12 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                   <FiBriefcase />
                 </div>
                 <h3 className="fw-bold text-dark h6">Track Applications</h3>
-                <p className="small text-muted mb-0">
+                <p className="small text-muted mb-2">
                   Never lose track of a job opportunity. Move applications from Applied to Interview and Offer.
                 </p>
+                <Link to="/features/job-application-tracker" className="extra-small fw-bold text-primary text-decoration-none">
+                  Job Pipeline &rarr;
+                </Link>
               </div>
             </div>
 
@@ -597,9 +623,12 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                   <FiCode />
                 </div>
                 <h3 className="fw-bold text-dark h6">Measure Your Progress</h3>
-                <p className="small text-muted mb-0">
+                <p className="small text-muted mb-2">
                   Connect GitHub and LeetCode to analyze repository stars, language breakdowns, and problem difficulty.
                 </p>
+                <Link to="/features/github-analytics" className="extra-small fw-bold text-primary text-decoration-none">
+                  GitHub &amp; LeetCode &rarr;
+                </Link>
               </div>
             </div>
 
@@ -609,9 +638,12 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                   <FiAward />
                 </div>
                 <h3 className="fw-bold text-dark h6">Build a Better Profile</h3>
-                <p className="small text-muted mb-0">
+                <p className="small text-muted mb-2">
                   Generate ATS-friendly resumes, optimize LinkedIn headlines, and maintain a 100% developer footprint.
                 </p>
+                <Link to="/features/linkedin-optimizer" className="extra-small fw-bold text-primary text-decoration-none">
+                  Profile Optimization &rarr;
+                </Link>
               </div>
             </div>
           </div>
@@ -633,7 +665,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
               Replace messy spreadsheets with a developer job tracker. Categorize application stages, document salaries, deadlines, and set custom interview notes.
             </p>
             <div className="mt-3">
-              <Link to="/register" className="extra-small fw-bold text-primary text-decoration-none">
+              <Link to="/features/job-application-tracker" className="extra-small fw-bold text-primary text-decoration-none">
                 Explore Job Tracker <FiArrowRight />
               </Link>
             </div>
@@ -648,8 +680,8 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
               Build and export ATS-friendly vector PDF layouts containing your skills, work experience history, and projects.
             </p>
             <div className="mt-3">
-              <Link to="/register" className="extra-small fw-bold text-primary text-decoration-none">
-                Build Resume <FiArrowRight />
+              <Link to="/features/ats-resume-builder" className="extra-small fw-bold text-primary text-decoration-none">
+                ATS Resume Builder <FiArrowRight />
               </Link>
             </div>
           </div>
@@ -677,9 +709,12 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
             <p>
               Instantly fetch your repositories and LeetCode stats via official endpoints. Show off your rankings directly in your career portal.
             </p>
-            <div className="mt-3">
-              <Link to="/register" className="extra-small fw-bold text-primary text-decoration-none">
-                Connect Integrations <FiArrowRight />
+            <div className="mt-3 d-flex gap-3">
+              <Link to="/features/github-analytics" className="extra-small fw-bold text-primary text-decoration-none">
+                GitHub Sync <FiArrowRight />
+              </Link>
+              <Link to="/features/leetcode-tracker" className="extra-small fw-bold text-primary text-decoration-none">
+                LeetCode Stats <FiArrowRight />
               </Link>
             </div>
           </div>
@@ -699,26 +734,26 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
           <div className="p-4 bg-light rounded-3 border max-w-800 mx-auto">
             <div className="badge bg-primary fs-6 px-3 py-2 mb-3">DEVBOARD CORE</div>
             <div className="d-flex justify-content-center gap-3 flex-wrap mb-3">
-              <span className="badge bg-white text-dark border p-2 fw-semibold">
+              <Link to="/features/developer-portfolio" className="badge bg-white text-dark border p-2 fw-semibold text-decoration-none">
                 <FiLayers className="text-primary me-1" /> Projects
-              </span>
-              <span className="badge bg-white text-dark border p-2 fw-semibold">
+              </Link>
+              <Link to="/features/job-application-tracker" className="badge bg-white text-dark border p-2 fw-semibold text-decoration-none">
                 <FiBriefcase className="text-purple me-1" /> Job Tracker
-              </span>
-              <span className="badge bg-white text-dark border p-2 fw-semibold">
+              </Link>
+              <Link to="/features/ats-resume-builder" className="badge bg-white text-dark border p-2 fw-semibold text-decoration-none">
                 <FiFileText className="text-info me-1" /> Resume Builder
-              </span>
+              </Link>
             </div>
             <div className="d-flex justify-content-center gap-3 flex-wrap">
-              <span className="badge bg-white text-dark border p-2 fw-semibold">
+              <Link to="/features/github-analytics" className="badge bg-white text-dark border p-2 fw-semibold text-decoration-none">
                 <FiGithub className="text-dark me-1" /> GitHub
-              </span>
-              <span className="badge bg-white text-dark border p-2 fw-semibold">
+              </Link>
+              <Link to="/features/leetcode-tracker" className="badge bg-white text-dark border p-2 fw-semibold text-decoration-none">
                 <FiCode className="text-warning me-1" /> LeetCode
-              </span>
-              <span className="badge bg-white text-dark border p-2 fw-semibold">
+              </Link>
+              <Link to="/features/linkedin-optimizer" className="badge bg-white text-dark border p-2 fw-semibold text-decoration-none">
                 <FiLinkedin className="text-primary me-1" /> LinkedIn
-              </span>
+              </Link>
             </div>
           </div>
         </div>
@@ -859,12 +894,63 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
       {/* ======================================================== */}
       <footer className="home-footer">
         <div className="container">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 pb-3 border-bottom">
-            <div className="d-flex align-items-center gap-2 fw-bold text-dark">
-              <FiCommand className="text-primary" /> DevBoard Platform
+          <div className="row g-4 py-4 border-bottom">
+            <div className="col-12 col-md-4">
+              <div className="d-flex align-items-center gap-2 fw-bold text-dark fs-5 mb-2">
+                <FiCommand className="text-primary" /> DevBoard
+              </div>
+              <p className="text-muted small mb-0">
+                Unified developer career hub and portfolio analytics platform. Master job hunting, code tracking, resume generation, and technical presence.
+              </p>
             </div>
+            <div className="col-6 col-md-4">
+              <div className="fw-bold text-dark small text-uppercase mb-2">Platform Features</div>
+              <ul className="list-unstyled extra-small space-y-1 mb-0">
+                <li className="mb-1">
+                  <Link to="/features/job-application-tracker" className="text-muted text-decoration-none">
+                    Job Application Tracker
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/features/ats-resume-builder" className="text-muted text-decoration-none">
+                    ATS Resume Builder &amp; Match
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/features/github-analytics" className="text-muted text-decoration-none">
+                    GitHub Developer Analytics
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="col-6 col-md-4">
+              <div className="fw-bold text-dark small text-uppercase mb-2">Developer Tools</div>
+              <ul className="list-unstyled extra-small space-y-1 mb-0">
+                <li className="mb-1">
+                  <Link to="/features/leetcode-tracker" className="text-muted text-decoration-none">
+                    LeetCode Progress Tracker
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/features/developer-portfolio" className="text-muted text-decoration-none">
+                    Portfolio CMS Showcase
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/features/linkedin-optimizer" className="text-muted text-decoration-none">
+                    LinkedIn Profile Optimizer
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 py-3">
             <div className="small text-muted">
               &copy; {new Date().getFullYear()} DevBoard. All rights reserved.
+            </div>
+            <div className="d-flex gap-3 extra-small text-muted">
+              <Link to="/login" className="text-muted text-decoration-none">Sign In</Link>
+              <Link to="/register" className="text-muted text-decoration-none">Register</Link>
             </div>
           </div>
         </div>

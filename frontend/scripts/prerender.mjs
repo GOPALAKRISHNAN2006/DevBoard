@@ -20,6 +20,60 @@ const routes = [
     name: 'Homepage'
   },
   {
+    path: '/features/job-application-tracker',
+    outputPaths: [
+      path.join(distDir, 'features', 'job-application-tracker', 'index.html'),
+      path.join(distDir, 'features', 'job-application-tracker.html')
+    ],
+    componentPath: '/src/pages/features/JobTrackerFeature.jsx',
+    name: 'Job Application Tracker'
+  },
+  {
+    path: '/features/ats-resume-builder',
+    outputPaths: [
+      path.join(distDir, 'features', 'ats-resume-builder', 'index.html'),
+      path.join(distDir, 'features', 'ats-resume-builder.html')
+    ],
+    componentPath: '/src/pages/features/ResumeBuilderFeature.jsx',
+    name: 'ATS Resume Builder'
+  },
+  {
+    path: '/features/github-analytics',
+    outputPaths: [
+      path.join(distDir, 'features', 'github-analytics', 'index.html'),
+      path.join(distDir, 'features', 'github-analytics.html')
+    ],
+    componentPath: '/src/pages/features/GithubAnalyticsFeature.jsx',
+    name: 'GitHub Analytics'
+  },
+  {
+    path: '/features/leetcode-tracker',
+    outputPaths: [
+      path.join(distDir, 'features', 'leetcode-tracker', 'index.html'),
+      path.join(distDir, 'features', 'leetcode-tracker.html')
+    ],
+    componentPath: '/src/pages/features/LeetcodeTrackerFeature.jsx',
+    name: 'LeetCode Tracker'
+  },
+  {
+    path: '/features/developer-portfolio',
+    outputPaths: [
+      path.join(distDir, 'features', 'developer-portfolio', 'index.html'),
+      path.join(distDir, 'features', 'developer-portfolio.html')
+    ],
+    componentPath: '/src/pages/features/PortfolioFeature.jsx',
+    name: 'Developer Portfolio CMS'
+  },
+  {
+    path: '/features/linkedin-optimizer',
+    outputPaths: [
+      path.join(distDir, 'features', 'linkedin-optimizer', 'index.html'),
+      path.join(distDir, 'features', 'linkedin-optimizer.html')
+    ],
+    componentPath: '/src/pages/features/LinkedinOptimizerFeature.jsx',
+    name: 'LinkedIn Optimizer'
+  },
+  {
     path: '/login',
     outputPaths: [
       path.join(distDir, 'login', 'index.html'),

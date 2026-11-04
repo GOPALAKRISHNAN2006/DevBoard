@@ -12,6 +12,7 @@ User-agent: *
 
 # Allow crawling of public marketing and authentication routes
 Allow: /
+Allow: /features/
 Allow: /login
 Allow: /register
 
