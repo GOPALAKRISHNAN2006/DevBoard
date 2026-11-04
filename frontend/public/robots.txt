@@ -13,6 +13,8 @@ User-agent: *
 # Allow crawling of public marketing and authentication routes
 Allow: /
 Allow: /features/
+Allow: /blog/
+Allow: /blog
 Allow: /login
 Allow: /register
 

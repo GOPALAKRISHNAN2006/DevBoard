@@ -48,6 +48,7 @@ export default function JobTrackerFeature() {
           <a href="#preview" className="feature-nav-link">Pipeline View</a>
           <a href="#workflow" className="feature-nav-link">Workflow</a>
           <Link to="/features/ats-resume-builder" className="feature-nav-link">ATS Resume</Link>
+          <Link to="/blog" className="feature-nav-link">Career Guides</Link>
         </div>
         <div className="d-flex align-items-center gap-2">
           <Link to="/login" className="btn btn-secondary-minimal" style={{ border: 'none' }}>
@@ -342,6 +343,7 @@ export default function JobTrackerFeature() {
             <Link to="/features/leetcode-tracker">LeetCode Stats</Link>
             <Link to="/features/developer-portfolio">Portfolio</Link>
             <Link to="/features/linkedin-optimizer">LinkedIn</Link>
+            <Link to="/blog">Career Guides</Link>
           </div>
         </div>
       </footer>

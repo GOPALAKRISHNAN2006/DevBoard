@@ -24,6 +24,14 @@ const LeetcodeTrackerFeature = lazy(() => import('./pages/features/LeetcodeTrack
 const PortfolioFeature = lazy(() => import('./pages/features/PortfolioFeature'));
 const LinkedinOptimizerFeature = lazy(() => import('./pages/features/LinkedinOptimizerFeature'));
 
+// Lazy-loaded Public Blog & Resource Pages (SEO Content Strategy)
+const BlogListing = lazy(() => import('./pages/blog/BlogListing'));
+const AtsResumeArticle = lazy(() => import('./pages/blog/AtsResumeArticle'));
+const GithubProfileArticle = lazy(() => import('./pages/blog/GithubProfileArticle'));
+const CodingInterviewArticle = lazy(() => import('./pages/blog/CodingInterviewArticle'));
+const PortfolioGuideArticle = lazy(() => import('./pages/blog/PortfolioGuideArticle'));
+const JobTrackingGuideArticle = lazy(() => import('./pages/blog/JobTrackingGuideArticle'));
+
 // Lazy-loaded App Pages
 const Dashboard = lazy(() => import('./pages/dashboard/Dashboard'));
 const Projects = lazy(() => import('./pages/projects/Projects'));
@@ -53,6 +61,12 @@ export default function App() {
                   <Route path="/features/leetcode-tracker" element={<LeetcodeTrackerFeature />} />
                   <Route path="/features/developer-portfolio" element={<PortfolioFeature />} />
                   <Route path="/features/linkedin-optimizer" element={<LinkedinOptimizerFeature />} />
+                  <Route path="/blog" element={<BlogListing />} />
+                  <Route path="/blog/ats-friendly-developer-resume" element={<AtsResumeArticle />} />
+                  <Route path="/blog/improve-github-profile" element={<GithubProfileArticle />} />
+                  <Route path="/blog/software-engineering-interview-preparation" element={<CodingInterviewArticle />} />
+                  <Route path="/blog/developer-portfolio-guide" element={<PortfolioGuideArticle />} />
+                  <Route path="/blog/job-application-tracking-guide" element={<JobTrackingGuideArticle />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
 

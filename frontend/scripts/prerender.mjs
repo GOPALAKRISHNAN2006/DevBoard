@@ -74,6 +74,60 @@ const routes = [
     name: 'LinkedIn Optimizer'
   },
   {
+    path: '/blog',
+    outputPaths: [
+      path.join(distDir, 'blog', 'index.html'),
+      path.join(distDir, 'blog.html')
+    ],
+    componentPath: '/src/pages/blog/BlogListing.jsx',
+    name: 'Resources Hub'
+  },
+  {
+    path: '/blog/ats-friendly-developer-resume',
+    outputPaths: [
+      path.join(distDir, 'blog', 'ats-friendly-developer-resume', 'index.html'),
+      path.join(distDir, 'blog', 'ats-friendly-developer-resume.html')
+    ],
+    componentPath: '/src/pages/blog/AtsResumeArticle.jsx',
+    name: 'ATS Resume Guide'
+  },
+  {
+    path: '/blog/improve-github-profile',
+    outputPaths: [
+      path.join(distDir, 'blog', 'improve-github-profile', 'index.html'),
+      path.join(distDir, 'blog', 'improve-github-profile.html')
+    ],
+    componentPath: '/src/pages/blog/GithubProfileArticle.jsx',
+    name: 'GitHub Profile Guide'
+  },
+  {
+    path: '/blog/software-engineering-interview-preparation',
+    outputPaths: [
+      path.join(distDir, 'blog', 'software-engineering-interview-preparation', 'index.html'),
+      path.join(distDir, 'blog', 'software-engineering-interview-preparation.html')
+    ],
+    componentPath: '/src/pages/blog/CodingInterviewArticle.jsx',
+    name: 'Coding Interview Prep Guide'
+  },
+  {
+    path: '/blog/developer-portfolio-guide',
+    outputPaths: [
+      path.join(distDir, 'blog', 'developer-portfolio-guide', 'index.html'),
+      path.join(distDir, 'blog', 'developer-portfolio-guide.html')
+    ],
+    componentPath: '/src/pages/blog/PortfolioGuideArticle.jsx',
+    name: 'Developer Portfolio Guide'
+  },
+  {
+    path: '/blog/job-application-tracking-guide',
+    outputPaths: [
+      path.join(distDir, 'blog', 'job-application-tracking-guide', 'index.html'),
+      path.join(distDir, 'blog', 'job-application-tracking-guide.html')
+    ],
+    componentPath: '/src/pages/blog/JobTrackingGuideArticle.jsx',
+    name: 'Job Tracking Guide'
+  },
+  {
     path: '/login',
     outputPaths: [
       path.join(distDir, 'login', 'index.html'),

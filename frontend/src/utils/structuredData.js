@@ -160,3 +160,116 @@ export function getFeaturePageStructuredData({ name, description, path, featureN
   };
 }
 
+/**
+ * Generates Schema.org JSON-LD structured data for the blog / resources hub.
+ */
+export function getBlogListingStructuredData({ title, description }) {
+  const url = `${PRODUCTION_DOMAIN}/blog`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${url}#collection`,
+        "url": url,
+        "name": title,
+        "description": description,
+        "isPartOf": {
+          "@id": `${PRODUCTION_DOMAIN}/#website`,
+        },
+        "breadcrumb": {
+          "@id": `${url}#breadcrumb`,
+        },
+        "inLanguage": "en-US",
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": `${PRODUCTION_DOMAIN}/`,
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Resources",
+            "item": url,
+          },
+        ],
+      },
+    ],
+  };
+}
+
+/**
+ * Generates Schema.org JSON-LD Article structured data for an individual article.
+ */
+export function getArticleStructuredData({
+  title,
+  description,
+  path,
+  datePublished,
+  dateModified,
+  category,
+}) {
+  const url = `${PRODUCTION_DOMAIN}${path}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": `${url}#article`,
+        "isPartOf": {
+          "@id": `${PRODUCTION_DOMAIN}/#website`,
+        },
+        "headline": title,
+        "description": description,
+        "inLanguage": "en-US",
+        "mainEntityOfPage": url,
+        "datePublished": datePublished,
+        "dateModified": dateModified,
+        "articleSection": category,
+        "image": `${PRODUCTION_DOMAIN}/og-image.png`,
+        "author": {
+          "@type": "Person",
+          "name": "Gopalakrishnan M",
+          "url": "https://github.com/GOPALAKRISHNAN2006",
+        },
+        "publisher": {
+          "@id": `${PRODUCTION_DOMAIN}/#organization`,
+        },
+        "breadcrumb": {
+          "@id": `${url}#breadcrumb`,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": `${PRODUCTION_DOMAIN}/`,
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Resources",
+            "item": `${PRODUCTION_DOMAIN}/blog`,
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": title,
+            "item": url,
+          },
+        ],
+      },
+    ],
+  };
+}
+

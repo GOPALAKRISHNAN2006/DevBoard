@@ -338,6 +338,7 @@ export default function ResumeBuilderFeature() {
             <Link to="/features/leetcode-tracker">LeetCode Stats</Link>
             <Link to="/features/developer-portfolio">Portfolio</Link>
             <Link to="/features/linkedin-optimizer">LinkedIn</Link>
+            <Link to="/blog">Career Guides</Link>
           </div>
         </div>
       </footer>

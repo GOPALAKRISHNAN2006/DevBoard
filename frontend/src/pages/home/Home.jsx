@@ -147,6 +147,9 @@ export default function Home() {
           <a href="#demo" className="nav-link-minimal">
             Interactive Demo
           </a>
+          <Link to="/blog" className="nav-link-minimal">
+            Resources
+          </Link>
           <a href="#faq" className="nav-link-minimal">
             FAQ
           </a>
@@ -895,7 +898,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
       <footer className="home-footer">
         <div className="container">
           <div className="row g-4 py-4 border-bottom">
-            <div className="col-12 col-md-4">
+            <div className="col-12 col-lg-3">
               <div className="d-flex align-items-center gap-2 fw-bold text-dark fs-5 mb-2">
                 <FiCommand className="text-primary" /> DevBoard
               </div>
@@ -903,7 +906,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                 Unified developer career hub and portfolio analytics platform. Master job hunting, code tracking, resume generation, and technical presence.
               </p>
             </div>
-            <div className="col-6 col-md-4">
+            <div className="col-6 col-lg-3">
               <div className="fw-bold text-dark small text-uppercase mb-2">Platform Features</div>
               <ul className="list-unstyled extra-small space-y-1 mb-0">
                 <li className="mb-1">
@@ -923,7 +926,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                 </li>
               </ul>
             </div>
-            <div className="col-6 col-md-4">
+            <div className="col-6 col-lg-3">
               <div className="fw-bold text-dark small text-uppercase mb-2">Developer Tools</div>
               <ul className="list-unstyled extra-small space-y-1 mb-0">
                 <li className="mb-1">
@@ -939,6 +942,31 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
                 <li className="mb-1">
                   <Link to="/features/linkedin-optimizer" className="text-muted text-decoration-none">
                     LinkedIn Profile Optimizer
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="col-12 col-lg-3">
+              <div className="fw-bold text-dark small text-uppercase mb-2">Career Guides &amp; Resources</div>
+              <ul className="list-unstyled extra-small space-y-1 mb-0">
+                <li className="mb-1">
+                  <Link to="/blog" className="text-muted text-decoration-none">
+                    Engineering Career Hub
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/blog/ats-friendly-developer-resume" className="text-muted text-decoration-none">
+                    ATS Developer Resume Guide
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/blog/software-engineering-interview-preparation" className="text-muted text-decoration-none">
+                    Coding Interview Preparation
+                  </Link>
+                </li>
+                <li className="mb-1">
+                  <Link to="/blog/improve-github-profile" className="text-muted text-decoration-none">
+                    GitHub Profile Optimization
                   </Link>
                 </li>
               </ul>
