@@ -86,7 +86,7 @@ export default function AtsResumeArticle() {
                 <FiUser /> {article.author}
               </span>
               <span className="article-meta-item">
-                <FiCalendar /> November 4, 2026
+                <FiCalendar /> Published Nov 1, 2026 · Updated Nov 4, 2026
               </span>
               <span className="article-meta-item">
                 <FiClock /> {article.readTime}
@@ -96,13 +96,13 @@ export default function AtsResumeArticle() {
 
           <div className="article-content">
             <p>
-              Among software developers seeking their next role, few topics generate as much frustration and misunderstanding as Applicant Tracking Systems (ATS). Common career myths suggest that mysterious AI algorithms instantly reject 90% of submissions for trivial typographical quirks.
+              Among software developers seeking their next role, few topics generate as much frustration and misunderstanding as Applicant Tracking Systems (ATS). Common career myths suggest that mysterious AI algorithms instantly reject the vast majority of submissions for trivial typographical quirks.
             </p>
             <p>
-              In reality, platforms such as Greenhouse, Lever, Workday, and iCIMS operate primarily as <strong>searchable document relational databases</strong>. When a corporate technical recruiter opens a req for a Senior React Engineer, they do not read 600 PDFs sequentially. Instead, they execute targeted database queries filtering by programming languages, frameworks, years of experience, and geographic location.
+              In reality, ATS platforms—such as Greenhouse, Lever, Workday, and iCIMS—differ substantially in their underlying architecture and workflows. Some serve primarily as workflow management systems with relational candidate databases, others integrate text-parsing and indexing engines, and many present candidate resumes directly to recruiters for manual review. When recruiters manage high applicant volumes, they often rely on keyword filtering, structured questionnaire answers, and candidate tags to prioritize reviews.
             </p>
             <p>
-              If your resume cannot be parsed cleanly into structured database fields (name, contact email, job titles, dates, and skill tags), your candidacy never surfaces in recruiter search results. Here is the concrete, technical blueprint for ensuring your software engineering resume parses reliably every time.
+              Different systems handle document ingestion differently: some extract text into structured database fields (contact info, work history, skill lists), while others display the formatted document alongside extracted search terms. Because parser accuracy varies across systems, adopting clean document structures maximizes the likelihood that your credentials parse cleanly into recruiter search filters.
             </p>
 
             <div className="article-takeaway">
@@ -110,33 +110,30 @@ export default function AtsResumeArticle() {
                 <FiFileText className="text-primary" /> Key Takeaway
               </div>
               <p>
-                An ATS is a search index, not a judge. Clean single-column linear text ensures your skills, work history, and project impact parse into recruiter search filters without formatting corruption.
+                An ATS is primarily a recruiting workflow tool, not a single monolithic ranking engine. Using clean, readable linear text and standard headings helps ensure your skills and experience are accurately indexed across diverse parsing engines.
               </p>
             </div>
 
-            <h2>1. Structural Layout Rules That Guarantee Machine Readability</h2>
+            <h2>1. Layout Recommendations for Broad Parser Compatibility</h2>
             <p>
-              Parsing engines read documents strictly linearly: from left to right, top to bottom. Visually creative templates built in graphic design tools (such as Canva or Photoshop) typically rely on floating text boxes, multi-column CSS tables, and embedded raster shapes that turn into jumbled text when ingested by OCR parsers.
+              Document parsers extract text by analyzing structural document streams. While modern enterprise parsers continue to improve, complex visual templates built in graphic design software often introduce nested layout tables, floating text boxes, or unusual bounding boxes that can cause text from separate columns to become jumbled when parsed.
             </p>
             <ul>
-              <li><strong>Strict Single-Column Flow:</strong> Avoid multi-column layouts, sidebars, or two-column contact blocks. Multi-column structures frequently cause parsers to merge unrelated text from parallel columns across lines.</li>
-              <li><strong>Standard Section Headings:</strong> Use standard, recognizable headings: <code>Technical Skills</code>, <code>Work Experience</code>, <code>Projects</code>, and <code>Education</code>. Non-standard phrases like &quot;Where I&apos;ve Been&quot; or &quot;Core Competencies Matrix&quot; confuse parser categorization algorithms.</li>
-              <li><strong>Text-Selectable Vector PDF:</strong> Always verify that text in your exported PDF can be highlighted, copied, and pasted into a plain text editor. Scanned images or canvas-rendered PDFs are completely unsearchable.</li>
-              <li><strong>Omit Graphics and Skill Bars:</strong> Visual ratings (e.g., &quot;React: 4/5 stars&quot; or &quot;Python: 85%&quot;) provide zero parseable text data and waste valuable document space.</li>
+              <li><strong>Recommended Single-Column Layout:</strong> A clean, single-column linear layout is a practical industry recommendation rather than an absolute software mandate. It provides the broadest compatibility across legacy and modern parsers by ensuring text flows sequentially.</li>
+              <li><strong>Standard Section Headings:</strong> Use clear, standard headings such as <code>Technical Skills</code>, <code>Work Experience</code>, <code>Projects</code>, and <code>Education</code>. Unconventional phrases (e.g., &quot;Where I&apos;ve Been&quot;) risk being miscategorized by automated taxonomy parsers.</li>
+              <li><strong>Text-Selectable Documents:</strong> Verify that text in your exported PDF or DOCX file can be selected, copied, and pasted cleanly into a plain text editor. Avoid scanned images or flattened canvas PDFs, which require optical character recognition (OCR) and frequently introduce transcription errors.</li>
+              <li><strong>Omit Arbitrary Graphic Meters:</strong> Graphical progress bars (e.g., &quot;React: 4/5 stars&quot; or &quot;Python: 85%&quot;) provide no meaningful text for search indexing and take up space better spent on concrete technical accomplishments.</li>
             </ul>
 
-            <h2>2. Writing High-Impact Engineering Bullets (The XYZ Formula)</h2>
+            <h2>2. Writing High-Impact Engineering Bullets (The XYZ Framework)</h2>
             <p>
-              Once your resume surfaces in a recruiter query, a human engineering lead evaluates your impact. The most common failure among developer resumes is listing passive day-to-day responsibilities rather than measurable business or architectural outcomes.
-            </p>
-            <p>
-              Adopt Google&apos;s proven XYZ formula: <em>&quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;</em>.
+              Once your resume passes initial screening, engineering hiring managers evaluate your practical contributions. A widely recommended approach for writing impactful technical bullets is the framework popularized by Google recruiting resources: <em>&quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;</em>.
             </p>
 
             <div className="comparison-grid">
               <div className="comparison-box weak">
                 <div className="comparison-box-title">
-                  <FiXCircle /> Weak (Passive Responsibility)
+                  <FiXCircle /> Passive Phrasing (Low Signal)
                 </div>
                 <p>
                   &quot;Worked on backend microservices in Node.js and improved API performance for user authentication.&quot;
@@ -144,7 +141,7 @@ export default function AtsResumeArticle() {
               </div>
               <div className="comparison-box strong">
                 <div className="comparison-box-title">
-                  <FiCheckCircle /> Strong (Quantified Engineering Impact)
+                  <FiCheckCircle /> Quantified Impact (Illustrative Example)
                 </div>
                 <p>
                   &quot;Refactored authentication microservices using Node.js and Redis caching, reducing p99 API latency by 42% across 1.8M daily active requests.&quot;
@@ -152,30 +149,37 @@ export default function AtsResumeArticle() {
               </div>
             </div>
 
+            <p className="extra-small text-muted fst-italic mt-2 mb-3">
+              Note: The metrics and figures shown in the strong bullet example above are illustrative sample demonstrations to illustrate phrasing structure, not verified benchmarks from a real developer or DevBoard user.
+            </p>
+
             <p>
-              Whenever possible, include metrics of scale: daily active users (DAU), transactions per second, database query execution reductions, test coverage gains, or build pipeline execution speedups.
+              Where authentic data is available, incorporating concrete scale metrics—such as request volume, execution time reductions, query optimization, or test coverage gains—helps convey the engineering scope of your work.
             </p>
 
             <h2>3. Structuring Your Technical Skills Taxonomy</h2>
             <p>
-              Do not drop a massive unstructured wall of 40 disjointed buzzwords. Group your skills logically into recognizable engineering categories so human screeners can assess your stack in 5 seconds:
+              Avoid an unstructured wall of 40 disjointed keywords. Grouping your skills into logical engineering categories enables human reviewers to quickly scan your stack and assess role alignment:
             </p>
             <div className="article-code-block">
               <code>
-{`Technical Skills:
+{`Technical Skills (Sample Taxonomy):
 • Languages: TypeScript, JavaScript (ES6+), Python, Go, SQL
 • Frontend: React 19, Redux Toolkit, Next.js, HTML5/CSS3, Tailwind CSS
 • Backend & APIs: Node.js, Express 5, RESTful APIs, GraphQL, gRPC
 • Databases & Cloud: PostgreSQL, MongoDB, Redis, Docker, AWS (S3, ECS), CI/CD`}
               </code>
             </div>
+            <p className="extra-small text-muted fst-italic mt-1 mb-3">
+              Note: The taxonomy above is an illustrative formatting template demonstrating category grouping.
+            </p>
 
             <h2>4. Aligning With Target Job Specifications</h2>
             <p>
-              Recruiters query their ATS for the exact spelling used in the job requisition. If a job description repeatedly emphasizes <code>TypeScript</code> and <code>Docker</code>, having those terms explicitly documented in your skills taxonomy and employment bullet points is essential for search relevance.
+              Recruiters frequently query candidate repositories or ATS filters for the key technologies stated in the job requisition. If a role emphasizes <code>TypeScript</code> and <code>Docker</code>, ensuring those competencies are accurately documented in your skills section and project descriptions improves search visibility.
             </p>
             <p>
-              However, never practice deceptive techniques such as hiding white-text keywords in headers or footers. Modern applicant tracking systems strip styling and display plain text views directly to human screeners, resulting in immediate rejection.
+              However, avoid artificial tactics such as hidden white-text keywords or repetitive keyword repetition. Modern ATS parsers strip styling and present normalized text views directly to human reviewers, making deceptive keyword stuffing immediately apparent.
             </p>
 
             {/* Contextual Feature Callout */}
@@ -189,17 +193,17 @@ export default function AtsResumeArticle() {
               </Link>
             </div>
 
-            <h2>5. ATS Resume Pre-Flight Checklist</h2>
-            <p>Before submitting your resume for any technical role, review this verification checklist:</p>
+            <h2>5. ATS Resume Pre-Flight Verification Checklist</h2>
+            <p>Before submitting your resume, review this practical verification checklist:</p>
             <ul>
-              <li>[ ] Single-column, linear layout without tables, floating columns, or text boxes.</li>
-              <li>[ ] File exported as text-selectable vector PDF named <code>Firstname-Lastname-Resume.pdf</code>.</li>
-              <li>[ ] Standard contact links: LinkedIn, GitHub, and portfolio URL included at the top.</li>
-              <li>[ ] Professional experience listed in reverse-chronological order with month/year dates.</li>
-              <li>[ ] Every experience bullet includes an action verb, engineering context, and quantified outcome.</li>
+              <li>[ ] Clean linear, single-column layout recommended for broad parser compatibility.</li>
+              <li>[ ] Text is selectable and copyable in plain text (not flattened images or scans).</li>
+              <li>[ ] Clear contact links: email, phone, LinkedIn, GitHub, and portfolio URL at top.</li>
+              <li>[ ] Work experience listed in reverse-chronological order with month and year dates.</li>
+              <li>[ ] Experience bullets highlight engineering context, actions taken, and measurable results.</li>
               <li>[ ] Technical skills grouped logically into Languages, Frameworks, Databases, and Tools.</li>
-              <li>[ ] Critical technologies from the target job posting genuinely represented in your text.</li>
-              <li>[ ] Zero graphical progress bars, rating meters, or decorative icons.</li>
+              <li>[ ] Relevant technologies from the target job posting genuinely represented in your text.</li>
+              <li>[ ] Avoided decorative rating bars, embedded tables, and hidden keyword text.</li>
             </ul>
           </div>
 
@@ -236,3 +240,4 @@ export default function AtsResumeArticle() {
     </div>
   );
 }
+

@@ -84,7 +84,7 @@ export default function GithubProfileArticle() {
                 <FiUser /> {article.author}
               </span>
               <span className="article-meta-item">
-                <FiCalendar /> November 4, 2026
+                <FiCalendar /> Published Nov 2, 2026 · Updated Nov 4, 2026
               </span>
               <span className="article-meta-item">
                 <FiClock /> {article.readTime}
@@ -94,13 +94,13 @@ export default function GithubProfileArticle() {
 
           <div className="article-content">
             <p>
-              For entry-level software developers, bootcamp graduates, and computer science students, GitHub is often considered a critical portfolio showcase. Yet many candidates operate under a fundamental misconception: they assume technical interviewers spend an hour analyzing every commit and pull request.
+              For entry-level software developers, bootcamp graduates, and computer science students, GitHub is often considered a critical portfolio showcase. Yet many candidates operate under a fundamental misconception: they assume technical interviewers spend hours analyzing every historical commit and pull request.
             </p>
             <p>
-              In reality, hiring managers review GitHub profiles in thirty seconds or less. They look for immediate signals of <strong>professional hygiene, communication clarity through documentation, and evidence that you can build and ship software</strong> beyond class homework.
+              In reality, technical screeners and hiring managers often review candidate profiles quickly during initial evaluations. Rather than digging into thousands of lines of raw code, they typically look for clear indicators of <strong>engineering discipline, clear documentation, and evidence of building functional software</strong> beyond introductory coursework.
             </p>
             <p>
-              A chaotic profile littered with dozens of unmaintained tutorial repositories actually damages your candidacy. Conversely, a clean, intentional GitHub profile featuring 3 to 4 well-documented, deployed projects establishes immediate credibility. Here is how to audit and optimize your GitHub account for technical hiring teams.
+              A profile cluttered with dozens of unmaintained tutorial repositories can obscure your strongest work. Conversely, a focused GitHub profile featuring a few well-documented, deployed projects provides immediate clarity. Here is a practical guide to auditing and organizing your GitHub presence.
             </p>
 
             <div className="article-takeaway">
@@ -108,46 +108,46 @@ export default function GithubProfileArticle() {
                 <FiGithub className="text-primary" /> Key Takeaway
               </div>
               <p>
-                Engineering leaders prioritize documentation, live deployments, and version control discipline over raw commit counts. Four polished repositories with comprehensive READMEs beat forty abandoned clones.
+                Many engineering teams value documentation, live deployments, and version control hygiene over raw commit volume. A few polished repositories with clear READMEs provide much stronger signal than dozens of uncustomized clones.
               </p>
             </div>
 
             <h2>1. Curating Your Pinned Repositories</h2>
             <p>
-              By default, GitHub displays repositories ordered by most recent activity. This means a messy school lab or a quick weekend test repo you pushed yesterday can occupy prime real estate on your public profile.
+              By default, GitHub displays repositories ordered by most recent activity. This means a quick sandbox test or incomplete scratch repo pushed recently can displace your best work on your public profile.
             </p>
             <p>
-              Use GitHub&apos;s <strong>Pin</strong> feature to deliberately control what evaluators see first:
+              Use GitHub&apos;s <strong>Pin</strong> feature as a suggested curation tool to highlight relevant work:
             </p>
             <ul>
-              <li><strong>Select Your Best 3 to 5 Projects:</strong> Never leave all 6 pin slots filled with low-effort work. Three solid repositories look significantly more focused than six repositories where half are broken.</li>
-              <li><strong>Prioritize Full-Stack and Systems Depth:</strong> Pin repositories that reflect the exact stack you are applying for (e.g., a React + Go API service, an authenticated PostgreSQL application, or a distributed CLI tool).</li>
-              <li><strong>Add Short Repository Descriptions:</strong> Ensure each pinned repository has a clear, one-sentence description and relevant topic tags (e.g., <code>typescript</code>, <code>rest-api</code>, <code>docker</code>, <code>vitest</code>).</li>
+              <li><strong>Highlight 3 to 5 Selected Projects:</strong> Filling your pinned slots with 3 to 5 functional, well-documented repositories provides a clear snapshot of your capabilities without overwhelming the reviewer.</li>
+              <li><strong>Prioritize Relevant Stack Depth:</strong> Pin repositories that reflect the technologies you are targeting (e.g., a React application with state management, an authenticated API service, or a containerized utility).</li>
+              <li><strong>Add Informative Descriptions:</strong> Include a concise one-sentence description and relevant topic tags (e.g., <code>typescript</code>, <code>rest-api</code>, <code>docker</code>, <code>vitest</code>) to summarize the project at a glance.</li>
             </ul>
 
-            <h2>2. Eliminating the &quot;Tutorial Graveyard&quot;</h2>
+            <h2>2. Addressing Introductory Tutorial Projects</h2>
             <p>
-              One of the most common red flags hiring managers report on developer forums is the &quot;tutorial graveyard&quot;: profiles featuring standard clones copied line-for-line from Udemy or YouTube courses (e.g., a basic Todo app, simple calculator, or weather widget).
+              A frequent observation shared across developer hiring discussions is the proliferation of identical beginner tutorial clones (such as basic counter apps or uncustomized weather widgets). While these exercises are valuable learning milestones, presenting them as signature portfolio pieces provides little distinction.
             </p>
             <p>
-              If your profile currently contains generic tutorial projects, take one of two actions:
+              When auditing your public repositories, consider two practical options:
             </p>
             <ol>
-              <li><strong>Make Them Private:</strong> If the project was purely an educational exercise and does not represent original engineering, archive or make the repository private.</li>
-              <li><strong>Extend Them With Real Complexity:</strong> If you want to keep the foundation, make it genuinely yours. Add robust JWT authentication, migrate the database to PostgreSQL, write end-to-end integration tests in Playwright, containerize the application with Docker, and deploy it to a live production URL.</li>
+              <li><strong>Archive or Make Private:</strong> If an exercise was purely for initial syntax practice and does not reflect independent architectural decisions, archiving it keeps your public profile focused on original work.</li>
+              <li><strong>Extend With Original Functionality:</strong> If you want to showcase the project, expand upon the tutorial foundation. Add proper authentication, implement database persistence, write unit and integration tests, containerize the setup, and deploy it to a live hosting environment.</li>
             </ol>
 
-            <h2>3. Writing Repository READMEs That Engineers Respect</h2>
+            <h2>3. Structuring Informative Repository READMEs</h2>
             <p>
               When a technical interviewer clicks into one of your pinned projects, the <code>README.md</code> is the first document they evaluate. If the README is blank or contains only default Create React App boilerplate, reviewers almost never inspect the source code.
             </p>
-            <p>A professional repository README must include:</p>
+            <p>Recommended components of a comprehensive repository README include:</p>
             <ul>
-              <li><strong>Live Production URL:</strong> Prominently placed at the top of the README. Hiring managers rarely have time to clone a repository and install local dependencies to see if your app works.</li>
-              <li><strong>Problem Statement &amp; Architecture:</strong> A concise 2-sentence explanation of what problem the application solves and how data flows through the system.</li>
-              <li><strong>Architecture Diagram or Visual Demo:</strong> A high-resolution screenshot or short animated GIF showing the core user workflow.</li>
-              <li><strong>Complete Tech Stack Breakdown:</strong> Clear bullet points detailing the frontend framework, backend runtime, database, authentication provider, and deployment host.</li>
-              <li><strong>Local Setup &amp; Test Instructions:</strong> Concrete shell commands detailing how to clone, configure environment variables (providing a clean <code>.env.example</code>), and execute automated test suites.</li>
+              <li><strong>Live Production URL:</strong> Prominently placed at the top of the README. Reviewers frequently appreciate a quick live link or demo recording to verify functionality without cloning the project locally.</li>
+              <li><strong>Problem Statement &amp; Architecture:</strong> A concise explanation of the problem solved and the high-level architecture.</li>
+              <li><strong>Architecture Diagram or Visual Demo:</strong> A screenshot or short walkthrough illustrating core user flows.</li>
+              <li><strong>Tech Stack Overview:</strong> A clear summary of the frontend framework, runtime, database, authentication provider, and hosting environment.</li>
+              <li><strong>Local Setup &amp; Test Instructions:</strong> Reproducible terminal commands to clone, configure environment variables (using a sample <code>.env.example</code>), and execute automated tests.</li>
             </ul>
 
             <h2>4. Git Hygiene &amp; Commit Discipline</h2>
@@ -218,3 +218,4 @@ export default function GithubProfileArticle() {
     </div>
   );
 }
+

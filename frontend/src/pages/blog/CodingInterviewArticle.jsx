@@ -84,7 +84,7 @@ export default function CodingInterviewArticle() {
                 <FiUser /> {article.author}
               </span>
               <span className="article-meta-item">
-                <FiCalendar /> November 4, 2026
+                <FiCalendar /> Published Nov 3, 2026 · Updated Nov 4, 2026
               </span>
               <span className="article-meta-item">
                 <FiClock /> {article.readTime}
@@ -94,13 +94,13 @@ export default function CodingInterviewArticle() {
 
           <div className="article-content">
             <p>
-              Preparing for data structures and algorithms (DSA) interviews is one of the most demanding phases of a software engineering job search. Many candidates adopt a brute-force approach: they attempt to solve 400 or 500 problems at random on LeetCode, only to discover during real interviews that slight problem variations leave them completely stuck.
+              Preparing for data structures and algorithms (DSA) interviews is often one of the most demanding phases of a software engineering job search. Many candidates adopt an ad-hoc approach: they attempt to solve hundreds of problems at random on LeetCode, only to find during live interviews that unfamiliar problem variations remain challenging.
             </p>
             <p>
-              Random problem grinding fails because it treats algorithms as isolated puzzles to memorize rather than structural patterns to recognize. Top-tier candidates who prepare efficiently rarely solve thousands of problems; instead, they master roughly <strong>15 foundational algorithmic archetypes</strong> and practice applying them across diverse problem domains.
+              Rather than attempting to memorize hundreds of individual problems in isolation, many candidates and competitive programming educators recommend focusing on recurring algorithmic patterns (such as those popularized by curated community roadmaps like Blind 75 and NeetCode 150). Practicing how to recognize and adapt structural patterns across different problem formulations helps build broader problem-solving versatility.
             </p>
             <p>
-              Here is a proven, systematic methodology for preparing for coding interviews without burning out.
+              Below is a structured study methodology designed to help organize algorithmic practice efficiently.
             </p>
 
             <div className="article-takeaway">
@@ -108,35 +108,37 @@ export default function CodingInterviewArticle() {
                 <FiCode className="text-primary" /> Key Takeaway
               </div>
               <p>
-                Algorithmic interviews test pattern recognition and communication, not memorization. Categorizing problems by underlying data structures and timeboxing practice sessions yields superior retention and confidence.
+                Technical coding interviews emphasize pattern recognition, time-space complexity trade-offs, and communication. Grouping practice by data structures and setting reasonable study time boundaries helps maintain steady progress.
               </p>
             </div>
 
-            <h2>1. The 15 Core Algorithmic Patterns You Actually Need</h2>
+            <h2>1. Core Algorithmic Patterns (Community Curated Frameworks)</h2>
             <p>
-              Virtually all standard interview questions asked at top tech companies are variations of a small set of recurring structural patterns:
+              While different educational resources categorize coding interview questions into anywhere between 14 to 20+ archetypes, many frequently asked problems build on these familiar patterns:
             </p>
             <ul>
-              <li><strong>Two Pointers:</strong> Used for sorted arrays and palindrome verification (e.g., Two Sum II, 3Sum, Container With Most Water).</li>
-              <li><strong>Sliding Window:</strong> Used for sub-array or sub-string problems requiring contiguous elements (e.g., Longest Substring Without Repeating Characters, Minimum Window Substring).</li>
-              <li><strong>Fast &amp; Slow Pointers (Floyd&apos;s Cycle):</strong> Used for cyclic graphs and linked list middle-node detection.</li>
-              <li><strong>Merge Intervals:</strong> Used when intervals overlap and need consolidation (e.g., Merge Intervals, Non-overlapping Intervals).</li>
-              <li><strong>Matrix Breadth-First / Depth-First Search:</strong> Used for connected component counting and shortest path on grids (e.g., Number of Islands, Rotting Oranges).</li>
-              <li><strong>Monotonic Stack:</strong> Used for finding next greater or smaller elements in linear time (e.g., Daily Temperatures, Next Greater Element).</li>
-              <li><strong>Top &apos;K&apos; Elements (Heaps):</strong> Used for finding the kth largest/smallest elements without sorting the entire collection.</li>
-              <li><strong>Dynamic Programming (1D &amp; 2D):</strong> Used for optimal substructure and overlapping subproblems (e.g., Coin Change, Longest Common Subsequence).</li>
+              <li><strong>Two Pointers:</strong> Often applied to sorted arrays, strings, and palindrome checks (e.g., Two Sum II, 3Sum, Container With Most Water).</li>
+              <li><strong>Sliding Window:</strong> Useful for finding optimal contiguous subarrays or substrings (e.g., Longest Substring Without Repeating Characters, Minimum Window Substring).</li>
+              <li><strong>Fast &amp; Slow Pointers (Floyd&apos;s Cycle Finding):</strong> Commonly used for cycle detection in linked lists and arrays.</li>
+              <li><strong>Merge Intervals:</strong> Applied when intervals overlap and need consolidation (e.g., Merge Intervals, Non-overlapping Intervals).</li>
+              <li><strong>Grid Breadth-First &amp; Depth-First Search:</strong> Useful for connected component counting and shortest path algorithms on matrices (e.g., Number of Islands, Rotting Oranges).</li>
+              <li><strong>Monotonic Stack:</strong> Helpful for identifying next greater or smaller elements in linear time (e.g., Daily Temperatures, Next Greater Element).</li>
+              <li><strong>Top &apos;K&apos; Elements (Heaps):</strong> Used for selecting extremes without full array sorting.</li>
+              <li><strong>Dynamic Programming (1D &amp; 2D):</strong> Used when problems exhibit optimal substructure and overlapping subproblems (e.g., Coin Change, Longest Common Subsequence).</li>
             </ul>
 
-            <h2>2. The 25-Minute Timebox Rule</h2>
+            <h2>2. A Suggested Study Heuristic: Timeboxing Problem Attempts (20–30 Minutes)</h2>
             <p>
-              A major trap for self-taught developers is spending three hours spinning their wheels on a single hard problem. This produces frustration, wastes time, and destroys study momentum.
+              A common pitfall during self-directed interview preparation is spending multiple hours struggling through a single problem without making progress. Many engineering mentors recommend setting a structured practice boundary—such as 20 to 30 minutes—as a study heuristic to sustain momentum:
             </p>
-            <p>Adopt a strict timebox workflow:</p>
             <ol>
-              <li><strong>Minutes 0–25 (Active Independent Attempt):</strong> Read the prompt carefully, clarify edge cases (empty arrays, negative numbers, duplicates), and write out a brute-force approach. Try to identify which of the 15 core patterns applies.</li>
-              <li><strong>Minute 25 (The Editorial Pivot):</strong> If you do not have a working O(n) or O(n log n) solution after 25 minutes, stop coding. Open the official editorial, discussion tab, or a trusted video walkthrough (such as NeetCode).</li>
-              <li><strong>Minutes 25–40 (Deconstruction):</strong> Do not simply copy-paste the code. Study <em>why</em> the specific data structure was chosen, trace the logic through a dry run on paper, and write out the time and space complexity yourself.</li>
+              <li><strong>Minutes 0–25 (Active Independent Attempt):</strong> Read the prompt carefully, clarify constraints and edge cases (empty inputs, negative values, duplicates), and draft a brute-force approach before attempting optimizations.</li>
+              <li><strong>Minute 25 (Consulting Solutions When Blocked):</strong> If you do not have a working approach after 20–25 minutes, reviewing the official editorial, discussion tab, or a video walkthrough can provide timely conceptual guidance.</li>
+              <li><strong>Minutes 25–40 (Concept Deconstruction):</strong> Rather than copying the code, trace <em>why</em> the specific data structure was chosen, perform a dry run of the logic on paper, and calculate time and space complexity independently.</li>
             </ol>
+            <p className="extra-small text-muted fst-italic mt-1 mb-3">
+              Note: The 20–25 minute boundary described above is a personal study heuristic to prevent burnout during practice, not an official rule used in live technical interviews.
+            </p>
 
             <h2>3. Active Recall and the Two-Pass System</h2>
             <p>
@@ -169,7 +171,10 @@ export default function CodingInterviewArticle() {
               </Link>
             </div>
 
-            <h2>5. 8-Week Systematic Preparation Roadmap</h2>
+            <h2>5. Sample 8-Week Preparation Roadmap (Suggested Study Guide)</h2>
+            <p className="extra-small text-muted fst-italic mb-2">
+              Note: This sample schedule illustrates how candidates commonly pace their review; individual preparation timelines vary based on prior experience and target interview loops.
+            </p>
             <ul>
               <li><strong>Weeks 1–2:</strong> Arrays, Strings, Two Pointers, and Sliding Window (NeetCode 150 foundation).</li>
               <li><strong>Weeks 3–4:</strong> Linked Lists, Trees, and Graph Traversals (BFS/DFS, Topological Sort).</li>
@@ -212,3 +217,4 @@ export default function CodingInterviewArticle() {
     </div>
   );
 }
+

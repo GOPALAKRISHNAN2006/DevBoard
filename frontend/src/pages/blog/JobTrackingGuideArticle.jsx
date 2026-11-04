@@ -84,7 +84,7 @@ export default function JobTrackingGuideArticle() {
                 <FiUser /> {article.author}
               </span>
               <span className="article-meta-item">
-                <FiCalendar /> November 4, 2026
+                <FiCalendar /> Published Nov 4, 2026 · Updated Nov 4, 2026
               </span>
               <span className="article-meta-item">
                 <FiClock /> {article.readTime}
@@ -94,13 +94,13 @@ export default function JobTrackingGuideArticle() {
 
           <div className="article-content">
             <p>
-              In modern technical hiring, a software engineering job search is rarely a simple two-step process. Between initial recruiter screenings, asynchronous HackerRank assessments, technical phone screens, take-home system design challenges, and multi-round behavioral on-sites, an engineer actively interviewing may juggle a dozen opportunities simultaneously.
+              In modern technical hiring, a software engineering job search is rarely a simple two-step process. Between initial recruiter screenings, asynchronous coding assessments, technical phone screens, take-home system challenges, and multi-round behavioral on-sites, an engineer actively interviewing may manage multiple concurrent opportunities across various stages.
             </p>
             <p>
-              Most developers default to a standard spreadsheet. While a spreadsheet works well for the first five submissions, it rapidly degrades into chaos once multiple rounds and concurrent take-home challenges overlap. You forget which resume version was sent to which company, scramble to locate interviewer names thirty seconds before a Zoom screen, and struggle to track compensation notes across competing offers.
+              Many developers start by tracking applications in a standard spreadsheet. While a simple sheet works during initial submissions, keeping track of communications, interview rounds, and notes across several concurrent companies can quickly become cumbersome. Remembering which resume version was submitted, locating interviewer names before calls, or comparing compensation details across competing offers often leads to fragmented information.
             </p>
             <p>
-              Adopting a visual, developer-focused pipeline workflow eliminates cognitive overload and keeps your interview preparation organized. Here is how to structure your software engineering job pipeline.
+              Adopting a visual, developer-focused pipeline workflow helps keep your job search organized and reduces cognitive load during interview cycles. Here is a practical framework to structure your job hunt.
             </p>
 
             <div className="article-takeaway">
@@ -112,22 +112,22 @@ export default function JobTrackingGuideArticle() {
               </p>
             </div>
 
-            <h2>1. Why Spreadsheets Break Down During an Active Search</h2>
+            <h2>1. Common Limitations of Flat Spreadsheets During an Active Search</h2>
             <p>
-              Spreadsheets are static tables designed for accountants, not dynamic engineering search workflows. The primary friction points developers experience include:
+              Flat spreadsheets are designed for tabular data, not dynamic recruiting pipelines. Frequent challenges developers encounter include:
             </p>
             <ul>
-              <li><strong>Zero Visual Stage Awareness:</strong> Scrolling across 40 rows of dense spreadsheet cells makes it difficult to see how many opportunities are currently in active technical rounds versus initial submissions.</li>
-              <li><strong>Lost Interview Notes:</strong> Notes crammed into a tiny spreadsheet cell are difficult to format and retrieve during a high-stakes phone interview.</li>
-              <li><strong>Disorganized Compensation Data:</strong> Tracking base salaries, equity grants, annual bonuses, and hybrid work requirements in plain text leads to fragmented records when negotiation time arrives.</li>
+              <li><strong>Limited Visual Stage Awareness:</strong> Scanning across rows of text makes it harder to quickly assess where opportunities sit across technical loops versus early submissions.</li>
+              <li><strong>Fragmented Interview Context:</strong> Notes compressed into single cells are difficult to reference quickly during high-context technical conversations.</li>
+              <li><strong>Unstructured Offer Details:</strong> Recording base salaries, equity vesting schedules, and remote policies in disparate cells makes comparisons less straightforward when evaluating offers.</li>
             </ul>
 
-            <h2>2. The 5-Stage Technical Pipeline Architecture</h2>
+            <h2>2. The 5-Stage Technical Pipeline Framework</h2>
             <p>
-              A Kanban pipeline models your job hunt as a continuous flow of opportunities across five unambiguous states:
+              A Kanban workflow models your job hunt as a continuous progression across five common states:
             </p>
             <ol>
-              <li><strong>Applied:</strong> Roles where you have submitted an application or recruiter reach-out, but have not yet received an assessment invitation. Document the applied date and the job role details.</li>
+              <li><strong>Applied:</strong> Roles where you have submitted an application or responded to a recruiter, awaiting feedback. Record application dates and target role descriptions.</li>
               <li><strong>Assessment:</strong> Opportunities requiring a technical take-home assignment, HackerRank, or LeetCode automated screen. Keep submission requirements and problem notes attached to the card.</li>
               <li><strong>Interview:</strong> Roles with active live rounds scheduled: recruiter screens, technical phone screens, live coding sessions, and on-site loops.</li>
               <li><strong>Offer:</strong> Roles where a written or verbal offer has been extended. Document confirmed base salary, equity vesting schedules, and decision deadlines.</li>
@@ -145,14 +145,15 @@ export default function JobTrackingGuideArticle() {
               <li><strong>Private Interview Notes:</strong> Interviewer names, technical questions asked, system design topics covered, and behavioral themes emphasized.</li>
             </ul>
 
-            <h2>4. Handling Technical Take-Home Challenges</h2>
+            <h2>4. Handling Technical Take-Home Challenges (Suggested Practices)</h2>
             <p>
-              Take-home coding challenges require careful project management. When an assessment arrives:
+              Take-home coding challenges require balanced time investment. When an assessment arrives:
             </p>
             <ul>
-              <li>Create a clean, dedicated GitHub repository with a private visibility setting.</li>
-              <li>Review the evaluation rubric: do they prioritize clean unit tests, API performance, or UI polish?</li>
-              <li>Include comprehensive setup instructions and Docker containerization so evaluators can run your submission without configuration headaches.</li>
+              <li><strong>Clarify Scope and Suggested Time Budget:</strong> Inquire about the company&apos;s expected time investment (many teams suggest roughly 3 to 6 hours). Setting a personal timebox prevents open-ended scope creep.</li>
+              <li>Create a clean, dedicated repository with private visibility.</li>
+              <li>Review the evaluation criteria: determine whether the reviewers prioritize clean unit test coverage, API performance, or UI finish.</li>
+              <li>Include reproducible setup instructions (or Docker containerization) so evaluators can run your submission without configuration friction.</li>
               <li>Attach the assignment prompt and submission confirmation directly to your pipeline card.</li>
             </ul>
 
@@ -211,3 +212,4 @@ export default function JobTrackingGuideArticle() {
     </div>
   );
 }
+
