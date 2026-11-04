@@ -97,7 +97,23 @@ export default function CodingInterviewArticle() {
               Preparing for data structures and algorithms (DSA) interviews is often one of the most demanding phases of a software engineering job search. Many candidates adopt an ad-hoc approach: they attempt to solve hundreds of problems at random on LeetCode, only to find during live interviews that unfamiliar problem variations remain challenging.
             </p>
             <p>
-              Rather than attempting to memorize hundreds of individual problems in isolation, many candidates and competitive programming educators recommend focusing on recurring algorithmic patterns (such as those popularized by curated community roadmaps like Blind 75 and NeetCode 150). Practicing how to recognize and adapt structural patterns across different problem formulations helps build broader problem-solving versatility.
+              Rather than attempting to memorize hundreds of individual problems in isolation, many candidates and competitive programming educators recommend focusing on recurring algorithmic patterns. Curated community roadmaps—such as Yangshun Tay&apos;s{' '}
+              <a
+                href="https://www.techinterviewhandbook.org/best-practice-questions/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Blind 75 list in the Tech Interview Handbook
+              </a>{' '}
+              and the{' '}
+              <a
+                href="https://neetcode.io/practice"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                NeetCode 150 practice roadmap
+              </a>{' '}
+              —popularized this pattern-based approach. Practicing how to recognize and adapt structural patterns across different problem formulations helps build broader problem-solving versatility.
             </p>
             <p>
               Below is a structured study methodology designed to help organize algorithmic practice efficiently.

@@ -157,7 +157,17 @@ export default function GithubProfileArticle() {
             <ul>
               <li><strong>Accidental Secret Commits:</strong> Committing <code>node_modules</code>, <code>.DS_Store</code>, or private API keys. Always maintain a comprehensive <code>.gitignore</code> file.</li>
               <li><strong>Single-Commit Dumps:</strong> Pushing an entire 10,000-line application in a single commit titled &quot;Initial commit&quot; or &quot;Upload files&quot;. Reviewers want to see incremental, logical feature progression.</li>
-              <li><strong>Structured Commit Messages:</strong> Practice Conventional Commits (e.g., <code>feat: implement JWT token refresh flow</code> or <code>fix: resolve race condition in database connection pool</code>). It signals software maturity.</li>
+              <li>
+                <strong>Structured Commit Messages:</strong> Following a standard format such as the{' '}
+                <a
+                  href="https://www.conventionalcommits.org/en/v1.0.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Conventional Commits specification
+                </a>{' '}
+                (e.g., <code>feat: implement JWT token refresh flow</code> or <code>fix: resolve race condition in database connection pool</code>) signals software maturity and makes commit histories readable for collaborators.
+              </li>
             </ul>
 
             {/* Contextual Feature Callout */}

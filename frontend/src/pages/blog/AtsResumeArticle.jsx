@@ -119,15 +119,23 @@ export default function AtsResumeArticle() {
               Document parsers extract text by analyzing structural document streams. While modern enterprise parsers continue to improve, complex visual templates built in graphic design software often introduce nested layout tables, floating text boxes, or unusual bounding boxes that can cause text from separate columns to become jumbled when parsed.
             </p>
             <ul>
-              <li><strong>Recommended Single-Column Layout:</strong> A clean, single-column linear layout is a practical industry recommendation rather than an absolute software mandate. It provides the broadest compatibility across legacy and modern parsers by ensuring text flows sequentially.</li>
+              <li><strong>Recommended Single-Column Layout:</strong> A clean, single-column linear layout is a practical industry recommendation rather than an absolute software mandate. It provides broad compatibility across diverse parsers by ensuring text flows sequentially.</li>
               <li><strong>Standard Section Headings:</strong> Use clear, standard headings such as <code>Technical Skills</code>, <code>Work Experience</code>, <code>Projects</code>, and <code>Education</code>. Unconventional phrases (e.g., &quot;Where I&apos;ve Been&quot;) risk being miscategorized by automated taxonomy parsers.</li>
-              <li><strong>Text-Selectable Documents:</strong> Verify that text in your exported PDF or DOCX file can be selected, copied, and pasted cleanly into a plain text editor. Avoid scanned images or flattened canvas PDFs, which require optical character recognition (OCR) and frequently introduce transcription errors.</li>
+              <li><strong>Text Selectability &amp; Document Formats:</strong> Ensuring that text in your exported PDF or DOCX file can be highlighted and copied in plain text generally makes document content easier for text-extraction and parsing systems to process. In contrast, scanned documents and flattened graphics can create extraction difficulties, often requiring OCR that introduces character transcription errors. While text-based PDFs and DOCX files are common practical formats, compatibility depends on the specific ATS and its parser version. Importantly, submitting a document with selectable text does not guarantee correct parsing, accurate field extraction, or successful advancement in the hiring process.</li>
               <li><strong>Omit Arbitrary Graphic Meters:</strong> Graphical progress bars (e.g., &quot;React: 4/5 stars&quot; or &quot;Python: 85%&quot;) provide no meaningful text for search indexing and take up space better spent on concrete technical accomplishments.</li>
             </ul>
 
             <h2>2. Writing High-Impact Engineering Bullets (The XYZ Framework)</h2>
             <p>
-              Once your resume passes initial screening, engineering hiring managers evaluate your practical contributions. A widely recommended approach for writing impactful technical bullets is the framework popularized by Google recruiting resources: <em>&quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;</em>.
+              Once your resume passes initial screening, engineering hiring managers evaluate your practical contributions. A widely recommended approach for writing impactful technical bullets is the XYZ framework popularized by former Google Senior Vice President of People Operations Laszlo Bock and referenced in{' '}
+              <a
+                href="https://careers.google.com/how-we-hire/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Google Careers hiring guidance
+              </a>
+              : <em>&quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;</em>.
             </p>
 
             <div className="comparison-grid">
@@ -197,7 +205,7 @@ export default function AtsResumeArticle() {
             <p>Before submitting your resume, review this practical verification checklist:</p>
             <ul>
               <li>[ ] Clean linear, single-column layout recommended for broad parser compatibility.</li>
-              <li>[ ] Text is selectable and copyable in plain text (not flattened images or scans).</li>
+              <li>[ ] Text is cleanly selectable in PDF or DOCX format to facilitate extraction (avoiding flattened scans).</li>
               <li>[ ] Clear contact links: email, phone, LinkedIn, GitHub, and portfolio URL at top.</li>
               <li>[ ] Work experience listed in reverse-chronological order with month and year dates.</li>
               <li>[ ] Experience bullets highlight engineering context, actions taken, and measurable results.</li>
