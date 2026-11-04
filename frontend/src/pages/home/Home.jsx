@@ -662,7 +662,7 @@ console.log("Career Readiness Score:", developer.getProfileScore()); // 94% Veri
             </div>
             <h3>Pipeline Job Tracking</h3>
             <p>
-              Replace messy spreadsheets with a developer job tracker. Categorize application stages, document salaries, deadlines, and set custom interview notes.
+              Replace messy spreadsheets with a developer job tracker. Categorize application stages, document target salaries, location details, and maintain private interview notes.
             </p>
             <div className="mt-3">
               <Link to="/features/job-application-tracker" className="extra-small fw-bold text-primary text-decoration-none">

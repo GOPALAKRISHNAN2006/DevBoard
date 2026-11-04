@@ -142,7 +142,7 @@ export default function LinkedinOptimizerFeature() {
                       ></div>
                     </div>
                     <span className="badge bg-success-subtle text-success extra-small fw-bold">
-                      All-Star Completeness Level
+                      Illustrative Completeness Indicator
                     </span>
                     <p className="extra-small text-muted mt-2 mb-0">
                       Sample preview: headline, skills, and experience sections completed with verified consistency.

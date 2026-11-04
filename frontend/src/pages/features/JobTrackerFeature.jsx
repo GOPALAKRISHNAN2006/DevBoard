@@ -229,7 +229,7 @@ export default function JobTrackerFeature() {
               </div>
               <h3>Interview Notes &amp; History</h3>
               <p>
-                Attach private preparation notes, technical questions asked, interviewer names, and follow-up deadlines directly to the company record.
+                Attach private preparation notes, technical questions asked, interviewer details, and stage progression directly to the company record.
               </p>
             </div>
 
@@ -270,7 +270,7 @@ export default function JobTrackerFeature() {
             <div className="workflow-step-card">
               <div className="workflow-step-num">02</div>
               <h3>Track Assessments</h3>
-              <p>Advance cards to Assessment when take-homes arrive. Track deadlines and status notes directly on each card.</p>
+              <p>Advance cards to Assessment when take-homes arrive. Track interview notes, role details, and status updates directly on each card.</p>
             </div>
             <div className="workflow-step-card">
               <div className="workflow-step-num">03</div>
