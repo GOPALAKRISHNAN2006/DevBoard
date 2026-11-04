@@ -9,7 +9,8 @@ import {
   FiGrid,
   FiCommand,
   FiFilter,
-  FiCode
+  FiCode,
+  FiInfo
 } from 'react-icons/fi';
 import SEO from '../../components/SEO';
 import { getFeaturePageStructuredData } from '../../utils/structuredData';
@@ -60,6 +61,23 @@ export default function PortfolioFeature() {
         </div>
       </nav>
 
+      {/* Visible Breadcrumb Trail */}
+      <nav className="feature-breadcrumb-nav" aria-label="Breadcrumb">
+        <ol className="feature-breadcrumb-list">
+          <li className="feature-breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item">
+            <a href="/#features">Features</a>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item active" aria-current="page">
+            Developer Portfolio CMS
+          </li>
+        </ol>
+      </nav>
+
       <main role="main">
         {/* Hero Section */}
         <header className="feature-hero" id="overview">
@@ -93,9 +111,14 @@ export default function PortfolioFeature() {
                 <span className="preview-dot yellow"></span>
                 <span className="preview-dot green"></span>
               </div>
-              <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
-                Project Catalog &amp; Technical Highlights
-              </span>
+              <div className="d-flex align-items-center gap-2">
+                <span className="preview-demo-badge">
+                  <FiInfo /> Sample preview data (illustrative)
+                </span>
+                <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
+                  Project Catalog &amp; Technical Highlights
+                </span>
+              </div>
             </div>
             <div className="feature-preview-body bg-light">
               <div className="row g-3">
@@ -325,3 +348,4 @@ export default function PortfolioFeature() {
     </div>
   );
 }
+

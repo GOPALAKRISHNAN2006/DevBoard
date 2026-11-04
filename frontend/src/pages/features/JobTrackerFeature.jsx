@@ -8,7 +8,8 @@ import {
   FiDollarSign,
   FiLayers,
   FiSearch,
-  FiCommand
+  FiCommand,
+  FiInfo
 } from 'react-icons/fi';
 import SEO from '../../components/SEO';
 import { getFeaturePageStructuredData } from '../../utils/structuredData';
@@ -16,7 +17,7 @@ import './FeaturePage.css';
 
 export default function JobTrackerFeature() {
   const pageTitle = "Developer Job Application Tracker & Pipeline Kanban – DevBoard";
-  const pageDescription = "Track software engineering job applications with a dedicated Kanban pipeline, interview deadline reminders, salary notes, and status analytics.";
+  const pageDescription = "Track software engineering job applications with a dedicated Kanban pipeline, stage progression tracking, salary notes, and status filtering.";
   const canonicalUrl = "https://dev-board-mauve.vercel.app/features/job-application-tracker";
 
   const structuredData = getFeaturePageStructuredData({
@@ -58,6 +59,23 @@ export default function JobTrackerFeature() {
         </div>
       </nav>
 
+      {/* Visible Breadcrumb Trail */}
+      <nav className="feature-breadcrumb-nav" aria-label="Breadcrumb">
+        <ol className="feature-breadcrumb-list">
+          <li className="feature-breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item">
+            <a href="/#features">Features</a>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item active" aria-current="page">
+            Job Application Tracker
+          </li>
+        </ol>
+      </nav>
+
       <main role="main">
         {/* Hero Section */}
         <header className="feature-hero" id="overview">
@@ -91,9 +109,14 @@ export default function JobTrackerFeature() {
                 <span className="preview-dot yellow"></span>
                 <span className="preview-dot green"></span>
               </div>
-              <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
-                DevBoard Pipeline Kanban
-              </span>
+              <div className="d-flex align-items-center gap-2">
+                <span className="preview-demo-badge">
+                  <FiInfo /> Sample preview data (illustrative)
+                </span>
+                <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
+                  DevBoard Pipeline Kanban
+                </span>
+              </div>
             </div>
             <div className="feature-preview-body bg-light">
               <div className="row g-3">
@@ -247,7 +270,7 @@ export default function JobTrackerFeature() {
             <div className="workflow-step-card">
               <div className="workflow-step-num">02</div>
               <h3>Track Assessments</h3>
-              <p>Advance cards to Assessment when take-homes arrive. Keep submission deadlines front and center.</p>
+              <p>Advance cards to Assessment when take-homes arrive. Track deadlines and status notes directly on each card.</p>
             </div>
             <div className="workflow-step-card">
               <div className="workflow-step-num">03</div>

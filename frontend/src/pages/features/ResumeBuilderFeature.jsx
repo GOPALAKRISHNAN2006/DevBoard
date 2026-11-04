@@ -9,7 +9,8 @@ import {
   FiSearch,
   FiCommand,
   FiCpu,
-  FiAlertCircle
+  FiAlertCircle,
+  FiInfo
 } from 'react-icons/fi';
 import SEO from '../../components/SEO';
 import { getFeaturePageStructuredData } from '../../utils/structuredData';
@@ -17,7 +18,7 @@ import './FeaturePage.css';
 
 export default function ResumeBuilderFeature() {
   const pageTitle = "ATS Resume Builder & Job Match Analyzer for Developers – DevBoard";
-  const pageDescription = "Build clean, ATS-compliant developer resumes and analyze keyword alignment against job descriptions with real-time match scoring and PDF export.";
+  const pageDescription = "Build clean, ATS-compliant developer resumes and analyze keyword alignment against job descriptions with on-demand match scoring and PDF export.";
   const canonicalUrl = "https://dev-board-mauve.vercel.app/features/ats-resume-builder";
 
   const structuredData = getFeaturePageStructuredData({
@@ -60,6 +61,23 @@ export default function ResumeBuilderFeature() {
         </div>
       </nav>
 
+      {/* Visible Breadcrumb Trail */}
+      <nav className="feature-breadcrumb-nav" aria-label="Breadcrumb">
+        <ol className="feature-breadcrumb-list">
+          <li className="feature-breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item">
+            <a href="/#features">Features</a>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item active" aria-current="page">
+            ATS Resume Builder &amp; Job Match Analyzer
+          </li>
+        </ol>
+      </nav>
+
       <main role="main">
         {/* Hero Section */}
         <header className="feature-hero" id="overview">
@@ -68,7 +86,7 @@ export default function ResumeBuilderFeature() {
           </div>
           <h1 className="feature-hero-title">
             ATS Resume Builder &amp; <br />
-            <span className="text-gradient">Real-Time Job Match Analyzer</span>
+            <span className="text-gradient">Targeted Job Match Analyzer</span>
           </h1>
           <p className="feature-hero-subtitle">
             Format your engineering experience into a scannable, applicant-tracking-system-friendly layout. Test your resume against target job requirements, spot missing keywords, and export high-resolution PDFs.
@@ -93,9 +111,14 @@ export default function ResumeBuilderFeature() {
                 <span className="preview-dot yellow"></span>
                 <span className="preview-dot green"></span>
               </div>
-              <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
-                ATS Compatibility &amp; Keyword Match Engine
-              </span>
+              <div className="d-flex align-items-center gap-2">
+                <span className="preview-demo-badge">
+                  <FiInfo /> Sample preview data (illustrative)
+                </span>
+                <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
+                  ATS Compatibility &amp; Keyword Match Engine
+                </span>
+              </div>
             </div>
             <div className="feature-preview-body bg-light">
               <div className="row g-4 align-items-center">
@@ -103,7 +126,7 @@ export default function ResumeBuilderFeature() {
                 <div className="col-12 col-md-5">
                   <div className="p-4 bg-white rounded-3 border shadow-sm text-center">
                     <span className="text-muted extra-small text-uppercase fw-bold letter-spacing-wide">
-                      Job Match Alignment
+                      Sample Job Match Alignment (Demo)
                     </span>
                     <div className="display-4 fw-bold text-success my-2">
                       88<span className="fs-4 text-muted">%</span>
@@ -119,7 +142,7 @@ export default function ResumeBuilderFeature() {
                       ></div>
                     </div>
                     <p className="extra-small text-muted mb-0">
-                      High ATS compatibility detected. 14 critical technical keywords matched out of 16 in the target job description.
+                      Illustrative analysis: 14 sample technical keywords matched out of 16 in the target job spec.
                     </p>
                   </div>
                 </div>
@@ -321,3 +344,4 @@ export default function ResumeBuilderFeature() {
     </div>
   );
 }
+

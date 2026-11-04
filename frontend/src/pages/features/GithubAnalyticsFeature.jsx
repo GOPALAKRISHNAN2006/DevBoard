@@ -10,7 +10,8 @@ import {
   FiCheckSquare,
   FiCommand,
   FiPieChart,
-  FiShield
+  FiShield,
+  FiInfo
 } from 'react-icons/fi';
 import SEO from '../../components/SEO';
 import { getFeaturePageStructuredData } from '../../utils/structuredData';
@@ -61,6 +62,23 @@ export default function GithubAnalyticsFeature() {
         </div>
       </nav>
 
+      {/* Visible Breadcrumb Trail */}
+      <nav className="feature-breadcrumb-nav" aria-label="Breadcrumb">
+        <ol className="feature-breadcrumb-list">
+          <li className="feature-breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item">
+            <a href="/#features">Features</a>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item active" aria-current="page">
+            GitHub Developer Analytics
+          </li>
+        </ol>
+      </nav>
+
       <main role="main">
         {/* Hero Section */}
         <header className="feature-hero" id="overview">
@@ -94,37 +112,42 @@ export default function GithubAnalyticsFeature() {
                 <span className="preview-dot yellow"></span>
                 <span className="preview-dot green"></span>
               </div>
-              <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
-                GitHub Intelligence &amp; Skill Verification
-              </span>
+              <div className="d-flex align-items-center gap-2">
+                <span className="preview-demo-badge">
+                  <FiInfo /> Sample preview data (illustrative)
+                </span>
+                <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
+                  GitHub Intelligence &amp; Skill Verification
+                </span>
+              </div>
             </div>
             <div className="feature-preview-body bg-light">
               {/* Stat Counters Bar */}
               <div className="row g-3 mb-4">
                 <div className="col-6 col-md-3">
                   <div className="p-3 bg-white rounded-3 border shadow-sm text-center">
-                    <div className="text-muted extra-small text-uppercase fw-bold">Repositories</div>
+                    <div className="text-muted extra-small text-uppercase fw-bold">Demo Repositories</div>
                     <div className="fs-3 fw-bold text-dark mt-1">34</div>
                     <span className="badge bg-success-subtle text-success extra-small mt-1">28 Public</span>
                   </div>
                 </div>
                 <div className="col-6 col-md-3">
                   <div className="p-3 bg-white rounded-3 border shadow-sm text-center">
-                    <div className="text-muted extra-small text-uppercase fw-bold">Total Stars</div>
+                    <div className="text-muted extra-small text-uppercase fw-bold">Demo Total Stars</div>
                     <div className="fs-3 fw-bold text-dark mt-1">182</div>
                     <span className="badge bg-warning-subtle text-dark extra-small mt-1"><FiStar /> Top 15%</span>
                   </div>
                 </div>
                 <div className="col-6 col-md-3">
                   <div className="p-3 bg-white rounded-3 border shadow-sm text-center">
-                    <div className="text-muted extra-small text-uppercase fw-bold">Forks Received</div>
+                    <div className="text-muted extra-small text-uppercase fw-bold">Demo Forks Received</div>
                     <div className="fs-3 fw-bold text-dark mt-1">47</div>
                     <span className="badge bg-primary-subtle text-primary extra-small mt-1"><FiGitBranch /> Active</span>
                   </div>
                 </div>
                 <div className="col-6 col-md-3">
                   <div className="p-3 bg-white rounded-3 border shadow-sm text-center">
-                    <div className="text-muted extra-small text-uppercase fw-bold">Profile Strength</div>
+                    <div className="text-muted extra-small text-uppercase fw-bold">Demo Profile Strength</div>
                     <div className="fs-3 fw-bold text-success mt-1">94%</div>
                     <span className="badge bg-success-subtle text-success extra-small mt-1">Recruiter Ready</span>
                   </div>
@@ -366,3 +389,4 @@ export default function GithubAnalyticsFeature() {
     </div>
   );
 }
+

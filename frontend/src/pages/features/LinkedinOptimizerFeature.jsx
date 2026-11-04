@@ -9,7 +9,8 @@ import {
   FiFileText,
   FiCommand,
   FiTarget,
-  FiCheckSquare
+  FiCheckSquare,
+  FiInfo
 } from 'react-icons/fi';
 import SEO from '../../components/SEO';
 import { getFeaturePageStructuredData } from '../../utils/structuredData';
@@ -17,7 +18,7 @@ import './FeaturePage.css';
 
 export default function LinkedinOptimizerFeature() {
   const pageTitle = "LinkedIn Profile Optimizer for Software Engineers – DevBoard";
-  const pageDescription = "Audit your LinkedIn technical profile strength, optimize recruiter keyword discoverability, and cross-reference profile consistency against your resume.";
+  const pageDescription = "Audit your LinkedIn technical profile strength, improve profile completeness, and cross-reference profile consistency against your resume.";
   const canonicalUrl = "https://dev-board-mauve.vercel.app/features/linkedin-optimizer";
 
   const structuredData = getFeaturePageStructuredData({
@@ -60,6 +61,23 @@ export default function LinkedinOptimizerFeature() {
         </div>
       </nav>
 
+      {/* Visible Breadcrumb Trail */}
+      <nav className="feature-breadcrumb-nav" aria-label="Breadcrumb">
+        <ol className="feature-breadcrumb-list">
+          <li className="feature-breadcrumb-item">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item">
+            <a href="/#features">Features</a>
+          </li>
+          <li className="feature-breadcrumb-separator" aria-hidden="true">/</li>
+          <li className="feature-breadcrumb-item active" aria-current="page">
+            LinkedIn Profile Optimizer
+          </li>
+        </ol>
+      </nav>
+
       <main role="main">
         {/* Hero Section */}
         <header className="feature-hero" id="overview">
@@ -68,10 +86,10 @@ export default function LinkedinOptimizerFeature() {
           </div>
           <h1 className="feature-hero-title">
             LinkedIn Profile Optimizer &amp; <br />
-            <span className="text-gradient">Recruiter Search Visibility</span>
+            <span className="text-gradient">Profile Strength Hub</span>
           </h1>
           <p className="feature-hero-subtitle">
-            Stand out in technical recruiter inboxes. DevBoard evaluates your LinkedIn profile completeness, flags high-impact engineering keywords, and cross-checks your profile against your resume for seamless consistency.
+            Stand out in technical recruiter searches. DevBoard evaluates your profile completeness, highlights key engineering skills, and cross-checks your profile against your resume for seamless career consistency.
           </p>
           <div className="feature-hero-actions">
             <Link to="/register" className="btn btn-primary-minimal btn-xl">
@@ -93,9 +111,14 @@ export default function LinkedinOptimizerFeature() {
                 <span className="preview-dot yellow"></span>
                 <span className="preview-dot green"></span>
               </div>
-              <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
-                Profile Strength &amp; Recruiter Inbound Scorecard
-              </span>
+              <div className="d-flex align-items-center gap-2">
+                <span className="preview-demo-badge">
+                  <FiInfo /> Sample preview data (illustrative)
+                </span>
+                <span className="badge bg-primary-subtle text-primary border extra-small fw-bold">
+                  DevBoard Profile Strength Card
+                </span>
+              </div>
             </div>
             <div className="feature-preview-body bg-light">
               <div className="row g-4 align-items-center">
@@ -103,10 +126,10 @@ export default function LinkedinOptimizerFeature() {
                 <div className="col-12 col-md-5">
                   <div className="p-4 bg-white rounded-3 border shadow-sm text-center">
                     <span className="text-muted extra-small text-uppercase fw-bold letter-spacing-wide">
-                      Recruiter Discoverability Score
+                      Profile Completeness (Demo)
                     </span>
                     <div className="display-4 fw-bold text-success my-2">
-                      91<span className="fs-4 text-muted">/100</span>
+                      91<span className="fs-4 text-muted">%</span>
                     </div>
                     <div className="progress mb-3" style={{ height: '8px' }}>
                       <div
@@ -119,10 +142,10 @@ export default function LinkedinOptimizerFeature() {
                       ></div>
                     </div>
                     <span className="badge bg-success-subtle text-success extra-small fw-bold">
-                      All-Star Technical Profile
+                      All-Star Completeness Level
                     </span>
                     <p className="extra-small text-muted mt-2 mb-0">
-                      Your headline, skills, and experience sections align with active senior engineering searches.
+                      Sample preview: headline, skills, and experience sections completed with verified consistency.
                     </p>
                   </div>
                 </div>
@@ -163,9 +186,9 @@ export default function LinkedinOptimizerFeature() {
               <div className="pillar-icon-wrap indigo">
                 <FiTarget />
               </div>
-              <h3>Profile Strength Scorecard</h3>
+              <h3>Profile Completeness Scorecard</h3>
               <p>
-                Get an objective, algorithmic score of your profile&apos;s completeness, keyword presence, and appeal to technical hiring teams.
+                Get a transparent, objective score of your profile&apos;s completeness and section coverage to build a well-rounded technical footprint.
               </p>
             </div>
 
@@ -314,3 +337,4 @@ export default function LinkedinOptimizerFeature() {
     </div>
   );
 }
+
